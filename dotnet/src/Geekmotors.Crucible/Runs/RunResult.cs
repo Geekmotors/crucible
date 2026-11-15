@@ -1,5 +1,5 @@
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Runs;
+namespace CrucibleAI.Runs;
 
 internal sealed record RunResult(RunStatus Status, RunCause? Cause, IReadOnlyList<JudgeCall> Calls);

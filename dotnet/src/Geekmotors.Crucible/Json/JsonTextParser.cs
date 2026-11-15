@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Json;
+namespace CrucibleAI.Json;
 
 internal sealed class JsonTextParser
 {

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Options;
+namespace CrucibleAI.Options;
 
 internal sealed class RunOptionsReader(RunOptionsValidator validator)
 {

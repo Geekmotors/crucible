@@ -2,7 +2,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class HttpAnswers
 {

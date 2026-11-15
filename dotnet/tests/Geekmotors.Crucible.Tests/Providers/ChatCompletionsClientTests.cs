@@ -1,7 +1,8 @@
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Harnesses;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
+using CrucibleAI.Tests.Harnesses;
 
-namespace Geekmotors.Crucible.Tests.Providers;
+namespace CrucibleAI.Tests.Providers;
 
 public sealed class ChatCompletionsClientTests
 {
@@ -11,8 +12,8 @@ public sealed class ChatCompletionsClientTests
         var harness = new ProviderHarness(JudgeSettings.PlainHttpConfig);
         var client = harness.Client(HttpAnswers.Reply(JudgeSettings.Reply), HttpAnswers.Reply(JudgeSettings.Reply));
 
-        await client.CompleteAsync(ProviderHarness.Request, CancellationToken.None);
-        await client.CompleteAsync(ProviderHarness.Request, CancellationToken.None);
+        await client.CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None);
+        await client.CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None);
 
         Assert.Single(harness.Warnings.Lines);
     }
@@ -22,7 +23,7 @@ public sealed class ChatCompletionsClientTests
     {
         var harness = new ProviderHarness(JudgeSettings.PlainHttpConfig);
 
-        await harness.Client(HttpAnswers.Reply(JudgeSettings.Reply)).CompleteAsync(ProviderHarness.Request, CancellationToken.None);
+        await harness.Client(HttpAnswers.Reply(JudgeSettings.Reply)).CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None);
 
         Assert.DoesNotContain(JudgeSettings.Key, string.Concat(harness.Warnings.Lines), StringComparison.Ordinal);
     }
@@ -32,7 +33,7 @@ public sealed class ChatCompletionsClientTests
     {
         var harness = new ProviderHarness(JudgeSettings.HttpsCompatibleConfig);
 
-        await harness.Client(HttpAnswers.Reply(JudgeSettings.Reply)).CompleteAsync(ProviderHarness.Request, CancellationToken.None);
+        await harness.Client(HttpAnswers.Reply(JudgeSettings.Reply)).CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None);
 
         Assert.Empty(harness.Warnings.Lines);
     }
@@ -43,7 +44,7 @@ public sealed class ChatCompletionsClientTests
         var client = new ProviderHarness(JudgeSettings.EscapedPathConfig)
             .Client(HttpAnswers.ServedOnlyAt(JudgeSettings.EscapedPathEndpoint, JudgeSettings.Reply));
 
-        Assert.Equal(JudgeSettings.Reply, await client.CompleteAsync(ProviderHarness.Request, CancellationToken.None));
+        Assert.Equal(JudgeSettings.Reply, await client.CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None));
     }
 
     [Fact]
@@ -51,7 +52,7 @@ public sealed class ChatCompletionsClientTests
     {
         using var cancellation = new CancellationTokenSource();
         var call = new ProviderHarness(JudgeSettings.OpenRouterConfig).Client(HttpAnswers.Never())
-            .CompleteAsync(ProviderHarness.Request, cancellation.Token);
+            .CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), cancellation.Token);
 
         await cancellation.CancelAsync();
 
@@ -63,7 +64,7 @@ public sealed class ChatCompletionsClientTests
     {
         var client = new ProviderHarness(JudgeSettings.OpenRouterConfig).Client(HttpAnswers.BrokenStream(), HttpAnswers.Reply(JudgeSettings.Reply));
 
-        Assert.Equal(JudgeSettings.Reply, await client.CompleteAsync(ProviderHarness.Request, CancellationToken.None));
+        Assert.Equal(JudgeSettings.Reply, await client.CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None));
     }
 
     [Fact]
@@ -72,7 +73,7 @@ public sealed class ChatCompletionsClientTests
         using var cancellation = new CancellationTokenSource();
         var client = new ProviderHarness(JudgeSettings.OpenRouterConfig).Client(HttpAnswers.ServerErrorWhileCancelling(cancellation));
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => client.CompleteAsync(ProviderHarness.Request, cancellation.Token));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => client.CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), cancellation.Token));
     }
 
     [Fact]
@@ -81,7 +82,7 @@ public sealed class ChatCompletionsClientTests
         var client = new ProviderHarness(JudgeSettings.OpenRouterConfig)
             .Client(HttpAnswers.ReplyDeclaringCharset(JudgeSettings.Reply, JudgeSettings.UnknownCharset));
 
-        Assert.Equal(JudgeSettings.Reply, await client.CompleteAsync(ProviderHarness.Request, CancellationToken.None));
+        Assert.Equal(JudgeSettings.Reply, await client.CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None));
     }
 
     [Fact]

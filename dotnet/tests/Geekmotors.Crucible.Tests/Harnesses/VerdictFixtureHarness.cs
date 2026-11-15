@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class VerdictFixtureHarness
 {
@@ -15,11 +15,11 @@ internal static class VerdictFixtureHarness
         ["discarded"] = RunStatus.Discarded,
     };
 
-    private static readonly Dictionary<VerdictOutcome, string> Outcomes = new()
+    private static readonly Dictionary<VerdictZone, string> Outcomes = new()
     {
-        [VerdictOutcome.Passed] = "passed",
-        [VerdictOutcome.Failed] = "failed",
-        [VerdictOutcome.Errored] = "errored",
+        [VerdictZone.Passed] = "passed",
+        [VerdictZone.Failed] = "failed",
+        [VerdictZone.Errored] = "errored",
     };
 
     public static JsonNode? Compute(JsonNode? input)

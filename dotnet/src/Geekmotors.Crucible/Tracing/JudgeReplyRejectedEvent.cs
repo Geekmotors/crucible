@@ -1,5 +1,5 @@
-using Geekmotors.Crucible.Runs;
+using CrucibleAI.Runs;
 
-namespace Geekmotors.Crucible.Tracing;
+namespace CrucibleAI.Tracing;
 
 internal sealed record JudgeReplyRejectedEvent(int Ask, RunCause Cause) : TraceEvent;

@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Urls;
+using CrucibleAI.Urls;
 
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal sealed class PlainHttpRule
 {

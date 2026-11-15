@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Config;
+using CrucibleAI.Config;
 
-namespace Geekmotors.Crucible.Tests.Fakes;
+namespace CrucibleAI.Tests.Fakes;
 
 internal sealed class FakeEnvironment(IReadOnlyDictionary<string, string> variables) : IEnvironment
 {

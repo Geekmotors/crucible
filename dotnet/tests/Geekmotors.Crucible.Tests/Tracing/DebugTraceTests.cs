@@ -1,10 +1,10 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
-using Geekmotors.Crucible.Tracing;
+using CrucibleAI.Config;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
+using CrucibleAI.Tracing;
 
-namespace Geekmotors.Crucible.Tests.Tracing;
+namespace CrucibleAI.Tests.Tracing;
 
 public sealed class DebugTraceTests
 {

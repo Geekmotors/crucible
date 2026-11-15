@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal sealed class ExponentialBackoff(TimeProvider time, Func<double> jitter) : IRetryBackoff
 {
@@ -9,9 +9,7 @@ internal sealed class ExponentialBackoff(TimeProvider time, Func<double> jitter)
     {
     }
 
-    public Task WaitAsync(int retry, CancellationToken cancellation)
-    {
-        var delay = BaseDelayMilliseconds * Math.Pow(2, retry - 1) * (1 + jitter());
-        return Task.Delay(TimeSpan.FromMilliseconds(delay), time, cancellation);
-    }
+    public TimeSpan Delay(int retry) => TimeSpan.FromMilliseconds(BaseDelayMilliseconds * Math.Pow(2, retry - 1) * (1 + jitter()));
+
+    public Task WaitAsync(TimeSpan delay, CancellationToken cancellation) => Task.Delay(delay, time, cancellation);
 }

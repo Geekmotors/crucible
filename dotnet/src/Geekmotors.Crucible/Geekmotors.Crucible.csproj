@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
-    <RootNamespace>Geekmotors.Crucible</RootNamespace>
+    <RootNamespace>CrucibleAI</RootNamespace>
     <AssemblyName>Geekmotors.Crucible</AssemblyName>
     <IsPackable>true</IsPackable>
   </PropertyGroup>

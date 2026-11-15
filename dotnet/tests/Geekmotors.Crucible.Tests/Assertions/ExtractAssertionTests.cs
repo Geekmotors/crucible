@@ -1,11 +1,11 @@
-using Geekmotors.Crucible.Assertions;
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
-using Geekmotors.Crucible.Tests.Harnesses;
+using CrucibleAI.Assertions;
+using CrucibleAI.Judging;
+using CrucibleAI.Runs;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
+using CrucibleAI.Tests.Harnesses;
 
-namespace Geekmotors.Crucible.Tests.Assertions;
+namespace CrucibleAI.Tests.Assertions;
 
 public sealed class ExtractAssertionTests
 {
@@ -15,7 +15,7 @@ public sealed class ExtractAssertionTests
         var harness = new AssertionHarness(AssertionTexts.ExtractedNumber);
 
         var value = await harness.Extract.AskAsync(
-            harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, typeof(double), null, null));
+            harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, typeof(double?), null, null));
 
         var call = Assert.IsType<ExtractionCall>(Assert.Single(harness.Record.Calls));
         Assert.Equal(
@@ -78,5 +78,75 @@ public sealed class ExtractAssertionTests
             harness.Run(), new ExtractCall(AssertionTexts.Response, null, null, null, null)));
 
         Assert.Equal(CrucibleErrorKind.Usage, error.Kind);
+    }
+
+    [Fact]
+    public async Task AWholeNumberIsReturnedAsAnInt()
+    {
+        var harness = new AssertionHarness(AssertionTexts.ExtractedNumber);
+
+        var value = await harness.Extract.AskAsync(
+            harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, typeof(int?), null, null));
+
+        Assert.Equal(AssertionTexts.WholeNumber, Assert.IsType<int>(value));
+    }
+
+    [Fact]
+    public async Task AWholeNumberBeyondIntIsReturnedAsALong()
+    {
+        var harness = new AssertionHarness(AssertionTexts.BeyondInt32);
+
+        var value = await harness.Extract.AskAsync(
+            harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, typeof(long?), null, null));
+
+        Assert.Equal(AssertionTexts.LongNumber, Assert.IsType<long>(value));
+    }
+
+    [Fact]
+    public async Task AWholeNumberTypeSendsTheNumberType()
+    {
+        var harness = new AssertionHarness(AssertionTexts.ExtractedNumber);
+
+        await harness.Extract.AskAsync(harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, typeof(int?), null, null));
+
+        Assert.Equal(ExtractType.Number, Assert.IsType<ExtractionCall>(Assert.Single(harness.Record.Calls)).Type);
+    }
+
+    [Theory]
+    [InlineData(AssertionTexts.Fraction)]
+    [InlineData(AssertionTexts.BeyondInt32)]
+    public async Task ANumberAnIntCannotHoldIsAnUnusableReply(double reply)
+    {
+        var harness = new AssertionHarness(reply);
+
+        var error = await Assert.ThrowsAsync<CrucibleException>(() => harness.Extract.AskAsync(
+            harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, typeof(int?), null, null)));
+
+        Assert.Equal((CrucibleErrorKind.Infra, true), (error.Kind, error.Retryable));
+    }
+
+    [Theory]
+    [InlineData(typeof(double))]
+    [InlineData(typeof(bool))]
+    [InlineData(typeof(int))]
+    public async Task AValueTypeThatCannotHoldNullIsAUsageError(Type type)
+    {
+        var harness = new AssertionHarness();
+
+        var error = await Assert.ThrowsAsync<CrucibleException>(() => harness.Extract.AskAsync(
+            harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, type, null, null)));
+
+        Assert.Equal(CrucibleErrorKind.Usage, error.Kind);
+    }
+
+    [Fact]
+    public async Task AFailedJudgeCallIsRecordedAsAnErroredCall()
+    {
+        var harness = new AssertionHarness(new ProviderHarness(JudgeSettings.OpenRouterConfig).Client(HttpAnswers.Reply(AssertionTexts.UnusableReply), HttpAnswers.Reply(AssertionTexts.UnusableReply)));
+
+        await Assert.ThrowsAsync<CrucibleException>(() => harness.Extract.AskAsync(
+            harness.Run(), new ExtractCall(AssertionTexts.Response, AssertionTexts.Target, null, null, null)));
+
+        Assert.Equal(AssertionTexts.UnusableReplyAsks, Assert.IsType<ErroredCall>(Assert.Single(harness.Record.Calls)).Attempts);
     }
 }

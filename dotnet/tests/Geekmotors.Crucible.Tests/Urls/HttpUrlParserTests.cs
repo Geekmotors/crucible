@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Urls;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Urls;
 
-namespace Geekmotors.Crucible.Tests.Urls;
+namespace CrucibleAI.Tests.Urls;
 
 public sealed class HttpUrlParserTests
 {

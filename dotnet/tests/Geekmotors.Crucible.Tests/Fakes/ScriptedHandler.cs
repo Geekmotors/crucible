@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Tests.Fakes;
+namespace CrucibleAI.Tests.Fakes;
 
 internal sealed class ScriptedHandler(IEnumerable<Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>> answers)
     : HttpMessageHandler

@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Text;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Text;
 
-namespace Geekmotors.Crucible.Tests.Text;
+namespace CrucibleAI.Tests.Text;
 
 public sealed class EcmaScriptJsonTests
 {

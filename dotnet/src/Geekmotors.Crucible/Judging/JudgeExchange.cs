@@ -1,35 +1,43 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Json;
-using Geekmotors.Crucible.Providers;
+using CrucibleAI.Json;
+using CrucibleAI.Providers;
+using CrucibleAI.Runs;
+using CrucibleAI.Tracing;
 
-namespace Geekmotors.Crucible.Judging;
+namespace CrucibleAI.Judging;
 
 internal sealed class JudgeExchange(IJudgeClient client, TimeProvider time)
 {
     private const int MaxAsks = 2;
 
-    public async Task<T> AskAsync<T>(JudgeRequest request, Func<JsonNode?, T?> read, TimeSpan inferenceTimeout, CancellationToken cancellation)
+    public async Task<T> AskAsync<T>(
+        JudgeRequest request, Func<JsonNode?, T?> read, TimeSpan inferenceTimeout, IJudgeObserver observer, CancellationToken cancellation)
         where T : class
     {
+        CrucibleException? rejection = null;
         for (var ask = 1; ask <= MaxAsks; ask++)
         {
-            var reply = await CompleteBeforeDeadlineAsync(request, inferenceTimeout, cancellation).ConfigureAwait(false);
-            if (Usable(reply, read) is { } result)
+            var reply = await CompleteBeforeDeadlineAsync(request, inferenceTimeout, observer, cancellation).ConfigureAwait(false);
+            var (result, problem) = Usable(reply, read);
+            if (result is not null)
             {
                 return result;
             }
+            rejection = CrucibleException.Infra("The judge reply was not the expected JSON.", true, problem);
+            observer.Observe(new JudgeReplyRejectedEvent(ask, RunCause.Of(rejection)));
         }
-        throw CrucibleException.Infra($"The judge reply was not the expected JSON, {MaxAsks} times in a row.", true);
+        throw rejection!;
     }
 
-    private async Task<string> CompleteBeforeDeadlineAsync(JudgeRequest request, TimeSpan inferenceTimeout, CancellationToken cancellation)
+    private async Task<string> CompleteBeforeDeadlineAsync(
+        JudgeRequest request, TimeSpan inferenceTimeout, IJudgeObserver observer, CancellationToken cancellation)
     {
         using var deadline = new CancellationTokenSource(inferenceTimeout, time);
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellation, deadline.Token);
         try
         {
-            return await client.CompleteAsync(request, linked.Token).ConfigureAwait(false);
+            return await client.CompleteAsync(request, observer, linked.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException timedOut) when (deadline.IsCancellationRequested && !cancellation.IsCancellationRequested)
         {
@@ -40,16 +48,16 @@ internal sealed class JudgeExchange(IJudgeClient client, TimeProvider time)
         }
     }
 
-    private static T? Usable<T>(string reply, Func<JsonNode?, T?> read)
+    private static (T? Result, Exception? Problem) Usable<T>(string reply, Func<JsonNode?, T?> read)
         where T : class
     {
         try
         {
-            return read(JsonTextParser.Parse(JudgeReplyText.Unwrap(reply), JsonDialect.Strict));
+            return (read(JsonTextParser.Parse(JudgeReplyText.Unwrap(reply), JsonDialect.Strict)), null);
         }
-        catch (JsonSyntaxException)
+        catch (JsonSyntaxException problem)
         {
-            return null;
+            return (null, problem);
         }
     }
 }

@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Json;
-using Geekmotors.Crucible.Tests.Constants;
+using CrucibleAI.Json;
+using CrucibleAI.Tests.Constants;
 
-namespace Geekmotors.Crucible.Tests.Json;
+namespace CrucibleAI.Tests.Json;
 
 public sealed class JsonTextParserTests
 {

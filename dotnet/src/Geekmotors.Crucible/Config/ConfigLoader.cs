@@ -1,10 +1,10 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Json;
-using Geekmotors.Crucible.Options;
-using Geekmotors.Crucible.Text;
-using Geekmotors.Crucible.Urls;
+using CrucibleAI.Json;
+using CrucibleAI.Options;
+using CrucibleAI.Text;
+using CrucibleAI.Urls;
 
-namespace Geekmotors.Crucible.Config;
+namespace CrucibleAI.Config;
 
 internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environment)
 {
@@ -50,6 +50,10 @@ internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environ
     };
 
     private readonly JsoncReader _reader = new();
+
+    public static IReadOnlyList<string> Fields => KnownFields;
+
+    public static IEnumerable<string> ProviderNames => Providers.Keys;
     private readonly HttpUrlParser _urls = new();
     private readonly RunOptionsReader _runOptions = new(new RunOptionsValidator());
 
@@ -73,7 +77,8 @@ internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environ
         var testDefaults = root.TryGetPropertyValue(TestDefaultsField, out var defaults)
             ? _runOptions.Read(defaults, RunOptionsSource.Config)
             : new RunOptions();
-        return new JudgeConfig(provider, model, meta, verbosity, testDefaults, ExcerptChars(root), baseUrl, apiKeyEnv);
+        var testDefaultsNode = defaults as JsonObject ?? [];
+        return new JudgeConfig(provider, model, meta, verbosity, testDefaults, testDefaultsNode, ExcerptChars(root), baseUrl, apiKeyEnv);
     }
 
     private string ReadFile()

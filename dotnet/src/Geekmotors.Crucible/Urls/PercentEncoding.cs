@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace Geekmotors.Crucible.Urls;
+namespace CrucibleAI.Urls;
 
 internal static class PercentEncoding
 {

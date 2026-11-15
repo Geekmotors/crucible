@@ -1,25 +1,28 @@
-using Geekmotors.Crucible.Judging;
+using CrucibleAI.Judging;
 
-namespace Geekmotors.Crucible.Assertions;
+namespace CrucibleAI.Assertions;
 
 internal static class ExtractTypes
 {
-    private static readonly Dictionary<Type, ExtractType> Supported = new()
+    private static readonly ExtractTarget Text = new(ExtractType.String);
+
+    private static readonly Dictionary<Type, ExtractTarget> Supported = new()
     {
-        [typeof(string)] = ExtractType.String,
-        [typeof(double)] = ExtractType.Number,
-        [typeof(bool)] = ExtractType.Boolean,
+        [typeof(string)] = Text,
+        [typeof(double?)] = new(ExtractType.Number),
+        [typeof(int?)] = new(ExtractType.Number, ExtractNumber.Int32),
+        [typeof(long?)] = new(ExtractType.Number, ExtractNumber.Int64),
+        [typeof(bool?)] = new(ExtractType.Boolean),
     };
 
-    public static ExtractType For(Type? requested)
+    public static ExtractTarget For(Type? requested)
     {
         if (requested is null)
         {
-            return ExtractType.String;
+            return Text;
         }
-        var type = Nullable.GetUnderlyingType(requested) ?? requested;
-        return Supported.TryGetValue(type, out var supported)
+        return Supported.TryGetValue(requested, out var supported)
             ? supported
-            : throw CrucibleException.Usage("Extract a string, a double or a bool.");
+            : throw CrucibleException.Usage("Extract a string, int?, long?, double? or bool?: the judge may answer null.");
     }
 }

@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Assertions;
+using CrucibleAI.Assertions;
 
-namespace Geekmotors.Crucible.Runs;
+namespace CrucibleAI.Runs;
 
 internal sealed class RunRecord
 {

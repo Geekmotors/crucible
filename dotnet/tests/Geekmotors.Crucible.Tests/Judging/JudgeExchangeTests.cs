@@ -1,9 +1,9 @@
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
-using Geekmotors.Crucible.Tests.Harnesses;
+using CrucibleAI.Judging;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
+using CrucibleAI.Tests.Harnesses;
 
-namespace Geekmotors.Crucible.Tests.Judging;
+namespace CrucibleAI.Tests.Judging;
 
 public sealed class JudgeExchangeTests
 {
@@ -12,7 +12,7 @@ public sealed class JudgeExchangeTests
     [Fact]
     public async Task AJudgeCallPastTheInferenceTimeoutIsARetryableInfraErrorAndIsNotAskedAgain()
     {
-        var call = Exchange().AskAsync(ProviderHarness.Request, new CoherentReplyReader().Read, JudgeTimes.InferenceTimeout, CancellationToken.None);
+        var call = Exchange().AskAsync(ProviderHarness.Request, new CoherentReplyReader().Read, JudgeTimes.InferenceTimeout, new QuietJudgeObserver(), CancellationToken.None);
 
         _clock.Advance(JudgeTimes.InferenceTimeout);
 
@@ -24,7 +24,7 @@ public sealed class JudgeExchangeTests
     public async Task ACancelledRunIsNotATimeout()
     {
         using var cancellation = new CancellationTokenSource();
-        var call = Exchange().AskAsync(ProviderHarness.Request, new CoherentReplyReader().Read, JudgeTimes.InferenceTimeout, cancellation.Token);
+        var call = Exchange().AskAsync(ProviderHarness.Request, new CoherentReplyReader().Read, JudgeTimes.InferenceTimeout, new QuietJudgeObserver(), cancellation.Token);
 
         await cancellation.CancelAsync();
 

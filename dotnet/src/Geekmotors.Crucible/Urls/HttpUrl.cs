@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Urls;
+namespace CrucibleAI.Urls;
 
 internal sealed record HttpUrl(string Scheme, string Host, HostKind HostKind, int? Port, string Path, bool HasCredentials)
 {

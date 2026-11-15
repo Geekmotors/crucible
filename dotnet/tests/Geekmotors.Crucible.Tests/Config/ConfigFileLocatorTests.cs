@@ -1,8 +1,8 @@
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
+using CrucibleAI.Config;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
 
-namespace Geekmotors.Crucible.Tests.Config;
+namespace CrucibleAI.Tests.Config;
 
 public sealed class ConfigFileLocatorTests
 {

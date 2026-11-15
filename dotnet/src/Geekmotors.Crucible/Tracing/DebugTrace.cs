@@ -1,11 +1,11 @@
 using System.Globalization;
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Text;
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Config;
+using CrucibleAI.Judging;
+using CrucibleAI.Runs;
+using CrucibleAI.Text;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Tracing;
+namespace CrucibleAI.Tracing;
 
 internal sealed class DebugTrace(TraceSettings settings, ITraceOutput output)
 {
@@ -114,10 +114,10 @@ internal sealed class DebugTrace(TraceSettings settings, ITraceOutput output)
         _ => "discarded",
     };
 
-    private static string ZoneWord(VerdictOutcome outcome) => outcome switch
+    private static string ZoneWord(VerdictZone outcome) => outcome switch
     {
-        VerdictOutcome.Passed => "pass",
-        VerdictOutcome.Failed => "fail",
+        VerdictZone.Passed => "pass",
+        VerdictZone.Failed => "fail",
         _ => "errored",
     };
 

@@ -1,17 +1,17 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Tests.Fakes;
-using Geekmotors.Crucible.Tracing;
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Tests.Fakes;
+using CrucibleAI.Tracing;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class TraceFixtureHarness
 {
-    private static readonly Dictionary<string, VerdictOutcome> Outcomes = new(StringComparer.Ordinal)
+    private static readonly Dictionary<string, VerdictZone> Outcomes = new(StringComparer.Ordinal)
     {
-        ["passed"] = VerdictOutcome.Passed,
-        ["failed"] = VerdictOutcome.Failed,
-        ["errored"] = VerdictOutcome.Errored,
+        ["passed"] = VerdictZone.Passed,
+        ["failed"] = VerdictZone.Failed,
+        ["errored"] = VerdictZone.Errored,
     };
 
     private static readonly Dictionary<string, ProviderFailureNext> Nexts = new(StringComparer.Ordinal)

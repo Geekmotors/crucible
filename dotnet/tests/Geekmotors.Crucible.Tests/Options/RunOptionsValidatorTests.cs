@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Options;
-using Geekmotors.Crucible.Tests.Constants;
+using CrucibleAI.Options;
+using CrucibleAI.Tests.Constants;
 
-namespace Geekmotors.Crucible.Tests.Options;
+namespace CrucibleAI.Tests.Options;
 
 public sealed class RunOptionsValidatorTests
 {

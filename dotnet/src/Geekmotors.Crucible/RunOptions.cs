@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible;
+namespace CrucibleAI;
 
 /// <summary>
 /// The run options of a test, a group of tests or the config file's <c>testDefaults</c>.

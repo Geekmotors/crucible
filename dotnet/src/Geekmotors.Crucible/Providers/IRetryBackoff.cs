@@ -1,6 +1,8 @@
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal interface IRetryBackoff
 {
-    public Task WaitAsync(int retry, CancellationToken cancellation);
+    public TimeSpan Delay(int retry);
+
+    public Task WaitAsync(TimeSpan delay, CancellationToken cancellation);
 }

@@ -1,9 +1,9 @@
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Providers;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
+using CrucibleAI.Config;
+using CrucibleAI.Providers;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal sealed class ProviderHarness
 {

@@ -1,9 +1,9 @@
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Payloads;
-using Geekmotors.Crucible.Providers;
-using Geekmotors.Crucible.Runs;
+using CrucibleAI.Judging;
+using CrucibleAI.Payloads;
+using CrucibleAI.Providers;
+using CrucibleAI.Runs;
 
-namespace Geekmotors.Crucible.Assertions;
+namespace CrucibleAI.Assertions;
 
 internal sealed class CoherentAssertion(JudgeExchange exchange)
 {
@@ -17,9 +17,10 @@ internal sealed class CoherentAssertion(JudgeExchange exchange)
         }
         IReadOnlyList<string> facts = [.. run.Record.Facts, .. FactList.Optional(call.Facts)];
         var prompt = PayloadAssembler.Assemble(facts, [new PayloadSection("RESPONSE", actual), new PayloadSection("CLAIM", claim)]);
-        var reply = await exchange.AskAsync(new JudgeRequest(JudgeSchemas.Coherent, prompt), _reader.Read, run.InferenceTimeout, run.Cancellation)
+        var reply = await run.JudgeAsync(observer => exchange.AskAsync(
+                new JudgeRequest(JudgeSchemas.Coherent, prompt), _reader.Read, run.InferenceTimeout, observer, run.Cancellation))
             .ConfigureAwait(false);
-        run.Record.Record(new VerdictCall(claim, reply.Verdict, reply.Reasoning, actual, facts));
+        run.Recorded(new VerdictCall(claim, reply.Verdict, reply.Reasoning, actual, facts));
         return reply.Verdict;
     }
 }

@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Tests;
+namespace CrucibleAI.Tests;
 
 public sealed class CrucibleExceptionTests
 {

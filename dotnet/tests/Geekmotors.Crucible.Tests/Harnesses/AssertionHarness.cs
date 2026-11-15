@@ -1,12 +1,12 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Assertions;
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Providers;
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
+using CrucibleAI.Assertions;
+using CrucibleAI.Judging;
+using CrucibleAI.Providers;
+using CrucibleAI.Runs;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal sealed class AssertionHarness(IJudgeClient client)
 {
@@ -23,5 +23,5 @@ internal sealed class AssertionHarness(IJudgeClient client)
 
     public ExtractAssertion Extract => new(_exchange);
 
-    public AssertionRun Run(bool strict = false) => new(Record, strict, JudgeTimes.InferenceTimeout, CancellationToken.None);
+    public AssertionRun Run(bool strict = false) => new(Record, strict, JudgeTimes.InferenceTimeout, new QuietJudgeObserver(), CancellationToken.None);
 }

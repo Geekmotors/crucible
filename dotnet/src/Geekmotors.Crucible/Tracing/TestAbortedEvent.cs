@@ -1,5 +1,5 @@
-using Geekmotors.Crucible.Runs;
+using CrucibleAI.Runs;
 
-namespace Geekmotors.Crucible.Tracing;
+namespace CrucibleAI.Tracing;
 
 internal sealed record TestAbortedEvent(RunCause Cause, int Discarded) : TraceEvent;

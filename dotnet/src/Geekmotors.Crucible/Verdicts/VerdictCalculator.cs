@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Verdicts;
+namespace CrucibleAI.Verdicts;
 
 internal sealed class VerdictCalculator
 {
@@ -21,12 +21,12 @@ internal sealed class VerdictCalculator
         return Math.Max(MinimumNeed, (int)Math.Ceiling(lowered));
     }
 
-    private static VerdictOutcome Outcome(int need, int passed, int errored)
+    private static VerdictZone Outcome(int need, int passed, int errored)
     {
         if (passed >= need)
         {
-            return VerdictOutcome.Passed;
+            return VerdictZone.Passed;
         }
-        return passed + errored < need ? VerdictOutcome.Failed : VerdictOutcome.Errored;
+        return passed + errored < need ? VerdictZone.Failed : VerdictZone.Errored;
     }
 }

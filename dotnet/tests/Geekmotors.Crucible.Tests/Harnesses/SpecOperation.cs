@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal sealed record SpecOperation(Func<JsonNode?, Task<JsonNode?>> Run, string OutcomeKey)
 {

@@ -1,6 +1,6 @@
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal interface IJudgeClient
 {
-    public Task<string> CompleteAsync(JudgeRequest request, CancellationToken cancellation);
+    public Task<string> CompleteAsync(JudgeRequest request, IJudgeObserver observer, CancellationToken cancellation);
 }

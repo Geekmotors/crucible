@@ -1,5 +1,5 @@
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Tracing;
+namespace CrucibleAI.Tracing;
 
 internal sealed record VerdictReachedEvent(Verdict Verdict, int Runs) : TraceEvent;

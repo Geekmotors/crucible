@@ -2,7 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal static class ChatRequestBody
 {

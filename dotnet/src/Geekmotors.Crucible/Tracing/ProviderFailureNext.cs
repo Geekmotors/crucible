@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Tracing;
+namespace CrucibleAI.Tracing;
 
 internal enum ProviderFailureNext
 {

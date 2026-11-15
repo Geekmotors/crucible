@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Text;
+using CrucibleAI.Text;
 
-namespace Geekmotors.Crucible.Tests.Text;
+namespace CrucibleAI.Tests.Text;
 
 public sealed class EcmaScriptNumberTests
 {

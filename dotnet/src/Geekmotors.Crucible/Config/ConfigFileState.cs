@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Config;
+namespace CrucibleAI.Config;
 
 internal enum ConfigFileState
 {

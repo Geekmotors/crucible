@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Assertions;
+namespace CrucibleAI.Assertions;
 
 internal static class FactList
 {

@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Runs;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Tracing;
+namespace CrucibleAI.Tracing;
 
 internal sealed record RunSettledEvent(int Number, RunStatus Status, RunCause? Cause) : TraceEvent;

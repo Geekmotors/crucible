@@ -1,11 +1,11 @@
 using System.Globalization;
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Text;
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Config;
+using CrucibleAI.Judging;
+using CrucibleAI.Runs;
+using CrucibleAI.Text;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Reports;
+namespace CrucibleAI.Reports;
 
 internal sealed class ReportRenderer(ReportSettings settings)
 {
@@ -49,10 +49,10 @@ internal sealed class ReportRenderer(ReportSettings settings)
         var smoke = IsSmoke(test.Runs);
         return verdict.Outcome switch
         {
-            VerdictOutcome.Passed when smoke => $"{Passed} {Smoke} passed.",
-            VerdictOutcome.Passed => $"{Passed} {RateClause(test, verdict)}.",
-            VerdictOutcome.Errored when smoke => $"{Errored} {Smoke} hit an infrastructure problem, so there is no verdict.",
-            VerdictOutcome.Errored =>
+            VerdictZone.Passed when smoke => $"{Passed} {Smoke} passed.",
+            VerdictZone.Passed => $"{Passed} {RateClause(test, verdict)}.",
+            VerdictZone.Errored when smoke => $"{Errored} {Smoke} hit an infrastructure problem, so there is no verdict.",
+            VerdictZone.Errored =>
                 $"{Errored} {RateClause(test, verdict)}; {Integer(verdict.Errored)} errored run(s) left the result inconclusive.",
             _ when smoke => $"{Failed} {Smoke} did not pass.",
             _ => $"{Failed} {RateClause(test, verdict)}.",

@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Text;
+using CrucibleAI.Text;
 
-namespace Geekmotors.Crucible.Judging;
+namespace CrucibleAI.Judging;
 
 internal static class JudgeReplyText
 {
