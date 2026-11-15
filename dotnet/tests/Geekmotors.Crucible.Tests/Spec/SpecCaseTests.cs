@@ -8,5 +8,5 @@ public sealed class SpecCaseTests
 
     [Theory]
     [MemberData(nameof(ImplementedCases))]
-    public void Case(string id) => SpecCaseRunner.Run(id);
+    public Task Case(string id) => SpecCaseRunner.RunAsync(id);
 }

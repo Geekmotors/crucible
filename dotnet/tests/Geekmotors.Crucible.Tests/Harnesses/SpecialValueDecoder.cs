@@ -26,6 +26,8 @@ internal static class SpecialValueDecoder
 
     public static bool IsUnset(JsonNode? node) => node is JsonObject special && Token(special) == Undefined;
 
+    public static bool IsUnreadable(JsonNode? node) => node is JsonObject special && Token(special) == Unreadable;
+
     private static JsonObject DecodeObject(JsonObject members)
     {
         var decoded = new JsonObject();

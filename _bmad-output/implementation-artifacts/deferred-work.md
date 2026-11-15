@@ -480,3 +480,9 @@
 
 - Harness default judge config stays `typescript/e2e/crucible.config.json` (shared with the TS live smoke and the request goldens). Revisit when the .NET port needs its own live-smoke config: consider `conformance/judge.config.json`.
 - CLAUDE.md rules read TypeScript-specific after the move (type vs interface, export style, file suffixes, `typescript/src/api/`, TDD scope); Jack to decide wording for C# ("in spirit" per Epic 9 intro).
+
+## Deferred from: code review of 9-3-dotnet-parsing-config-providers (2026-11-15)
+
+- C# provider client ignores a 429 `Retry-After`: the contract fixes the 250 ms x 2^n schedule (TS the same), so a rate-limited judge burns the 3 attempts in about 1.75 s.
+- `ConfigFileLocator.Location` calls `Directory.GetCurrentDirectory()` outside its guarded block; a deleted working directory surfaces a raw `IOException` instead of a `config` error.
+- The once-per-client plain-http warning test makes sequential calls; the `Interlocked` guard is not exercised by concurrent calls.

@@ -4,11 +4,11 @@ namespace Geekmotors.Crucible.Tests.Harnesses;
 
 internal static class FixtureOutcome
 {
-    public static JsonObject Capture(Func<JsonNode?> operation, JsonNode? expect)
+    public static async Task<JsonObject> CaptureAsync(Func<Task<JsonNode?>> operation, string outcomeKey, JsonNode? expect)
     {
         try
         {
-            return new JsonObject { ["value"] = operation() };
+            return new JsonObject { [outcomeKey] = await operation() };
         }
         catch (CrucibleException error)
         {
