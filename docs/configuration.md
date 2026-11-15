@@ -80,6 +80,14 @@ writes `crucible.config.jsonc` in the current directory:
   option or makes no `coherent()` or `extract()` call. A missing or invalid
   file fails each `crucible.it()` test that runs; plain Jest `it()` tests are
   unaffected.
+- **In .NET:** the working directory of `dotnet test` is the build output
+  folder; `Geekmotors.Crucible.Xunit` copies the file there from beside the
+  test project's `.csproj` on every build (with NUnit or MSTest, set
+  `CopyToOutputDirectory="PreserveNewest"` on it yourself). The file is read
+  once per test process, when the first Crucible test runs. With a judge set
+  by `Crucible.UseJudge(IChatClient)` the file is optional, and `provider`,
+  `model`, `baseUrl`, `apiKeyEnv` and `meta` are ignored with a warning
+  ([C# reference](dotnet/api.md#crucibleusejudge)).
 
 ## Comments and editor hints
 

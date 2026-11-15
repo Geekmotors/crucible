@@ -16,6 +16,14 @@ pick `runs`/`threshold` so that a red build means something.
 - [Headroom patterns](#headroom-patterns) — worked examples
 - [Cost](#cost)
 
+In C# the same gate is `[CrucibleFact(Runs = 20, Threshold = 0.95)]` (or
+`Crucible.Gate(new RunOptions { Runs = 20, Threshold = 0.95 }, body)`), group
+settings are `[Crucible(...)]` on a class or the assembly instead of
+`crucible.describe()`, and the verdict exception is `CrucibleVerdictException`;
+what this page says about runs, verdicts, reports and timeouts applies to
+both languages; only the signatures and runner details are TypeScript's
+([C# reference](dotnet/api.md)).
+
 ## `crucible.it()` reference
 
 ### Signature

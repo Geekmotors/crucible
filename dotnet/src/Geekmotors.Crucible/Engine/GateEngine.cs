@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Runtime.ExceptionServices;
 using CrucibleAI.Options;
-using CrucibleAI.Providers;
 using CrucibleAI.Runs;
 using CrucibleAI.Tracing;
 using CrucibleAI.Verdicts;
@@ -18,11 +17,6 @@ internal sealed class GateEngine(Func<EngineSession> session, TimeProvider time)
     private readonly RunScope _scope = new();
 
     private const string NoTask = "A Crucible test body must return a Task, not null.";
-
-    public GateEngine(IJudgeClient? judge)
-        : this(() => EngineSession.FromConfigFile(judge), TimeProvider.System)
-    {
-    }
 
     public Task GateAsync(RunOptions? options, Func<CrucibleContext, Task>? body, CancellationToken cancellationToken = default)
     {

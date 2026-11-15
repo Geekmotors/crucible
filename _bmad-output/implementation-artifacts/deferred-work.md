@@ -508,6 +508,16 @@
 - `Geekmotors.Crucible.Xunit` relies on `Geekmotors.Crucible` internals (`InternalsVisibleTo`) but its nuspec depends on `Geekmotors.Crucible >= x`; pin the exact version when the .NET packages are published.
 - Invalid `[Crucible]` / `[CrucibleFact]` values report "a group" / "a test" rather than naming the attribute layer (assembly, class) as AC 2 words it.
 - A teardown (dispose) failure is dropped when the run body also failed; consider tracing it.
-- `Crucible.UseJudge` after the shared engine was first built is silently ignored.
+- ~~`Crucible.UseJudge` after the shared engine was first built is silently ignored.~~ Resolved in 9.7: a `usage` error.
 - Switching `crucible.config.json` to `.jsonc` leaves the old copy in `bin/` (`PreserveNewest` never deletes), giving the "Found both" config error until a clean.
 - The fixture child-process harness locates the fixture via `bin/$(Configuration)/$(TargetFramework)/`; breaks under `UseArtifactsOutput` or a custom `OutputPath`.
+
+## Deferred from: code review of 9-7-dotnet-ichatclient-and-docs (2026-11-15)
+
+- `GateEngine`'s `Lazy<EngineSession>` caches a session-creation failure (config read error, client metadata throw) for the rest of the process.
+- `ChatClientJudge` (like `ChatCompletionsClient`) backs off on `TimeProvider.System`, not the host's injected clock.
+- The caching probe resolves `CachingChatClient` in the default load context only; caches not derived from `CachingChatClient` are not detected.
+- No test against `Microsoft.Extensions.AI` 11.x consumers; on net8.0 the Abstractions package pulls System.Text.Json 10.0.x.
+- `dotnet/README.md` (the NuGet page) links to `main` and says "until it is published"; `spec/PORTING.md` embeds a commit hash and skip count. Fix at release prep.
+- Internal `UseJudge(IJudgeClient)` seam tested for the after-start rule only; `CRUCIBLE_VERBOSE` without a config file on the chat-client path is untested.
+- Status-less `HttpRequestException` (DNS/TLS failures) and 501/505 are retried as transient on both the `IChatClient` and provider paths (kept for parity); revisit both with `HttpRequestError`.

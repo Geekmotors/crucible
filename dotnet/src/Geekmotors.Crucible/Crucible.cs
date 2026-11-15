@@ -1,5 +1,6 @@
 using CrucibleAI.Engine;
 using CrucibleAI.Providers;
+using Microsoft.Extensions.AI;
 
 namespace CrucibleAI;
 
@@ -10,8 +11,7 @@ namespace CrucibleAI;
 public static class Crucible
 {
     private static readonly RunScope Scope = new();
-    private static readonly Lazy<GateEngine> LazyEngine = new(() => new GateEngine(_judge));
-    private static IJudgeClient? _judge;
+    private static readonly EngineHost Host = new();
 
     /// <summary>
     /// The context of the run this call belongs to, wherever the run's async flow reaches.
@@ -79,7 +79,7 @@ public static class Crucible
     public static Task Gate(RunOptions options, Func<CrucibleContext, Task> body, CancellationToken cancellationToken) =>
         Engine.GateAsync(options, body, cancellationToken);
 
-    internal static GateEngine Engine => LazyEngine.Value;
+    internal static GateEngine Engine => Host.Engine;
 
     /// <summary>Adds facts to the current run. See <see cref="CrucibleContext.Facts(string[])"/>.</summary>
     /// <param name="facts">The facts.</param>
@@ -118,5 +118,36 @@ public static class Crucible
         string text, string description, ExtractOptions? options = null, CancellationToken cancellationToken = default) =>
         await Context.ExtractAsync<T>(text, description, options, cancellationToken).ConfigureAwait(false);
 
-    internal static void UseJudge(IJudgeClient client) => _judge = client;
+    /// <summary>
+    /// Makes <paramref name="chatClient"/> the judge for every Crucible test in this process, instead of the provider in
+    /// <c>crucible.config.json</c>. Call it once, before the first gate or Crucible test starts: in an xUnit assembly
+    /// fixture, an NUnit <c>[SetUpFixture]</c>, an MSTest <c>[AssemblyInitialize]</c> method or a module initializer.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// With a chat client the config file is optional. When present, its <c>testDefaults</c>, <c>verbosity</c> and
+    /// <c>excerptChars</c> still apply; <c>provider</c>, <c>model</c>, <c>baseUrl</c>, <c>apiKeyEnv</c> and <c>meta</c>
+    /// are ignored, with one warning on standard error.
+    /// </para>
+    /// <para>
+    /// Each judge call sends a system message and a user message with a copy of <paramref name="options"/> (choose the
+    /// model, temperature and so on there or in the client; Crucible adds no tools, passes your tools and response format
+    /// through and clears <c>ConversationId</c>). An <see cref="HttpRequestException"/> without a status code or with status
+    /// 408, 429 or 5xx, a <see cref="TimeoutException"/>, an <see cref="IOException"/>, a cancellation Crucible did not ask
+    /// for, or an exception whose public <c>int Status</c> property (on it or an inner exception) is 408, 429 or 5xx
+    /// (<c>ClientResultException</c>, <c>RequestFailedException</c>) is retried twice, then errors the run; any other exception aborts the
+    /// test as a non-retryable <see cref="CrucibleErrorKind.Infra"/> error. A client that caches responses
+    /// (<c>CachingChatClient</c>, e.g. <c>UseDistributedCache</c>) triggers a warning on standard error: cached verdicts
+    /// hide the judge's own variance.
+    /// </para>
+    /// </remarks>
+    /// <param name="chatClient">The judge, any <c>Microsoft.Extensions.AI</c> chat client.</param>
+    /// <param name="options">Options sent with every judge call (copied per call), or <see langword="null"/> for the client's defaults.</param>
+    /// <exception cref="CrucibleException">
+    /// A <see cref="CrucibleErrorKind.Usage"/> error for a <see langword="null"/> client, after the first gate or Crucible
+    /// test started, or when a different client or options instance was already chosen. The same instances again are a no-op.
+    /// </exception>
+    public static void UseJudge(IChatClient chatClient, ChatOptions? options = null) => Host.UseChatClient(chatClient, options);
+
+    internal static void UseJudge(IJudgeClient client) => Host.UseJudge(client);
 }

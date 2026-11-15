@@ -391,6 +391,16 @@ new cases and operations add coverage; a changed `expect` is a behaviour
 change and has a CHANGELOG entry here; ids are never reused
 ([Versioning](README.md#versioning)).
 
+**Ports.**
+
+| Port | Package | Status | Spec it passes | Skipped cases |
+| --- | --- | --- | --- | --- |
+| TypeScript | `crucible-ai` (npm) | released | always the `spec/` of the same commit (`npm test` runs it) | none |
+| C# | `Geekmotors.Crucible`, `Geekmotors.Crucible.Xunit` (NuGet) | complete, 0.1.0 not yet published | the `spec/` of the same commit: CI runs the fixture runner on every PR (fixture files last changed at `f931a6a`) | 37 ids, all input a C# caller cannot express (a number or object where the parameter is a `string`, a missing required argument, JavaScript's `null`-vs-unset distinction, untyped option bags, a mis-cased type name, an unset unknown key); the ids and reasons are in [`SpecOperations.cs`](../dotnet/tests/Geekmotors.Crucible.Tests/Harnesses/SpecOperations.cs) |
+
+The C# port's machine-readable spec declaration ships with its first NuGet
+release.
+
 **Reusing the surface check.** Port the check, not the TypeScript test:
 list the port's public functions, option names, config fields, providers and
 error kinds from its own sources (reflection over the options types, or

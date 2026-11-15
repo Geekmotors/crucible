@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using CrucibleAI.Json;
 using CrucibleAI.Options;
+using CrucibleAI.Providers;
 using CrucibleAI.Text;
 using CrucibleAI.Urls;
 
@@ -24,6 +25,8 @@ internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environ
     private const int DefaultExcerptChars = 500;
 
     private static readonly string[] FileNames = [JsonFileName, JsoncFileName];
+
+    private static readonly string[] JudgeFields = [ProviderField, ModelField, BaseUrlField, ApiKeyEnvField, MetaField];
 
     private static readonly string[] KnownFields =
     [
@@ -64,7 +67,7 @@ internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environ
 
     public JudgeConfig Load()
     {
-        var root = Root(ReadFile());
+        var root = Root(ReadFile() ?? throw Missing());
         RejectKeyLikeFields(root);
         RejectUnknownFields(root);
         var providerName = RequireName(root, ProviderField);
@@ -73,15 +76,36 @@ internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environ
         var provider = RequireProvider(providerName, baseUrl);
         var model = RequireName(root, ModelField);
         var meta = OptionalMeta(root);
+        var run = Run(root);
+        return new JudgeConfig(provider, model, meta, run.Verbosity, run.TestDefaults, run.TestDefaultsNode, run.ExcerptChars, baseUrl, apiKeyEnv);
+    }
+
+    public RunSettings LoadRunSettings(IWarningSink warnings)
+    {
+        var root = ReadFile() is { } text ? Root(text) : [];
+        RejectKeyLikeFields(root);
+        RejectUnknownFields(root);
+        var ignored = JudgeFields.Where(root.ContainsKey).ToArray();
+        if (ignored.Length > 0)
+        {
+            warnings.Write(
+                $"Crucible: the judge is the IChatClient passed to Crucible.UseJudge, so {string.Join(", ", ignored)} "
+                + "in the config file are ignored. Remove them to silence this warning.");
+        }
+        return Run(root);
+    }
+
+    private RunSettings Run(JsonObject root)
+    {
         var verbosity = EffectiveVerbosity(root);
         var testDefaults = root.TryGetPropertyValue(TestDefaultsField, out var defaults)
             ? _runOptions.Read(defaults, RunOptionsSource.Config)
             : new RunOptions();
         var testDefaultsNode = defaults as JsonObject ?? [];
-        return new JudgeConfig(provider, model, meta, verbosity, testDefaults, testDefaultsNode, ExcerptChars(root), baseUrl, apiKeyEnv);
+        return new RunSettings(verbosity, testDefaults, testDefaultsNode, ExcerptChars(root));
     }
 
-    private string ReadFile()
+    private string? ReadFile()
     {
         var reads = FileNames.Select(name => (Name: name, Read: files.Read(name))).ToList();
         if (reads.FirstOrDefault(entry => entry.Read.State == ConfigFileState.Unreadable) is { Name: { } unreadable })
@@ -91,14 +115,18 @@ internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environ
         var found = reads.Where(entry => entry.Read.State == ConfigFileState.Found).ToList();
         return found.Count switch
         {
-            0 => throw Failure(
-                $"Could not find {JsonFileName} or {JsoncFileName} in {files.Folder} (the working directory, the test output "
-                + "folder under xUnit). Create either file with at least { \"provider\": \"...\", \"model\": \"...\" } beside "
-                + "the test project's .csproj: Geekmotors.Crucible.Xunit copies it to the output folder on build."),
+            0 => null,
             1 => found[0].Read.Text,
             _ => throw Failure($"Found both {files.Location(JsonFileName)} and {JsoncFileName}. Keep one and delete the other."),
         };
     }
+
+    private CrucibleException Missing() =>
+        Failure(
+            $"Could not find {JsonFileName} or {JsoncFileName} in {files.Folder} (the working directory, the test output "
+            + "folder under xUnit). Create either file with at least { \"provider\": \"...\", \"model\": \"...\" } beside "
+            + "the test project's .csproj: Geekmotors.Crucible.Xunit copies it to the output folder on build. "
+            + "Or pass an IChatClient to Crucible.UseJudge.");
 
     private JsonObject Root(string text) =>
         _reader.Read(text) as JsonObject ?? throw Failure("The config file must contain a single JSON object at the root.");
