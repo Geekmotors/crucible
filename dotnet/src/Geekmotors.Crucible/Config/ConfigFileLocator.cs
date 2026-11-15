@@ -7,7 +7,9 @@ internal sealed class ConfigFileLocator(IConfigFileSystem files, Func<string> di
     {
     }
 
-    public string Location(string name) => Path.Combine(directory(), name);
+    public string Folder => directory();
+
+    public string Location(string name) => Path.Combine(Folder, name);
 
     public ConfigFileRead Read(string name)
     {

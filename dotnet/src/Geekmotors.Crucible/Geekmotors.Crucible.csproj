@@ -10,5 +10,8 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Geekmotors.Crucible.Tests" />
+    <InternalsVisibleTo Include="Geekmotors.Crucible.Xunit" />
+    <InternalsVisibleTo Include="Geekmotors.Crucible.Xunit.Fixture" />
+    <InternalsVisibleTo Include="Geekmotors.Crucible.Xunit.Tests" />
   </ItemGroup>
 </Project>

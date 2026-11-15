@@ -19,6 +19,7 @@ Thumbs.db
 node_modules/
 dist/
 build/
+!dotnet/src/*/build/
 __pycache__/
 *.py[cod]
 .venv/

@@ -13,6 +13,6 @@ public sealed class LiveSmokeTests
             Assert.Equal(
                 LiveTexts.DeliveryHour,
                 await context.ExtractAsync<int?>(LiveTexts.Response, LiveTexts.Target, cancellationToken: TestContext.Current.CancellationToken));
-        });
+        }, TestContext.Current.CancellationToken);
     }
 }

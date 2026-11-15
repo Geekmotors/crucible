@@ -209,7 +209,7 @@ public sealed class RunIsolationTests
             _ =>
             {
                 Crucible.Facts(EngineTexts.LateFact);
-                return _ => Task.CompletedTask;
+                return Task.FromResult(RunBody.Of(_ => Task.CompletedTask));
             },
             false)));
 

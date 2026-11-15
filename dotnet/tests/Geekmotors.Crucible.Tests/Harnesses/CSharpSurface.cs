@@ -7,12 +7,12 @@ namespace CrucibleAI.Tests.Harnesses;
 internal static class CSharpSurface
 {
     private const string ItReason =
-        "Registration belongs to the runner adapter: the xUnit adapter's [CrucibleFact] / [CrucibleTheory] (Story 9.6). "
+        "Registration belongs to the runner adapter: [CrucibleFact] / [CrucibleTheory] in the Geekmotors.Crucible.Xunit package. "
         + "Crucible.Gate is the framework-neutral form inside any test method.";
 
     private const string DescribeReason =
         "xUnit, NUnit and MSTest have no group callbacks: group settings come from class or assembly attributes, "
-        + "nearest wins (the xUnit adapter's [Crucible(...)], Story 9.6; PORTING section 2).";
+        + "nearest wins ([Crucible(...)] in the Geekmotors.Crucible.Xunit package; PORTING section 2).";
 
     private const string DeprecatedAliasReason =
         "Deprecated alias of crucible.facts; PORTING section 1 lets a new port leave it out, and TypeScript removes it in 1.0.";

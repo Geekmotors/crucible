@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <RootNamespace>CrucibleAI</RootNamespace>
+    <AssemblyName>Geekmotors.Crucible.Xunit</AssemblyName>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.extensibility.core" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Geekmotors.Crucible/Geekmotors.Crucible.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Geekmotors.Crucible.Xunit.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="build/Geekmotors.Crucible.Xunit.targets" Pack="true" PackagePath="build/;buildTransitive/" />
+  </ItemGroup>
+</Project>

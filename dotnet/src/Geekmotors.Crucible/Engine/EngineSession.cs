@@ -36,10 +36,10 @@ internal sealed class EngineSession
 
     public DebugTrace Trace { get; }
 
-    public static EngineSession FromConfigFile()
+    public static EngineSession FromConfigFile(IJudgeClient? judge)
     {
         var config = new ConfigLoader().Load();
-        return new EngineSession(config, new ChatCompletionsClient(config), TimeProvider.System, new StandardOutputTraceOutput());
+        return new EngineSession(config, judge ?? new ChatCompletionsClient(config), TimeProvider.System, new StandardOutputTraceOutput());
     }
 
     public void WritePassingReport(Func<string> report)

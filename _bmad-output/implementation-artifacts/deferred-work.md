@@ -501,3 +501,13 @@
 - No `Aborted` trace event when cancellation hits during backoff; `RunBatch.Settle` throwing would hang the gate to its deadline; `RunClassifier` follows only the first `AggregateException` inner.
 - Story 9.6: a `CancellationToken` parameter on `Crucible.Gate` (wired to xUnit's test cancellation, `TestContext.Current.CancellationToken`).
 - Story 9.6: async body factory plus per-run teardown on `GateRequest` (e.g. `Func<int, Task<Func<CrucibleContext, Task>>>` and a dispose hook), so `IAsyncLifetime.InitializeAsync` runs outside the run scope and each per-run instance is disposed after its run.
+
+## Deferred from: code review of 9-6-dotnet-xunit-adapter (2026-11-15)
+
+- Runs still in flight after a halt, the deadline or cancellation keep running (and dispose their instances) after the xUnit result, possibly after xUnit disposed class/collection/assembly fixtures or the process ends. Options: await in-flight runs (bounded grace) before reporting, or keep the documented behaviour.
+- `Geekmotors.Crucible.Xunit` relies on `Geekmotors.Crucible` internals (`InternalsVisibleTo`) but its nuspec depends on `Geekmotors.Crucible >= x`; pin the exact version when the .NET packages are published.
+- Invalid `[Crucible]` / `[CrucibleFact]` values report "a group" / "a test" rather than naming the attribute layer (assembly, class) as AC 2 words it.
+- A teardown (dispose) failure is dropped when the run body also failed; consider tracing it.
+- `Crucible.UseJudge` after the shared engine was first built is silently ignored.
+- Switching `crucible.config.json` to `.jsonc` leaves the old copy in `bin/` (`PreserveNewest` never deletes), giving the "Found both" config error until a clean.
+- The fixture child-process harness locates the fixture via `bin/$(Configuration)/$(TargetFramework)/`; breaks under `UseArtifactsOutput` or a custom `OutputPath`.

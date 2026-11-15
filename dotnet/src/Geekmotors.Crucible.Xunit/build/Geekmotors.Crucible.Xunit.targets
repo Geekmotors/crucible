@@ -1,0 +1,9 @@
+<Project>
+  <ItemGroup>
+    <None Update="crucible.config.json;crucible.config.jsonc">
+      <CopyToOutputDirectory Condition="'%(None.CopyToOutputDirectory)' == ''">PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(MSBuildProjectDirectory)/crucible.config.json" Link="crucible.config.json" CopyToOutputDirectory="PreserveNewest" Condition="('$(EnableDefaultItems)' == 'false' Or '$(EnableDefaultNoneItems)' == 'false') And Exists('$(MSBuildProjectDirectory)/crucible.config.json')" />
+    <None Include="$(MSBuildProjectDirectory)/crucible.config.jsonc" Link="crucible.config.jsonc" CopyToOutputDirectory="PreserveNewest" Condition="('$(EnableDefaultItems)' == 'false' Or '$(EnableDefaultNoneItems)' == 'false') And Exists('$(MSBuildProjectDirectory)/crucible.config.jsonc')" />
+  </ItemGroup>
+</Project>

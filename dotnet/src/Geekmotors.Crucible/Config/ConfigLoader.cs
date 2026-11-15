@@ -92,8 +92,9 @@ internal sealed class ConfigLoader(ConfigFileLocator files, IEnvironment environ
         return found.Count switch
         {
             0 => throw Failure(
-                $"Could not find {files.Location(JsonFileName)} or {JsoncFileName}. "
-                + "Create either file with at least { \"provider\": \"...\", \"model\": \"...\" }."),
+                $"Could not find {JsonFileName} or {JsoncFileName} in {files.Folder} (the working directory, the test output "
+                + "folder under xUnit). Create either file with at least { \"provider\": \"...\", \"model\": \"...\" } beside "
+                + "the test project's .csproj: Geekmotors.Crucible.Xunit copies it to the output folder on build."),
             1 => found[0].Read.Text,
             _ => throw Failure($"Found both {files.Location(JsonFileName)} and {JsoncFileName}. Keep one and delete the other."),
         };
