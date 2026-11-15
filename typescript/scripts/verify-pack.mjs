@@ -1,6 +1,8 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 class PackVerifier {
   static allowed = [
@@ -32,6 +34,12 @@ class PackVerifier {
     'schemas/crucible.config.schema.json',
   ];
 
+  static sharedFile = /^(LICENSE|schemas\/.+)$/;
+
+  static packageDir = dirname(dirname(fileURLToPath(import.meta.url)));
+
+  static repoDir = dirname(PackVerifier.packageDir);
+
   static vitestEntries = ['dist/vitest.js', 'dist/vitest.cjs'];
 
   static vitestImport =
@@ -52,7 +60,33 @@ class PackVerifier {
     const missing = PackVerifier.required
       .filter((file) => !files.includes(file))
       .map((file) => `required file missing from tarball: ${file}`);
-    return [...unexpected, ...missing, ...this.vitestProblems(files)];
+    return [
+      ...unexpected,
+      ...missing,
+      ...this.sharedFileProblems(files),
+      ...this.vitestProblems(files),
+    ];
+  }
+
+  sharedFileProblems(files) {
+    const stale = files
+      .filter((file) => PackVerifier.sharedFile.test(file))
+      .filter((file) => !this.matchesRepository(file))
+      .map((file) => `${file} differs from the repository's ../${file}; run npm run build`);
+    const unshipped = readdirSync(join(PackVerifier.repoDir, 'schemas'))
+      .map((name) => `schemas/${name}`)
+      .filter((file) => PackVerifier.allowed.some((pattern) => pattern.test(file)))
+      .filter((file) => !files.includes(file))
+      .map((file) => `repository's ../${file} missing from tarball; run npm run build`);
+    return [...stale, ...unshipped];
+  }
+
+  matchesRepository(file) {
+    const source = join(PackVerifier.repoDir, file);
+    return (
+      existsSync(source) &&
+      readFileSync(join(PackVerifier.packageDir, file)).equals(readFileSync(source))
+    );
   }
 
   vitestProblems(files) {

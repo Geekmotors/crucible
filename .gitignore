@@ -30,3 +30,7 @@ venv/
 
 # Test output
 coverage/
+
+# Shared files copied into the npm package at build time
+typescript/schemas/
+typescript/LICENSE

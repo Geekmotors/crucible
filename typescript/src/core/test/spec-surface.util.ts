@@ -1,5 +1,5 @@
-import manifest from '../../../spec/surface.json' with { type: 'json' };
-import schema from '../../../spec/surface.schema.json' with { type: 'json' };
+import manifest from '../../../../spec/surface.json' with { type: 'json' };
+import schema from '../../../../spec/surface.schema.json' with { type: 'json' };
 import type { SurfaceManifest } from './surface-check.util.js';
 
 class SpecSurface {

@@ -1,4 +1,4 @@
-import schema from '../../../schemas/crucible.config.schema.json' with { type: 'json' };
+import schema from '../../../../schemas/crucible.config.schema.json' with { type: 'json' };
 
 type SchemaNode = {
   default?: unknown;

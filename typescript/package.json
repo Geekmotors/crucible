@@ -5,9 +5,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Geekmotors/crucible-ai.git"
+    "url": "git+https://github.com/Geekmotors/crucible-ai.git",
+    "directory": "typescript"
   },
-  "homepage": "https://github.com/Geekmotors/crucible-ai#readme",
+  "homepage": "https://github.com/Geekmotors/crucible-ai/tree/main/typescript#readme",
   "bugs": {
     "url": "https://github.com/Geekmotors/crucible-ai/issues"
   },
@@ -69,11 +70,12 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "build": "tsdown",
+    "build": "node scripts/sync-shared-files.mjs && tsdown",
+    "prepack": "node scripts/sync-shared-files.mjs",
     "prepublishOnly": "npm run lint && npm run typecheck && npm test && npm run build",
-    "prepare": "husky",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "prepare": "cd .. && husky",
+    "format": "prettier --write . ../spec ../schemas ../conformance ../.github ../.prettierrc.json",
+    "format:check": "prettier --check . ../spec ../schemas ../conformance ../.github ../.prettierrc.json",
     "verify:pack": "node scripts/verify-pack.mjs"
   },
   "peerDependencies": {

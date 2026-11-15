@@ -7,12 +7,12 @@ Run at session start:
 ## Development rules
 
 - TDD mandatory for all implementation: red-green-refactor; a failing test
-  precedes every piece of `src/` behavior. Scaffold/config files (package.json,
+  precedes every piece of `typescript/src/` behavior. Scaffold/config files (package.json,
   tsconfig, CI yaml) exempt.
 - Mock boundaries only (network, filesystem, clock, provider APIs); prefer real
   collaborators everywhere else.
 - When a consumer/dependency does not yet exist, bind to its spec (port
-  interface + contract tests) — never ship stub implementations in `src/`.
+  interface + contract tests) — never ship stub implementations in `typescript/src/`.
 
 ## Collaboration rules
 
@@ -36,7 +36,7 @@ Run at session start:
 - Boundaries (fs, env, network, clock) are injected and faked in tests; pure
   logic is tested through the module's behavior, not its internals.
 - Fakes/test doubles live ONE PER FILE under the area's `test/` folder with a
-  `.fake.ts` suffix (e.g. `src/core/test/scripted-adapter.fake.ts`); enums in
+  `.fake.ts` suffix (e.g. `typescript/src/core/test/scripted-adapter.fake.ts`); enums in
   `.enum.ts` files; shared helpers in `.harness.ts` files. Never a monolithic
   fakes file, never inline in a test file.
 - All test helper functions belong to a class — no loose module-level helper
@@ -69,5 +69,5 @@ Run at session start:
   module-level mutable state or free-function modules.
 - ONE class per file, named after the class in kebab-case. Shared types/
   constants two classes need go in their own module, never a runtime cycle.
-- The exposed surface lives in `src/api/`; internals stay out of that folder.
-  The entry point re-exports only from `src/api/`.
+- The exposed surface lives in `typescript/src/api/`; internals stay out of that folder.
+  The entry point re-exports only from `typescript/src/api/`.

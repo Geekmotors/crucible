@@ -4,6 +4,16 @@ All notable changes to `crucible-ai` are listed here. The project follows
 [Semantic Versioning](https://semver.org); before 1.0, a minor version may
 contain breaking changes, and they are marked **Breaking** below.
 
+## Unreleased
+
+### Changed
+
+- The package source moved to the `typescript/` folder of the repository,
+  next to the shared `spec/` and `schemas/`, ready for the .NET port. The
+  published package, its contents and its API are unchanged. The API
+  reference moved to
+  [`docs/typescript/api.md`](https://github.com/Geekmotors/crucible-ai/blob/main/docs/typescript/api.md).
+
 ## 0.4.1
 
 ### Fixed

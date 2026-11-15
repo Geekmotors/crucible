@@ -109,7 +109,7 @@ The reply does not reveal the meeting place to Bob
 ```
 
 - `STATE` carries the **facts** the call is judged against: the run's facts
-  ([`crucible.facts()`](api.md#cruciblefacts)) in the order they were added,
+  ([`crucible.facts()`](typescript/api.md#cruciblefacts)) in the order they were added,
   then any facts passed with this call (`{ facts }`), one per line (a fact
   that contains line breaks keeps them). The API calls them facts; the wire
   name is `STATE`, and the schemas speak of state. The section is left out
@@ -276,7 +276,7 @@ their own for other language implementations.
 ## Checking another implementation
 
 The repository contains a language-agnostic conformance harness,
-[`e2e/ext/conformance/`](../e2e/ext/conformance/), that judges with nothing but
+[`conformance/`](../conformance/), that judges with nothing but
 the schemas, a POSIX shell, `jq` and `curl` in a container. It runs one suite
 per schema (`coherent` and `extract`) and proves each schema is complete
 enough for a non-TypeScript implementation to assemble the same payloads and
@@ -287,8 +287,8 @@ make conformance   # needs Docker and the judge provider's key; makes real judge
 ```
 
 `make conformance CONFORMANCE_SUITES=extract` (or `coherent`) runs one suite. Its fixtures
-(`e2e/ext/fixtures/coherent-conformance.json`,
-`e2e/ext/fixtures/extract-conformance.json`), its dry `payloads` mode, which prints every assembled user message without calling a
+(`conformance/cases/coherent.json`,
+`conformance/cases/extract.json`), its dry `payloads` mode, which prints every assembled user message without calling a
 provider, and its dry `request <suite> <case index>` mode, which prints the
 HTTP request (URL, headers, JSON body) it would send for one case, are the
 reference for anyone writing another shell. `make spec-goldens-check` proves

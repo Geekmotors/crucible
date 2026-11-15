@@ -5,7 +5,7 @@ It says what a port must provide, which parts the shared fixtures prove,
 what each port proves itself, and the order to build it in. You should not
 need to read the TypeScript source: where a rule matters, this guide or
 [`README.md`](README.md) states it. Where they differ, `README.md` (the
-fixture contracts) wins, then [`docs/api.md`](../docs/api.md).
+fixture contracts) wins, then [`docs/typescript/api.md`](../docs/typescript/api.md).
 
 A port is done when:
 
@@ -79,7 +79,7 @@ Rules that hold across the table:
   `CrucibleDescribe`) have idiomatic equivalents in a port, not exact
   copies. Jest- and Vitest-only details (variant placement, `for` rows,
   Vitest's test context, how `crucible.it` behaves as a plain function) are
-  in [`docs/api.md`](../docs/api.md); a port maps its own runner's
+  in [`docs/typescript/api.md`](../docs/typescript/api.md); a port maps its own runner's
   equivalents.
 
 ### Run options
@@ -358,7 +358,7 @@ fake HTTP, fake runner):
   end-to-end test can run offline against a scripted stub judge
   (TypeScript: `make e2e-offline`, a loopback OpenAI-compatible server).
 - **Model behaviour is not a port's test.** `make conformance` (a jq/curl
-  harness in [`e2e/ext/conformance/`](../e2e/ext/conformance/)) checks the
+  harness in [`conformance/`](../conformance/)) checks the
   judge models against the conformance cases. A port that passes the
   payload and request goldens sends exactly what that harness sends, so its
   results hold for every port.
@@ -372,7 +372,7 @@ Embed these unchanged, byte for byte (UTF-8, as in the repository):
 | [`schemas/coherent.md`](../schemas/coherent.md), [`schemas/extract.md`](../schemas/extract.md) | the judge system prompts, sent verbatim, front matter included (`provider/request-conformance.json` proves it) |
 | [`schemas/crucible.config.schema.json`](../schemas/crucible.config.schema.json) | ship it for editor hints (`"$schema"` in a config file); the port's own config rules are `config/load` |
 | `spec/**/*.json` (fixture files), [`fixture.schema.json`](fixture.schema.json), [`surface.json`](surface.json) | test resources: the fixture runner and the surface check |
-| [`e2e/ext/fixtures/*-conformance.json`](../e2e/ext/fixtures/) | the conformance cases; already turned into payload goldens, so a port only needs them to run `make conformance` itself |
+| [`conformance/cases/*.json`](../conformance/cases/) | the conformance cases; already turned into payload goldens, so a port only needs them to run `make conformance` itself |
 
 Copy them into the port at a pinned commit (a script, a git submodule, or a
 build step) and embed them as resources, so unit tests never read files at

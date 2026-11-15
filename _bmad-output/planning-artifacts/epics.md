@@ -763,3 +763,58 @@ So that the system under test cannot rewrite the judge's prompt.
 **And** this story lands before Story 8.5 removes the TypeScript conformance e2e
 
 Also for 8.3/8.5: prove TS and jq send the same system prompt (`schemas/*.md` verbatim) and the same request envelope (model, meta, OpenRouter usage field) — not covered by the 8.2 payload goldens.
+
+## Epic 9: Crucible for .NET (xUnit first)
+
+Port Crucible to C# as the NuGet packages `Geekmotors.Crucible` (engine, namespace `Geekmotors.Crucible`) and `Geekmotors.Crucible.Xunit` (xUnit v3 adapter), proven against the shared `spec/` fixtures and the conformance harness, following `spec/PORTING.md`. Decisions: same repository; targets `net8.0` and `net10.0`; the library's own tests use xUnit v3; the test author writes ordinary xUnit tests with `[CrucibleFact]` / `[CrucibleTheory]` (replacing `[Fact]` / `[Theory]`) and reaches the run through the ambient API (`Crucible.Facts`, `Crucible.CoherentAsync`, `Crucible.ExtractAsync<T>`, `Crucible.Context`), the .NET norm (`TestContext.Current`); settings resolve config `testDefaults` → class `[Crucible(...)]` → method attribute; `Crucible.Gate(...)` stays in the engine as the framework-neutral fallback; NUnit and MSTest adapters are a later epic. The judge can be the config-file providers or any `Microsoft.Extensions.AI` `IChatClient`. Released by `publish-dotnet.yml` on `dotnet-v*` tags with NuGet trusted publishing (owner `Geekmotors`, repo `crucible-ai`, environment `nuget`, user `Jackula`). Facts and judged text are typed so attachments can be added later without breaking signatures. The CLAUDE.md engineering rules apply to C# in spirit (TDD, boundaries injected and faked, one type per file, no comments outside public XML docs, outcomes not interactions).
+
+**Isolation is a first-class requirement.** Facts and every other run state belong to ONE run of ONE test: never to the test class, the collection, the assembly, a sibling run, another theory row, or another test running in parallel. Crucible calls outside a running Crucible test are a `usage` error, never a write to shared state.
+
+### Story 9.1: One repository, two packages
+
+As a maintainer about to add a second language,
+I want the npm package in its own folder and a language-neutral landing page,
+So that npm and NuGet each show their own README and the docs separate concepts from language APIs.
+
+**Acceptance Criteria:**
+
+**Given** the repository
+**Then** the npm package moves to `typescript/` (sources, tests, e2e, build config, its `README.md` shown on npm), with `package.json` `repository.directory` set so provenance still verifies; CI, `publish.yml`, Makefile, scripts and `spec`/`schemas` references are updated; `schemas/` and `spec/` stay at the root and the package still ships `schemas/*`
+**And** the root `README.md` becomes a landing page: what Crucible is, the headline example in TypeScript and C#, a "pick your language" table, links to shared docs
+**And** `docs/` keeps shared concept pages; the TypeScript API reference moves to `docs/typescript/api.md`
+**And** the gate, `make e2e`, `make conformance`, `make spec-goldens-check` and a dry-run publish all pass from the new layout; no npm API change
+
+### Story 9.2: .NET solution and the fixture runner
+
+**Given** `dotnet/` with a solution, `src/Geekmotors.Crucible` (multi-target net8.0/net10.0) and `tests/Geekmotors.Crucible.Tests` (xUnit v3)
+**Then** a fixture runner loads `spec/**/*.json`, validates against `spec/fixture.schema.json`, and runs `run-options/*` and `verdict/compute` green through real C# code
+**And** CI builds and tests .NET on every PR (Linux, both target frameworks) with a format/analyzer check
+
+### Story 9.3: Parsing, config and providers
+
+**Then** `jsonc/parse`, `config/load`, `provider/request`, `provider/response`, `provider/plain-http-warning` and `judge/reply` fixtures pass in C# (HTTP via an injected `HttpMessageHandler`), incl. the request goldens
+
+### Story 9.4: Judge payloads and reports
+
+**Then** `payload/*` (incl. conformance goldens), `report/render`, `report/trace` and `assertion/call` fixtures pass in C#, with the language notes in `spec/PORTING.md` §5 verified and corrected where wrong
+
+### Story 9.5: The engine, the ambient run context and the gate
+
+**Then** the run loop (concurrency, deadlines, early halt, discarded runs, the verdict exception and report) behaves as PORTING §2 describes; `Crucible.Facts/CoherentAsync/ExtractAsync<T>/Context` resolve the current run via `AsyncLocal`; `Crucible.Gate(options, async ctx => …)` works inside any test framework
+**And** isolation tests prove: concurrent runs of one gate see only their own facts; facts added after awaits, in `Task.Run` and in continuations stay in their run; a value set inside an awaited helper reaches the rest of the run; a call after the run settles, or outside any run, is a `usage` error; a background task outliving its run cannot write into a later run
+**And** the surface manifest check runs for C# (every `spec/surface.json` item mapped to the C# API)
+
+### Story 9.6: xUnit v3 adapter — `[CrucibleFact]`, `[CrucibleTheory]`, `[Crucible]`
+
+**Given** `Geekmotors.Crucible.Xunit`
+**Then** `[CrucibleFact(Runs = …, Threshold = …, …)]` and `[CrucibleTheory(...)]` (with xUnit data attributes) run the test method N times concurrently, each run on its own test-class instance, and report ONE xUnit result per test (per theory row) with the pass-rate verdict and the Crucible failure report; a class-level `[Crucible(...)]` supplies defaults the method attribute overrides; `Sequential = true` opts out of concurrency
+**And** isolation tests run real xUnit (in-process runner or a child test project) and prove: two Crucible tests in the same class, in different classes running in parallel, and in different collections never see each other's facts; each theory row has its own facts; each of the N runs of one test has its own facts and its own class instance; facts never survive from one test to the next; `Crucible.Facts` in a plain `[Fact]`, a constructor, `IAsyncLifetime`, a class/collection fixture or a static initialiser is a `usage` error
+**And** a live smoke (≤ 2 judge calls) runs a `[CrucibleFact]` and a `[CrucibleTheory]` against OpenRouter
+
+### Story 9.7: `IChatClient` judge, response-caching guard, docs
+
+**Then** an `IChatClient` can be the judge (config providers remain); the docs warn that response caching on the system under test defeats repeated runs, and Crucible detects the common caching client where it can; `dotnet/README.md` (NuGet page) and `docs/dotnet/api.md` are complete
+
+### Story 9.8: Publish to NuGet
+
+**Then** `publish-dotnet.yml` packs both packages (SourceLink, deterministic, symbols, README, licence), verifies the tag `dotnet-vX.Y.Z` matches the version and the commit is on `main`, waits for the `nuget` environment, logs in with trusted publishing and pushes; RELEASING.md covers .NET; `Geekmotors.Crucible` and `Geekmotors.Crucible.Xunit` 0.1.0 are released

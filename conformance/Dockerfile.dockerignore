@@ -1,0 +1,10 @@
+*
+!schemas/coherent.md
+!schemas/extract.md
+!typescript/e2e/crucible.config.json
+!conformance/cases/coherent.json
+!conformance/cases/extract.json
+!conformance/conformance.sh
+!conformance/payload-sections.jq
+!conformance/coherent-payload.jq
+!conformance/extract-payload.jq

@@ -1,4 +1,4 @@
-import configSchema from '../../../schemas/crucible.config.schema.json' with { type: 'json' };
+import configSchema from '../../../../schemas/crucible.config.schema.json' with { type: 'json' };
 import type { CoherentOptions } from '../../api/coherent-options.js';
 import type { CrucibleSurface } from '../../api/crucible-surface.js';
 import type { ExtractOptions } from '../../api/extract-options.js';

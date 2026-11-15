@@ -5,14 +5,15 @@ inputs and give back a value, an exact text, or an error, with no judge call,
 clock or file system involved. Every port (TypeScript today; C#, Python and
 Java later) runs these same cases through its own code. A port that passes
 them all behaves like every other port for that behaviour. The TypeScript
-port runs them as part of `npm test`.
+port (`typescript/`) runs them as part of `npm test`.
 
 A fixture describes **inputs** and the **observable outcome**. It never
 describes internal structure, class names or error message text. Message
 wording is each port's business. Only the error kind is shared.
 
 The judge instruction schemas (`schemas/*.md`) are shared the same way: every
-port sends them word for word.
+port sends them word for word. They live at the repository root; the npm
+build copies them into the package.
 
 `spec/` lives in the repository only. It is not in the npm package.
 
@@ -67,9 +68,9 @@ runner runs every file whose `area` and `operation` name the operation.
 ### Generated goldens
 
 `payload/coherent-conformance.json` and `payload/extract-conformance.json`
-hold one case per conformance case (`e2e/ext/fixtures/*-conformance.json`).
+hold one case per conformance case (`conformance/cases/<suite>.json`).
 Their expected text is produced by the conformance harness's own jq payload
-builder (`e2e/ext/conformance/payload-sections.jq` and
+builder (`conformance/payload-sections.jq` and
 `<suite>-payload.jq`), so a port that passes them sends, for every
 conformance case, the very payload `make conformance` sends to the model.
 
@@ -77,7 +78,7 @@ conformance case, the very payload `make conformance` sends to the model.
 builds (`conformance.sh request <suite> <case index>`: its URL, its headers
 and the JSON body of its own `chat_request`, with the system prompt read from
 `schemas/<suite>.md`) for the first case of each suite with the repository's
-harness config (`e2e/crucible.config.json`), and for the first coherent case
+harness config (`typescript/e2e/crucible.config.json`), and for the first coherent case
 with one config of each other provider shape (`openai` with `apiKeyEnv`,
 `openai-compatible` with a trailing slash in `baseUrl`, `openai-compatible`
 without a key). The envelope does not depend on the case, and the payload of
@@ -94,7 +95,7 @@ each `openrouter` case.
 Never edit generated goldens by hand:
 
 - `make spec-goldens` regenerates them (needs `jq` and the installed
-  `node_modules`, for Prettier; no network). `make spec-payloads` is an alias.
+  `typescript/node_modules`, for Prettier; no network). `make spec-payloads` is an alias.
 - `make spec-goldens-check` (run in CI; alias `make spec-payloads-check`)
   fails when any golden is stale (a changed schema file, conformance case,
   harness config or harness builder makes them stale), also runs the jq
@@ -225,25 +226,25 @@ checks that every id starts with its file's `<area>-<operation>-` and checks
 that ids are unique. The TypeScript runner does this with a small
 built-in checker, so it needs no schema library.
 
-TypeScript runners: `src/core/run-options.spec-fixtures.test.ts`,
-`src/core/aggregator.util.spec-fixtures.test.ts`,
-`src/core/payload-assembler.util.spec-fixtures.test.ts`,
-`src/core/reporter.util.spec-fixtures.test.ts`,
-`src/core/trace-reporter.spec-fixtures.test.ts`,
-`src/core/jsonc-reader.util.spec-fixtures.test.ts`,
-`src/core/config.spec-fixtures.test.ts`,
-`src/providers/chat-completions-adapter.spec-fixtures.test.ts`,
-`src/providers/transport-security.util.spec-fixtures.test.ts`,
-`src/core/judge-exchange.spec-fixtures.test.ts`,
-`src/core/scoped-assertions.spec-fixtures.test.ts`,
-`src/core/spec-fixtures.test.ts` (schema, ids, golden currency) and
-`src/core/spec-surface.test.ts` (the [surface manifest](#surface-manifest-and-coverage-check)). Their
-harnesses live in `src/core/test/` and `src/providers/test/`. Where an
+TypeScript runners: `typescript/src/core/run-options.spec-fixtures.test.ts`,
+`typescript/src/core/aggregator.util.spec-fixtures.test.ts`,
+`typescript/src/core/payload-assembler.util.spec-fixtures.test.ts`,
+`typescript/src/core/reporter.util.spec-fixtures.test.ts`,
+`typescript/src/core/trace-reporter.spec-fixtures.test.ts`,
+`typescript/src/core/jsonc-reader.util.spec-fixtures.test.ts`,
+`typescript/src/core/config.spec-fixtures.test.ts`,
+`typescript/src/providers/chat-completions-adapter.spec-fixtures.test.ts`,
+`typescript/src/providers/transport-security.util.spec-fixtures.test.ts`,
+`typescript/src/core/judge-exchange.spec-fixtures.test.ts`,
+`typescript/src/core/scoped-assertions.spec-fixtures.test.ts`,
+`typescript/src/core/spec-fixtures.test.ts` (schema, ids, golden currency) and
+`typescript/src/core/spec-surface.test.ts` (the [surface manifest](#surface-manifest-and-coverage-check)). Their
+harnesses live in `typescript/src/core/test/` and `typescript/src/providers/test/`. Where an
 operation's outcome is an HTTP request, the TypeScript runner gets it the
 way a user would see it: a fake HTTP boundary answers each request with the
 request itself as the judge's reply, read back through the real judge
 exchange. A new fixture file is registered in
-`src/core/test/spec-fixtures.util.ts`; an unregistered file is neither checked
+`typescript/src/core/test/spec-fixtures.util.ts`; an unregistered file is neither checked
 nor run. The TypeScript runner compares header names exactly, which is
 stricter than rule 5 of `provider` / `request` requires.
 
@@ -1141,7 +1142,7 @@ each with the ids of the cases that pin it:
 string equal to it, or appears quoted (`"provider"`) inside a string (the
 config file texts).
 
-The TypeScript check (`src/core/spec-surface.test.ts`, part of `npm test`
+The TypeScript check (`typescript/src/core/spec-surface.test.ts`, part of `npm test`
 and so of CI) fails when an item cites no case, cites an id no case has, or
 cites a case that does not exercise it as above; when a section lists a
 name twice; when the manifest's

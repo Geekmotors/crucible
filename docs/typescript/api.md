@@ -52,7 +52,7 @@ body that takes no argument works too. `runs` (integer ≥ 1) and
 Each run calls your system under test and the judge, so an unconfigured test
 costs 10 runs of your system and 10 judge calls per assertion. For a single
 run that must pass, declare `{ runs: 1, threshold: 1 }` on the test or in
-[`testDefaults`](runs-and-threshold.md#project-wide-defaults-testdefaults).
+[`testDefaults`](../runs-and-threshold.md#project-wide-defaults-testdefaults).
 
 Two time budgets, in milliseconds (integers from 1 to 2147483647):
 
@@ -85,9 +85,9 @@ still compile and throw a `usage` error at registration. JavaScript callers
 get the shape checks at runtime too, as `usage` errors.
 
 The full reference — run statuses, the three-zone verdict, the failure
-report, verbosity, the [timeouts](runs-and-threshold.md#timeout) and the
+report, verbosity, the [timeouts](../runs-and-threshold.md#timeout) and the
 re-entrancy contract — is in
-[Runs and threshold](runs-and-threshold.md#crucibleit-reference).
+[Runs and threshold](../runs-and-threshold.md#crucibleit-reference).
 
 ## `crucible.describe()`
 
@@ -342,7 +342,7 @@ it.each([
   the runner one at least as large (Jest's third argument; Jest's default is
   5 s, far below the gate's 39 s for 10 runs). If the runner's timeout is
   shorter, the runner fails the test first, without Crucible's report. See
-  [Timeout](runs-and-threshold.md#timeout).
+  [Timeout](../runs-and-threshold.md#timeout).
 - **Arity.** The returned function declares no parameters, so Jest never
   treats it as a `done`-callback test; it forwards every argument the runner
   passes to `body`, after `t`.
@@ -397,7 +397,7 @@ consistent with `expectation`, a natural-language claim about it, given the
 facts the current run has added so far ([`crucible.facts()`](#cruciblefacts))
 and any `facts` passed with this call. The order is Jest's: actual first.
 `actual` is sent to the judge as the `RESPONSE` section and `expectation` as
-the `CLAIM` ([what the judge receives](instruction-schema.md#what-the-judge-receives)).
+the `CLAIM` ([what the judge receives](../instruction-schema.md#what-the-judge-receives)).
 Resolves to the verdict; it does not throw on a `false` verdict. Assert it
 with Jest:
 
@@ -434,7 +434,7 @@ expect(await crucible.coherent(reply, 'The reply declines to share the meeting p
   Start the judgments and await them together with no other `await` in
   between, so a rejected judgment is never left unobserved.
   Starting judgments early also saves time against the
-  [test deadline](runs-and-threshold.md#timeout): sequential awaits cost one
+  [test deadline](../runs-and-threshold.md#timeout): sequential awaits cost one
   judge round trip each.
 - **Facts for one call.** `{ facts }` (a string or an array of strings) is
   sent with this call only, after the run's facts. It is not added to the
@@ -457,10 +457,10 @@ expect(await crucible.coherent(reply, 'The reply declines to share the meeting p
   names; optional for `openai-compatible` without `apiKeyEnv`) throws a
   `config` error. Provider failures
   surface as `infra` errors after retries, which make the run *errored* rather
-  than *failed* ([classification](runs-and-threshold.md#what-a-run-is-and-how-it-is-classified)).
+  than *failed* ([classification](../runs-and-threshold.md#what-a-run-is-and-how-it-is-classified)).
 - **Cost.** Each call is one paid judge request (more if retried).
 
-How the judge decides is defined by the [instruction schema](instruction-schema.md).
+How the judge decides is defined by the [instruction schema](../instruction-schema.md).
 
 ## `crucible.extract()`
 
@@ -508,7 +508,7 @@ may be absent, the result widens to every type it could be.)
   wins: built-in `false`, `testDefaults.strict`, the enclosing
   `crucible.describe` groups, the `crucible.it()` options, then the call's
   own `{ strict }`
-  ([precedence](runs-and-threshold.md#group-settings-crucibledescribe)).
+  ([precedence](../runs-and-threshold.md#group-settings-crucibledescribe)).
   It applies to every assertion that supports it; today that is
   `extract()`. The judge never guesses in either mode.
 - **Facts are context, not a source.** The run's facts are sent with the
@@ -524,7 +524,7 @@ may be absent, the result widens to every type it could be.)
   names its mode (`Extraction 1 of 2 (lenient): …`). When a run fails, the
   report lists the run's extractions, so a failing `toBe(2)` shows that the
   judge returned `null` and why
-  ([failure report](runs-and-threshold.md#reading-the-failure-report)).
+  ([failure report](../runs-and-threshold.md#reading-the-failure-report)).
 - **Errors.** A non-string `text` or `description`, options that are not a
   plain object, an `as` other than `'string'`, `'number'` or `'boolean'`, or a
   `strict` that is not a boolean, `facts` that are not a string or an array
@@ -538,7 +538,7 @@ may be absent, the result widens to every type it could be.)
 - **Cost.** Each call is one paid judge request (more if retried).
 
 How the judge extracts is defined by the
-[extract schema](instruction-schema.md#the-extract-schema).
+[extract schema](../instruction-schema.md#the-extract-schema).
 
 ## `crucible.facts()`
 
@@ -551,7 +551,7 @@ order. Facts are the ground truth your system worked from — what its
 behaviour should respect — in any text format (sentences, JSON text, log
 lines). The judge treats them as true for every later `coherent()` and
 `extract()` call in the run. On the wire they travel as the payload's `STATE`
-section ([what the judge receives](instruction-schema.md#what-the-judge-receives));
+section ([what the judge receives](../instruction-schema.md#what-the-judge-receives));
 "facts" and "state" are the same thing.
 
 - **Scoped to the current run, not global.** `crucible` is a module import,
@@ -585,7 +585,7 @@ instead: they are sent after the run's facts, with that call only.
 
 The failure report lists, under each judged call, the facts it used (run
 facts, then that call's own) as `Facts:`
-([failure report](runs-and-threshold.md#reading-the-failure-report)).
+([failure report](../runs-and-threshold.md#reading-the-failure-report)).
 
 ## `crucible.load()` and `crucible.append()` (deprecated)
 
@@ -615,7 +615,7 @@ change.
 ### `CrucibleVerdictError`
 
 Thrown by a `crucible.it()` or `crucible.gate()` test that did not pass. Its `message` is the
-[failure report](runs-and-threshold.md#reading-the-failure-report).
+[failure report](../runs-and-threshold.md#reading-the-failure-report).
 
 | Property | Type | Meaning |
 | --- | --- | --- |
