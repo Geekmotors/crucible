@@ -1,0 +1,124 @@
+name: publish-dotnet
+
+on:
+  push:
+    tags: ['dotnet-v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-dotnet-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: verify release (net8.0, net10.0)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      checksums: ${{ steps.checksums.outputs.sha256 }}
+    defaults:
+      run:
+        working-directory: dotnet
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Tag matches dotnet/Directory.Build.props version
+        run: |
+          version="$(dotnet msbuild src/Geekmotors.Crucible/Geekmotors.Crucible.csproj -getProperty:Version | tail -n 1 | tr -d '\r')"
+          if [ "$GITHUB_REF_NAME" != "dotnet-v$version" ]; then
+            echo "::error title=Tag/version mismatch::Tag $GITHUB_REF_NAME does not match the <Version> $version in dotnet/Directory.Build.props. Bump <Version>, commit to main, then tag dotnet-v$version."
+            exit 1
+          fi
+      - name: CHANGELOG has the release
+        run: |
+          version="${GITHUB_REF_NAME#dotnet-v}"
+          if ! grep -F -x -q "## $version" CHANGELOG.md; then
+            echo "::error title=No CHANGELOG entry::dotnet/CHANGELOG.md has no '## $version' section; the NuGet release notes link to it."
+            exit 1
+          fi
+      - name: Tagged commit is on main
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error title=Tag not on main::Tag $GITHUB_REF_NAME points at $GITHUB_SHA, which is not on main. Releases are cut from main only."
+            exit 1
+          fi
+      - run: dotnet restore --locked-mode
+      - run: dotnet build --no-restore -warnaserror
+      - run: dotnet test --no-build
+      - run: dotnet format --verify-no-changes --no-restore
+      - run: dotnet pack --no-restore -c Release -warnaserror -o artifacts/packages
+      - run: sh scripts/verify-pack.sh artifacts/packages
+      - name: Record package checksums
+        id: checksums
+        working-directory: dotnet/artifacts/packages
+        run: |
+          {
+            echo 'sha256<<CHECKSUMS_END'
+            sha256sum -- *.nupkg *.snupkg
+            echo 'CHECKSUMS_END'
+          } >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: nuget-packages
+          path: dotnet/artifacts/packages/
+          if-no-files-found: error
+          retention-days: 30
+          overwrite: true
+
+  publish:
+    name: dotnet nuget push (trusted publishing)
+    needs: verify
+    if: github.repository == 'Geekmotors/crucible-ai'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: nuget
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: nuget-packages
+          path: packages
+      - name: Packages are exactly the ones verify checked
+        working-directory: packages
+        env:
+          CHECKSUMS: ${{ needs.verify.outputs.checksums }}
+        run: |
+          printf '%s\n' "$CHECKSUMS" > "$RUNNER_TEMP/packages.sha256"
+          sha256sum --check --strict "$RUNNER_TEMP/packages.sha256"
+          if [ "$(ls -A | wc -l)" -ne "$(grep -c . "$RUNNER_TEMP/packages.sha256")" ]; then
+            echo "::error title=Unexpected files::The downloaded artifact holds files verify did not check."
+            exit 1
+          fi
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: 10.0.x
+      - name: NuGet login (OIDC)
+        id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: Jackula
+      - name: dotnet nuget push
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          version="${GITHUB_REF_NAME#dotnet-v}"
+          for package in Geekmotors.Crucible Geekmotors.Crucible.Xunit; do
+            dotnet nuget push "packages/$package.$version.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          done

@@ -505,7 +505,7 @@
 ## Deferred from: code review of 9-6-dotnet-xunit-adapter (2026-11-15)
 
 - Runs still in flight after a halt, the deadline or cancellation keep running (and dispose their instances) after the xUnit result, possibly after xUnit disposed class/collection/assembly fixtures or the process ends. Options: await in-flight runs (bounded grace) before reporting, or keep the documented behaviour.
-- `Geekmotors.Crucible.Xunit` relies on `Geekmotors.Crucible` internals (`InternalsVisibleTo`) but its nuspec depends on `Geekmotors.Crucible >= x`; pin the exact version when the .NET packages are published.
+- ~~`Geekmotors.Crucible.Xunit` relies on `Geekmotors.Crucible` internals (`InternalsVisibleTo`) but its nuspec depends on `Geekmotors.Crucible >= x`; pin the exact version when the .NET packages are published.~~ Resolved in 9.8: the nuspec depends on `[X.Y.Z]`, checked by `dotnet/scripts/verify-pack.sh`.
 - Invalid `[Crucible]` / `[CrucibleFact]` values report "a group" / "a test" rather than naming the attribute layer (assembly, class) as AC 2 words it.
 - A teardown (dispose) failure is dropped when the run body also failed; consider tracing it.
 - ~~`Crucible.UseJudge` after the shared engine was first built is silently ignored.~~ Resolved in 9.7: a `usage` error.
@@ -518,6 +518,19 @@
 - `ChatClientJudge` (like `ChatCompletionsClient`) backs off on `TimeProvider.System`, not the host's injected clock.
 - The caching probe resolves `CachingChatClient` in the default load context only; caches not derived from `CachingChatClient` are not detected.
 - No test against `Microsoft.Extensions.AI` 11.x consumers; on net8.0 the Abstractions package pulls System.Text.Json 10.0.x.
-- `dotnet/README.md` (the NuGet page) links to `main` and says "until it is published"; `spec/PORTING.md` embeds a commit hash and skip count. Fix at release prep.
+- ~~`dotnet/README.md` (the NuGet page) links to `main` and says "until it is published"; `spec/PORTING.md` embeds a commit hash and skip count. Fix at release prep.~~ Resolved in 9.8: README reworded for after the release (links stay on `main`, docs-only); PORTING declares the spec by release tag and `[AssemblyMetadata("CrucibleSpec", "dotnet-vX.Y.Z")]`; the skip count stays (it is the documented skip list).
 - Internal `UseJudge(IJudgeClient)` seam tested for the after-start rule only; `CRUCIBLE_VERBOSE` without a config file on the chat-client path is untested.
 - Status-less `HttpRequestException` (DNS/TLS failures) and 501/505 are retried as transient on both the `IChatClient` and provider paths (kept for parity); revisit both with `HttpRequestError`.
+
+## Deferred from: code review of 9-8-dotnet-publish-to-nuget (2026-11-15)
+
+- `verify-pack.sh` expects SourceLink to `raw.githubusercontent.com/Geekmotors/crucible-ai/<commit>`; the SDK takes it from the `origin` remote, so CI on a fork (or a clone whose `origin` is a fork) fails the pack check.
+- `[AssemblyMetadata("CrucibleSpec", "dotnet-v<Version>")]` is stamped on every build (PR, local), not only tag builds; it is a declaration, not a verification.
+- `make dotnet-pack-check` passes on a dirty working tree (commit = HEAD while `EmbedUntrackedSources` embeds local edits).
+- After a partial push where a `.nupkg` landed but its `.snupkg` did not, whether a `--skip-duplicate` re-run still pushes the symbols is unverified; RELEASING's post-release check (Symbols listed) is the backstop.
+- RELEASING sources the whole `.env.dev.local` into the environment for `make dotnet-live` and `make conformance` (same as the npm section); scope it to `CRUCIBLE_JUDGE_KEY`.
+
+## From Story 9.8 review decisions (2026-11-15)
+
+- NuGet build provenance: add an attest job that only downloads the verified artifact.
+- Test and pack from one Release build (`-c Release` test, then `dotnet pack --no-build`) once the adapter fixture is confirmed under Release.

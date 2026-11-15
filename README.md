@@ -40,16 +40,16 @@ public async Task KeepsTheMeetingPlaceSecret()
 }
 ```
 
-The .NET packages `Geekmotors.Crucible` and `Geekmotors.Crucible.Xunit` 0.1.0 are complete in this repository and
-go to NuGet with their first release; until then, build them from [`dotnet/`](dotnet/). The judge can be the
-config file's provider or any `Microsoft.Extensions.AI` `IChatClient`.
+Install version 0.1.0 or later from NuGet: `dotnet add package Geekmotors.Crucible.Xunit` (xUnit v3; it brings the engine) or
+`dotnet add package Geekmotors.Crucible` (NUnit, MSTest or anything else, through `Crucible.Gate`). The judge can be
+the config file's provider or any `Microsoft.Extensions.AI` `IChatClient`.
 
 ## Pick your language
 
 | Language | Package | Docs |
 | --- | --- | --- |
 | TypeScript (Jest, Vitest) | [`crucible-ai`](https://www.npmjs.com/package/crucible-ai) on npm | [typescript/README.md](typescript/README.md), [API reference](docs/typescript/api.md) |
-| .NET (xUnit v3; NUnit, MSTest via `Crucible.Gate`) | `Geekmotors.Crucible`, `Geekmotors.Crucible.Xunit` 0.1.0 on NuGet (first release pending; namespace `CrucibleAI`) | [dotnet/README.md](dotnet/README.md), [API reference](docs/dotnet/api.md) |
+| .NET (xUnit v3; NUnit, MSTest via `Crucible.Gate`) | [`Geekmotors.Crucible`](https://www.nuget.org/packages/Geekmotors.Crucible), [`Geekmotors.Crucible.Xunit`](https://www.nuget.org/packages/Geekmotors.Crucible.Xunit) 0.1.0 on NuGet (namespace `CrucibleAI`) | [dotnet/README.md](dotnet/README.md), [API reference](docs/dotnet/api.md) |
 
 ## Shared documentation
 

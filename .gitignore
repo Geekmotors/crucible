@@ -36,6 +36,7 @@ coverage/
 dotnet/**/bin/
 dotnet/**/obj/
 dotnet/**/TestResults/
+dotnet/artifacts/
 
 # Shared files copied into the npm package at build time
 typescript/schemas/

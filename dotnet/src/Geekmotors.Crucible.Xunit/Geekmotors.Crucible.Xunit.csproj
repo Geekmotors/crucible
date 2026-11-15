@@ -4,6 +4,9 @@
     <RootNamespace>CrucibleAI</RootNamespace>
     <AssemblyName>Geekmotors.Crucible.Xunit</AssemblyName>
     <IsPackable>true</IsPackable>
+    <PackageId>Geekmotors.Crucible.Xunit</PackageId>
+    <Description>xUnit v3 adapter for Crucible: [CrucibleFact] and [CrucibleTheory] run a test N times with its own facts per run and report one result gated on the pass rate of an AI judge's semantic verdicts. Copies crucible.config.json to the test output folder.</Description>
+    <PackageTags>llm;ai;testing;xunit;llm-as-judge;semantic-assertions;evaluation</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3.extensibility.core" />
@@ -16,5 +19,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="build/Geekmotors.Crucible.Xunit.targets" Pack="true" PackagePath="build/;buildTransitive/" />
+    <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="/" Visible="false" />
   </ItemGroup>
+  <Target Name="PinEngineToExactVersion" AfterTargets="_GetProjectReferenceVersions" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_ProjectReferencesWithVersions Condition="'%(Filename)' == 'Geekmotors.Crucible' And '%(ProjectVersion)' != '' And !$([System.String]::Copy('%(ProjectVersion)').StartsWith('['))">
+        <ProjectVersion>[%(ProjectVersion)]</ProjectVersion>
+      </_ProjectReferencesWithVersions>
+      <_PinnedEngineReference Include="@(_ProjectReferencesWithVersions)" Condition="'%(Filename)' == 'Geekmotors.Crucible' And $([System.String]::Copy('%(ProjectVersion)').StartsWith('['))" />
+    </ItemGroup>
+    <Error Condition="'@(_PinnedEngineReference)' == ''" Text="Geekmotors.Crucible.Xunit must depend on exactly its own version of Geekmotors.Crucible, but no Geekmotors.Crucible project reference reached the nuspec." />
+  </Target>
 </Project>
