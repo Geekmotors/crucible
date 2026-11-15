@@ -486,3 +486,8 @@
 - C# provider client ignores a 429 `Retry-After`: the contract fixes the 250 ms x 2^n schedule (TS the same), so a rate-limited judge burns the 3 attempts in about 1.75 s.
 - `ConfigFileLocator.Location` calls `Directory.GetCurrentDirectory()` outside its guarded block; a deleted working directory surfaces a raw `IOException` instead of a `config` error.
 - The once-per-client plain-http warning test makes sequential calls; the `Interlocked` guard is not exercised by concurrent calls.
+
+## Deferred from: code review of 9-4-dotnet-payloads-and-reports (2026-11-15)
+
+- C# assertion services never record `ErroredCall` when the judge exchange fails; the report's "a judge call errored" / "Judge attempts" paths depend on it. Carry into Story 9.5 explicitly (its ACs do not mention it).
+- `Runs` <-> `Assertions` namespace cycle through `FactList` (same assembly, not a runtime cycle).

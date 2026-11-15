@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(SpecRoot)/**/*.json" LogicalName="spec/%(RecursiveDir)%(Filename)%(Extension)" LinkBase="spec" />
+    <EmbeddedResource Include="$(RepositoryRoot)/schemas/*.md" LogicalName="repository-schemas/%(Filename)%(Extension)" LinkBase="repository-schemas" />
   </ItemGroup>
 </Project>

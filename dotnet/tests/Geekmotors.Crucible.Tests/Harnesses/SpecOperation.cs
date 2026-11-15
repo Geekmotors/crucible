@@ -12,4 +12,6 @@ internal sealed record SpecOperation(Func<JsonNode?, Task<JsonNode?>> Run, strin
     public static SpecOperation Value(Func<JsonNode?, Task<JsonNode?>> run) => new(run, ValueKey);
 
     public static SpecOperation Text(Func<JsonNode?, Task<JsonNode?>> run) => new(run, TextKey);
+
+    public static SpecOperation Text(Func<JsonNode?, JsonNode?> run) => new(input => Task.FromResult(run(input)), TextKey);
 }
