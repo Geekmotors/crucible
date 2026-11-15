@@ -1,6 +1,6 @@
 {
   "name": "crucible-ai",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Coherence testing for LLM-integrated code",
   "license": "MIT",
   "repository": {
