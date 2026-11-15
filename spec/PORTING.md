@@ -270,9 +270,11 @@ What a runner adapter does, and nothing more:
     `sequential`): a group's tests must run one at a time in declaration
     order. Register tests and groups explicitly non-concurrent where the
     runner allows a surrounding setting to override (Vitest
-    `{ concurrent: false, shuffle: false }`; xUnit test collections run in
-    parallel by default, so put Crucible tests in one non-parallel
-    collection).
+    `{ concurrent: false, shuffle: false }`). xUnit already runs the tests of
+    one collection one at a time, and the class is the group; leave
+    collection parallelism to the user's settings rather than forcing
+    Crucible tests into one collection, and keep every run's state in that
+    run so tests in collections running in parallel never see each other's.
 - **Group settings**: a group's options must reach every test declared
   inside it, at any depth, through plain runner groups too, and never leak
   to siblings. Two strategies:

@@ -1,6 +1,6 @@
 .NOTPARALLEL:
 
-.PHONY: e2e-core e2e-offline e2e-stub-jest e2e-stub-vitest e2e e2e-key e2e-compile e2e-build conformance conformance-image spec-goldens spec-goldens-check spec-payloads spec-payloads-check
+.PHONY: e2e-core e2e-offline e2e-stub-jest e2e-stub-vitest e2e e2e-key e2e-compile e2e-build conformance conformance-image spec-goldens spec-goldens-check spec-payloads spec-payloads-check dotnet-build dotnet-test dotnet-format
 
 E2E_NODE_OPTIONS ?= --experimental-vm-modules --use-system-ca
 E2E_OFFLINE_NODE_OPTIONS ?= --experimental-vm-modules
@@ -9,6 +9,8 @@ CONFORMANCE_REPS ?= 3
 CONFORMANCE_SUITES ?= coherent extract
 CONFORMANCE_CA_BUNDLE ?=
 TS_DIR = typescript
+DOTNET_DIR = dotnet
+DOTNET ?= dotnet
 CONFORMANCE_HARNESS = conformance
 CONFORMANCE_CONFIG ?= $(TS_DIR)/e2e/crucible.config.json
 MACOS_CA_KEYCHAINS = /Library/Keychains/System.keychain /System/Library/Keychains/SystemRootCertificates.keychain
@@ -49,6 +51,15 @@ spec-goldens:
 
 spec-goldens-check:
 	sh $(CONFORMANCE_HARNESS)/spec-goldens.sh check
+
+dotnet-build:
+	cd $(DOTNET_DIR) && $(DOTNET) build -warnaserror
+
+dotnet-test: dotnet-build
+	cd $(DOTNET_DIR) && $(DOTNET) test --no-build
+
+dotnet-format:
+	cd $(DOTNET_DIR) && $(DOTNET) format --verify-no-changes
 
 spec-payloads: spec-goldens
 
