@@ -76,13 +76,14 @@ This writes `crucible.config.jsonc`: the provider, the judge model and an OpenRo
 
 The `$schema` line gives your editor autocomplete and hover docs for every field. `init` never overwrites: if `crucible.config.json` or `crucible.config.jsonc` already exists, it changes nothing and exits non-zero.
 
-**Pick your judge.** Crucible talks to any OpenAI-compatible chat completions API. `init` starts you on OpenRouter; change the top of the file for another provider.
+**Pick your judge.** Crucible talks to any OpenAI-compatible chat completions API: set `"provider": "openai-compatible"` and point `"baseUrl"` at the API root (the part before `/chat/completions`).
 
-OpenRouter (one key, every model; the default `init` writes):
+OpenRouter (one key, every model):
 
 ```jsonc
 {
-  "provider": "openrouter",
+  "provider": "openai-compatible",
+  "baseUrl": "https://openrouter.ai/api/v1",
   "model": "deepseek/deepseek-v4-flash-0731",
   "meta": { "reasoning": { "effort": "low" } } // OpenRouter-only setting
 }
@@ -92,22 +93,13 @@ OpenAI:
 
 ```json
 {
-  "provider": "openai",
+  "provider": "openai-compatible",
+  "baseUrl": "https://api.openai.com/v1",
   "model": "gpt-5-mini"
 }
 ```
 
-Any other OpenAI-compatible endpoint (Azure OpenAI, a LiteLLM gateway, Ollama, LM Studio): set `"provider": "openai-compatible"` and the API root as `"baseUrl"`, for example a local Ollama:
-
-```json
-{
-  "provider": "openai-compatible",
-  "baseUrl": "http://localhost:11434/v1",
-  "model": "qwen3:8b"
-}
-```
-
-`meta` fields go to the provider as-is, so drop OpenRouter's `reasoning` line when you switch. More examples (Azure OpenAI, LiteLLM) and what has been tested live: [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
+Azure OpenAI, a LiteLLM gateway, or a local server such as Ollama (`http://localhost:11434/v1`) work the same way with their own `baseUrl`. `meta` fields go to the provider as-is, so drop OpenRouter's `reasoning` line for any other endpoint. More examples and what has been tested live: [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
 
 **2. Set your API key** in the environment. Never put it in the config file.
 
@@ -243,7 +235,8 @@ Put defaults for every `crucible.it()` in the config; they replace the built-in 
 
 ```json
 {
-  "provider": "openrouter",
+  "provider": "openai-compatible",
+  "baseUrl": "https://openrouter.ai/api/v1",
   "model": "deepseek/deepseek-v4-flash-0731",
   "testDefaults": { "runs": 20, "threshold": 0.85, "testTimeout": 90000 }
 }
