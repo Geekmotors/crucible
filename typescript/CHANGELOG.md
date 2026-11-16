@@ -4,7 +4,7 @@ All notable changes to `crucible-ai` are listed here. The project follows
 [Semantic Versioning](https://semver.org); before 1.0, a minor version may
 contain breaking changes, and they are marked **Breaking** below.
 
-## Unreleased
+## 0.5.0
 
 ### Changed
 
@@ -17,7 +17,6 @@ contain breaking changes, and they are marked **Breaking** below.
 - A judge reply with a trailing comma before `}` or `]`
   (`{ "verdict": true, "reasoning": "…", }`) is now repaired instead of asked
   again. Comments and other broken JSON are still asked again once.
-
 - The package source moved to the `typescript/` folder of the repository,
   next to the shared `spec/` and `schemas/`, ready for the .NET port. The
   published package, its contents and its API are unchanged. The API
