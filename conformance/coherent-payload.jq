@@ -12,7 +12,6 @@ def coherent_request($schema; $judge):
 def coherent_strict_reply($case):
   length == 1
   and (.[0] | type == "object")
-  and (.[0] | keys == ["reasoning", "verdict"])
   and (.[0].verdict | type == "boolean")
   and (.[0].reasoning | type == "string");
 

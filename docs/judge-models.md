@@ -136,6 +136,9 @@ schemas and the conformance cases to your judge and reports, per case,
 whether each reply matched the expected verdict or value, how many replies
 were strict JSON as sent, and how many were usable only after the repairs
 Crucible itself makes (removing a code fence, dropping a trailing comma).
+Like Crucible, it ignores extra keys in a reply and asks the judge once more
+when a reply is still unusable, so a case fails on a wrong answer or on two
+unusable replies in a row.
 
 ```sh
 make conformance CONFORMANCE_CONFIG=path/to/your/crucible.config.json
@@ -155,6 +158,11 @@ make conformance CONFORMANCE_CONFIG=path/to/your/crucible.config.json
 - `CONFORMANCE_REPS` (default 3) repeats each case; `CONFORMANCE_SUITES`
   (`coherent`, `extract`, default both) picks the suites. It makes real,
   usually paid, judge calls: about `cases × reps` of them.
+- `CONFORMANCE_REASK_LIMIT` (default 3) caps how many times the whole run may
+  ask again after an unusable reply. Once the cap is used up, an unusable
+  reply fails its case, so a model that often breaks the JSON contract still
+  fails the run. Each re-ask is logged with the reply that caused it, and the
+  summary counts them per case.
 - The harness runs in a container, so `localhost` there is the container
   itself. For a model server on your machine, use
   `http://host.docker.internal:11434/v1` (Docker Desktop) as `baseUrl` in the
