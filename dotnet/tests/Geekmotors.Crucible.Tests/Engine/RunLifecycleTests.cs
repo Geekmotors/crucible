@@ -104,6 +104,7 @@ public sealed class RunLifecycleTests
     public async Task ABodyStillRunningAfterAHaltIsTornDownWhenItFinishes()
     {
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var tornDown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var finished = false;
 
@@ -111,10 +112,15 @@ public sealed class RunLifecycleTests
             [],
             new RunOptions { Runs = EngineRuns.Pair, Threshold = EngineRuns.Everyone },
             run => Task.FromResult(run == EngineRuns.FirstRun
-                ? RunBody.Of(_ => throw CrucibleException.Usage(EngineTexts.Problem))
+                ? RunBody.Of(async _ =>
+                {
+                    await started.Task;
+                    throw CrucibleException.Usage(EngineTexts.Problem);
+                })
                 : new RunBody(
                     async _ =>
                     {
+                        started.SetResult();
                         await release.Task;
                         finished = true;
                     },

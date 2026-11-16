@@ -3,6 +3,11 @@
 This page takes you from an empty install to a multi-run reliability gate you
 can trust in CI. It assumes a Node project that already runs Jest tests.
 
+Using .NET? Start with the quick start in [`dotnet/README.md`](../dotnet/README.md)
+(`dotnet add package Geekmotors.Crucible.Xunit`, `[CrucibleFact]`), then come
+back for sections 2, 3, 4, 6, 7 and 8: choosing an assertion, the config file,
+the key, tuning and reading a failure work the same way.
+
 1. [Install](#1-install)
 2. [Choose the right assertion first](#2-choose-the-right-assertion-first)
 3. [Create the config file](#3-create-the-config-file)

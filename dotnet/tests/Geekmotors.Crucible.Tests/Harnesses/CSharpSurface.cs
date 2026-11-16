@@ -28,6 +28,7 @@ internal static class CSharpSurface
         $"{nameof(Crucible)}.{nameof(Crucible.Context)}",
         $"{nameof(CrucibleContext)}.{nameof(CrucibleContext.Run)}",
         $"{nameof(CrucibleContext)}.{nameof(CrucibleContext.CancellationToken)}",
+        $"{nameof(Crucible)}.{nameof(Crucible.UseJudge)}",
     };
 
     public static IReadOnlyCollection<string> MappedKeys => [.. Mappings.Keys];

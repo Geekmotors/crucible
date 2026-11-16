@@ -18,6 +18,7 @@ protect you from.
 - [Facts are per run, never global](#facts-are-per-run-never-global)
 - [`facts` never replaces](#facts-never-replaces)
 - [Keep facts consistent](#keep-facts-consistent)
+- [Response caching turns N runs into one sample](#response-caching-turns-n-runs-into-one-sample)
 
 **Time**
 
@@ -184,6 +185,12 @@ per run. So:
 
 Put the whole arrange step in the body. To share setup code, call a helper
 function from inside the body.
+
+In C# with `[CrucibleFact]` it is the other way round: each run gets its own
+test-class instance, so the constructor and `IAsyncLifetime.InitializeAsync`
+run once **per run**, still outside the run (`Crucible.Facts` there is a
+`usage` error). Class, collection and assembly fixtures are created once and
+shared by every run. See [the C# reference](dotnet/api.md#cruciblefact-and-crucibletheory).
 
 ## Facts are per run, never global
 
@@ -363,6 +370,19 @@ context `t` instead, and nothing else (`crucible.it.for` bodies get
 `expect` from `vitest`. On Vitest's own `test` with `crucible.gate()`, the
 body receives the context after `t`: `async (t, context) => { ... }`.
 
+## Response caching turns N runs into one sample
+
+Crucible's runs measure your system only if each run calls it afresh. If the
+system under test caches model responses (an LLM gateway cache, an HTTP cache,
+LangChain's cache, `Microsoft.Extensions.AI`'s `UseDistributedCache()`), every
+run after the first replays the first reply: 20 runs become one sample
+repeated 20 times, and the pass rate is 0 or 1 whatever the threshold says.
+Turn response caching off for the system under test in Crucible tests.
+Crucible cannot see your system's client, so it cannot detect this. In C#, a
+judge client passed to `Crucible.UseJudge` that caches gets a warning on
+standard error: a cached judge hides the judge's own variance
+([`Crucible.UseJudge`](dotnet/api.md#crucibleusejudge)).
+
 ## The config is read from the working directory
 
 Crucible looks for `crucible.config.json` or `crucible.config.jsonc` (exactly
@@ -371,6 +391,11 @@ file, not in a parent directory. If tests fail
 with a `config` error saying the file cannot be found, check where Jest was
 started (monorepo workspace scripts often start it in a package directory).
 See [Where and when the file is read](configuration.md#where-and-when-the-file-is-read).
+
+In .NET the working directory of `dotnet test` is the build output folder.
+`Geekmotors.Crucible.Xunit` copies the config file from beside the `.csproj`
+there on every build; with NUnit or MSTest, mark it
+`CopyToOutputDirectory="PreserveNewest"` yourself.
 
 ## Behind a TLS-intercepting proxy, judge calls error
 

@@ -22,7 +22,7 @@ crucible.it('keeps the meeting place secret', async () => {
 });
 ```
 
-## C# (xUnit), coming soon
+## C# (xUnit v3, or any framework through `Crucible.Gate`)
 
 ```csharp
 using CrucibleAI;
@@ -40,18 +40,20 @@ public async Task KeepsTheMeetingPlaceSecret()
 }
 ```
 
-The .NET port is in progress. This is its planned API; it is not on NuGet yet.
+The .NET packages `Geekmotors.Crucible` and `Geekmotors.Crucible.Xunit` 0.1.0 are complete in this repository and
+go to NuGet with their first release; until then, build them from [`dotnet/`](dotnet/). The judge can be the
+config file's provider or any `Microsoft.Extensions.AI` `IChatClient`.
 
 ## Pick your language
 
 | Language | Package | Docs |
 | --- | --- | --- |
 | TypeScript (Jest, Vitest) | [`crucible-ai`](https://www.npmjs.com/package/crucible-ai) on npm | [typescript/README.md](typescript/README.md), [API reference](docs/typescript/api.md) |
-| .NET (xUnit) | `Geekmotors.Crucible`, `Geekmotors.Crucible.Xunit` on NuGet (coming soon; namespace `CrucibleAI`) | coming soon |
+| .NET (xUnit v3; NUnit, MSTest via `Crucible.Gate`) | `Geekmotors.Crucible`, `Geekmotors.Crucible.Xunit` 0.1.0 on NuGet (first release pending; namespace `CrucibleAI`) | [dotnet/README.md](dotnet/README.md), [API reference](docs/dotnet/api.md) |
 
 ## Shared documentation
 
-These pages explain how Crucible works in every language. Code samples are TypeScript for now.
+These pages explain how Crucible works in every language. Most code samples are TypeScript; the C# equivalents are in the [C# API reference](docs/dotnet/api.md).
 
 - [Inspiration](docs/inspiration.md): why Crucible exists, the design ideas, and how it compares with promptfoo, DeepEval and others
 - [Getting started](docs/getting-started.md): from install to a CI gate you can trust
@@ -68,6 +70,7 @@ These pages explain how Crucible works in every language. Code samples are TypeS
 | Path | What it holds |
 | --- | --- |
 | `typescript/` | the npm package `crucible-ai` |
+| `dotnet/` | the NuGet packages `Geekmotors.Crucible` and `Geekmotors.Crucible.Xunit` |
 | `schemas/` | the judge instruction schemas and the config JSON Schema, shared by every port |
 | `spec/` | language-neutral fixtures every port runs |
 | `conformance/` | the language-neutral judge conformance harness (POSIX shell, `jq`, Docker) and its cases (`conformance/cases/`) |

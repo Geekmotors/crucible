@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using CrucibleAI.Assertions;
 using CrucibleAI.Config;
 using CrucibleAI.Judging;
@@ -13,16 +14,22 @@ internal sealed class EngineSession
     private readonly Verbosity _verbosity;
 
     public EngineSession(JudgeConfig config, IJudgeClient judge, TimeProvider time, ITraceOutput output)
+        : this(config.Run, ChatEndpoint.For(config).Name, config.Model, config.Meta, judge, time, output)
+    {
+    }
+
+    public EngineSession(
+        RunSettings settings, string provider, string model, JsonObject? meta, IJudgeClient judge, TimeProvider time, ITraceOutput output)
     {
         var exchange = new JudgeExchange(judge, time);
         _output = output;
-        _verbosity = config.Verbosity;
-        TestDefaults = config.TestDefaults;
+        _verbosity = settings.Verbosity;
+        TestDefaults = settings.TestDefaults;
         Coherent = new CoherentAssertion(exchange);
         Extract = new ExtractAssertion(exchange);
-        Reports = new ReportRenderer(new ReportSettings(config.ExcerptChars, config.Verbosity));
+        Reports = new ReportRenderer(new ReportSettings(settings.ExcerptChars, settings.Verbosity));
         Trace = new DebugTrace(
-            new TraceSettings(config.Verbosity, ChatEndpoint.For(config).Name, config.Model, config.Meta, config.TestDefaultsNode, config.ExcerptChars),
+            new TraceSettings(settings.Verbosity, provider, model, meta, settings.TestDefaultsNode, settings.ExcerptChars),
             output);
     }
 
@@ -35,12 +42,6 @@ internal sealed class EngineSession
     public ReportRenderer Reports { get; }
 
     public DebugTrace Trace { get; }
-
-    public static EngineSession FromConfigFile(IJudgeClient? judge)
-    {
-        var config = new ConfigLoader().Load();
-        return new EngineSession(config, judge ?? new ChatCompletionsClient(config), TimeProvider.System, new StandardOutputTraceOutput());
-    }
 
     public void WritePassingReport(Func<string> report)
     {

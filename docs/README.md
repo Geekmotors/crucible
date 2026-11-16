@@ -9,6 +9,7 @@ Start with **Getting started**; it links to everything else as you need it.
 | [Runs and threshold](runs-and-threshold.md) | You are choosing `runs`/`threshold`, or need the `crucible.it()` reference: group settings (`crucible.describe`), run statuses, the three-zone verdict, the failure report, verbosity, the deadline, re-entrancy, cost. |
 | [Configuration and providers](configuration.md) | You need to create the config (`npx crucible-ai init`), a config field, the JSON Schema and editor hints, a validation rule or error kind, the environment variables, a provider set up (OpenRouter, OpenAI, Azure OpenAI, LiteLLM, Ollama), how provider failures are handled, judge-model advice, or CI-secret setup. |
 | [TypeScript API reference](typescript/api.md) | You need the exact behaviour of `crucible.it`, `describe`, `coherent`, `extract`, `load`, `append`, or the error classes. |
+| [C# API reference](dotnet/api.md) | You use .NET: `[CrucibleFact]`, `[CrucibleTheory]`, `[Crucible]`, `Crucible.Gate`, `Facts`, `CoherentAsync`, `ExtractAsync<T>`, `UseJudge(IChatClient)`, the exceptions. |
 | [Gotchas](gotchas.md) | Something behaves unexpectedly — or before you write your first real suite. |
 | [The instruction schema](instruction-schema.md) | You want to know how the judge decides or extracts, what it is sent, or how to change its behaviour. |
 | [Judge models](judge-models.md) | You are choosing a judge model or provider; measured accuracy, latency, cost and reasoning-effort findings, and how to check your own model with the conformance harness. |

@@ -12,4 +12,7 @@ internal sealed record JudgeConfig(
     JsonObject TestDefaultsNode,
     int ExcerptChars,
     HttpUrl? BaseUrl,
-    string? ApiKeyEnv);
+    string? ApiKeyEnv)
+{
+    public RunSettings Run => new(Verbosity, TestDefaults, TestDefaultsNode, ExcerptChars);
+}
