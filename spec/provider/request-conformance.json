@@ -9,12 +9,7 @@
       "input": {
         "config": {
           "provider": "openrouter",
-          "model": "deepseek/deepseek-v4-flash-0731",
-          "meta": {
-            "reasoning": {
-              "effort": "low"
-            }
-          }
+          "model": "anthropic/claude-haiku-5.5"
         },
         "env": {
           "CRUCIBLE_JUDGE_KEY": "sk-spec-sentinel-key"
@@ -31,10 +26,7 @@
             "Content-Type": "application/json"
           },
           "body": {
-            "reasoning": {
-              "effort": "low"
-            },
-            "model": "deepseek/deepseek-v4-flash-0731",
+            "model": "anthropic/claude-haiku-5.5",
             "messages": [
               {
                 "role": "system",
@@ -55,12 +47,7 @@
       "input": {
         "config": {
           "provider": "openrouter",
-          "model": "deepseek/deepseek-v4-flash-0731",
-          "meta": {
-            "reasoning": {
-              "effort": "low"
-            }
-          }
+          "model": "anthropic/claude-haiku-5.5"
         },
         "env": {
           "CRUCIBLE_JUDGE_KEY": "sk-spec-sentinel-key"
@@ -77,10 +64,7 @@
             "Content-Type": "application/json"
           },
           "body": {
-            "reasoning": {
-              "effort": "low"
-            },
-            "model": "deepseek/deepseek-v4-flash-0731",
+            "model": "anthropic/claude-haiku-5.5",
             "messages": [
               {
                 "role": "system",

@@ -53,16 +53,13 @@ npm install --save-dev crucible-ai
 npx crucible-ai init
 ```
 
-This writes `crucible.config.jsonc`: the provider, the judge model and an OpenRouter reasoning setting that speeds it up, then every other setting as a commented line showing its default (trimmed here):
+This writes `crucible.config.jsonc`: the provider and the recommended judge model (Claude Haiku 5.5 on OpenRouter), then every other setting as a commented line showing its default (trimmed here):
 
 ```jsonc
 {
   "$schema": "./node_modules/crucible-ai/schemas/crucible.config.schema.json",
   "provider": "openrouter",
-  "model": "deepseek/deepseek-v4-flash-0731",
-  // OpenRouter reasoning setting that speeds up the model above; extra request fields
-  // go to the provider as-is, so remove or change this when you switch provider.
-  "meta": { "reasoning": { "effort": "low" } },
+  "model": "anthropic/claude-haiku-5.5",
 
   // Every line below shows a default. Uncomment a line to change it.
   // "apiKeyEnv": "CRUCIBLE_JUDGE_KEY", // the variable holding the key, never the key
@@ -80,12 +77,11 @@ The `$schema` line gives your editor autocomplete and hover docs for every field
 
 OpenRouter (one key, every model):
 
-```jsonc
+```json
 {
   "provider": "openai-compatible",
   "baseUrl": "https://openrouter.ai/api/v1",
-  "model": "deepseek/deepseek-v4-flash-0731",
-  "meta": { "reasoning": { "effort": "low" } } // OpenRouter-only setting
+  "model": "anthropic/claude-haiku-5.5"
 }
 ```
 
@@ -109,7 +105,7 @@ A local Ollama, no key needed:
 }
 ```
 
-Azure OpenAI, a LiteLLM gateway or LM Studio work the same way with their own `baseUrl`. `meta` fields go to the provider as-is, so drop OpenRouter's `reasoning` line for any other endpoint. More examples and what has been tested live: [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
+Azure OpenAI, a LiteLLM gateway or LM Studio work the same way with their own `baseUrl`. More examples and what has been tested live: [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
 
 **2. Set your API key** in the environment. Never put it in the config file.
 
@@ -247,7 +243,7 @@ Put defaults for every `crucible.it()` in the config; they replace the built-in 
 {
   "provider": "openai-compatible",
   "baseUrl": "https://openrouter.ai/api/v1",
-  "model": "deepseek/deepseek-v4-flash-0731",
+  "model": "anthropic/claude-haiku-5.5",
   "testDefaults": { "runs": 20, "threshold": 0.85, "testTimeout": 90000 }
 }
 ```

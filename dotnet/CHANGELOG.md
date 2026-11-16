@@ -23,7 +23,8 @@ the repository).
     `CrucibleVerdictException` with the failure report.
   - The judge: the config file's `openrouter`, `openai` or `openai-compatible` provider, or any
     `Microsoft.Extensions.AI` `IChatClient` through `Crucible.UseJudge`, with the same retry and reply rules. A judge
-    client that caches responses gets a warning.
+    client that caches responses gets a warning. A judge reply with a trailing comma before `}` or `]` is repaired
+    instead of asked again.
   - `crucible.config.json` / `crucible.config.jsonc` with `testDefaults`, `verbosity`, `excerptChars`, `meta` and
     `apiKeyEnv`, the same fields as the TypeScript package; `CRUCIBLE_VERBOSE` overrides the verbosity.
   - `CrucibleException` with `Kind` (`Usage`, `Config`, `Infra`) and `Retryable`.

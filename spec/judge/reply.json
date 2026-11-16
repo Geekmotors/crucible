@@ -480,12 +480,68 @@
     },
     {
       "id": "judge-reply-coherent-trailing-comma",
-      "description": "Replies are strict JSON: a trailing comma is unusable.",
+      "description": "A trailing comma before the closing brace is dropped.",
+      "input": {
+        "ask": "coherent",
+        "replies": ["{\"verdict\":true,\"reasoning\":\"r\",}"]
+      },
+      "expect": {
+        "value": {
+          "verdict": true,
+          "reasoning": "r"
+        }
+      }
+    },
+    {
+      "id": "judge-reply-coherent-trailing-comma-padded",
+      "description": "A trailing comma followed by white space and a line break is dropped.",
+      "input": {
+        "ask": "coherent",
+        "replies": ["{\n  \"verdict\": false,\n  \"reasoning\": \"r\", \n}"]
+      },
+      "expect": {
+        "value": {
+          "verdict": false,
+          "reasoning": "r"
+        }
+      }
+    },
+    {
+      "id": "judge-reply-coherent-trailing-comma-in-fence",
+      "description": "A trailing comma inside a ```json fence is dropped after the fence is removed.",
+      "input": {
+        "ask": "coherent",
+        "replies": ["```json\n{\"verdict\":true,\"reasoning\":\"r\",}\n```"]
+      },
+      "expect": {
+        "value": {
+          "verdict": true,
+          "reasoning": "r"
+        }
+      }
+    },
+    {
+      "id": "judge-reply-coherent-comma-brace-inside-string",
+      "description": "A comma and closing brace inside a string are text, not a trailing comma.",
+      "input": {
+        "ask": "coherent",
+        "replies": ["{\"verdict\":true,\"reasoning\":\"say \\\"a,}\\\" then stop,}\"}"]
+      },
+      "expect": {
+        "value": {
+          "verdict": true,
+          "reasoning": "say \"a,}\" then stop,}"
+        }
+      }
+    },
+    {
+      "id": "judge-reply-coherent-double-trailing-comma",
+      "description": "Two commas before the closing brace are unusable.",
       "input": {
         "ask": "coherent",
         "replies": [
-          "{\"verdict\":true,\"reasoning\":\"r\",}",
-          "{\"verdict\":true,\"reasoning\":\"r\",}"
+          "{\"verdict\":true,\"reasoning\":\"r\",,}",
+          "{\"verdict\":true,\"reasoning\":\"r\",,}"
         ]
       },
       "expect": {
@@ -496,8 +552,39 @@
       }
     },
     {
+      "id": "judge-reply-coherent-comma-after-root",
+      "description": "A comma after the whole reply object is unusable.",
+      "input": {
+        "ask": "coherent",
+        "replies": [
+          "{\"verdict\":true,\"reasoning\":\"r\"},",
+          "{\"verdict\":true,\"reasoning\":\"r\"},"
+        ]
+      },
+      "expect": {
+        "error": {
+          "kind": "infra",
+          "retryable": true
+        }
+      }
+    },
+    {
+      "id": "judge-reply-coherent-empty-object-comma",
+      "description": "A comma with no member before it is unusable.",
+      "input": {
+        "ask": "coherent",
+        "replies": ["{,}", "{,}"]
+      },
+      "expect": {
+        "error": {
+          "kind": "infra",
+          "retryable": true
+        }
+      }
+    },
+    {
       "id": "judge-reply-coherent-comment",
-      "description": "Replies are strict JSON: a comment is unusable.",
+      "description": "A comment is unusable; only trailing commas are tolerated.",
       "input": {
         "ask": "coherent",
         "replies": [
@@ -586,6 +673,23 @@
         "value": {
           "value": 2,
           "reasoning": "the answer is two"
+        }
+      }
+    },
+    {
+      "id": "judge-reply-extract-trailing-comma",
+      "description": "A trailing comma after the reasoning, as some models write it, is dropped.",
+      "input": {
+        "ask": "extract",
+        "type": "number",
+        "replies": [
+          "{ \"value\": 7, \"reasoning\": \"The response states \\\"seven apples\\\", so the value is 7.\", }"
+        ]
+      },
+      "expect": {
+        "value": {
+          "value": 7,
+          "reasoning": "The response states \"seven apples\", so the value is 7."
         }
       }
     },

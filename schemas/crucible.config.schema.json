@@ -18,7 +18,7 @@
       "enum": ["openrouter", "openai", "openai-compatible"]
     },
     "model": {
-      "description": "The provider's model id for the judge, passed through as given. Recommended on OpenRouter: \"deepseek/deepseek-v4-flash-0731\".",
+      "description": "The provider's model id for the judge, passed through as given. Recommended on OpenRouter: \"anthropic/claude-haiku-5.5\".",
       "type": "string",
       "minLength": 1,
       "pattern": "\\S"

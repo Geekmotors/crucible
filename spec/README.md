@@ -1003,8 +1003,12 @@ error `infra` with `retryable: true`.
    stays) and `` ``` json `` (the tag stays) leave text that is not JSON, and
    `~~~` fences are not removed. Text before or after the JSON is never
    removed.
-2. **Parse** the result as strict JSON (no comments, no trailing commas, one
-   value; duplicate keys: the last wins). Numbers are IEEE 754 doubles: an
+2. **Parse** the result as strict JSON with one exception: a trailing comma
+   is dropped by the same string-aware rule as [`jsonc` / `parse`](#jsonc--parse)
+   rule 5 (`{"verdict":true,"reasoning":"r",}` is usable; `,,}`, `{,}` and a
+   comma after the root are not). Some models add that comma; it has only one
+   meaning, so it is repaired rather than asked again. Comments stay unusable.
+   One value; duplicate keys: the last wins. Numbers are IEEE 754 doubles: an
    integer beyond 2^53 becomes the nearest double, and one that overflows
    (`1e999`) is infinity. A lone-surrogate escape is outside the contract.
 3. **Shape.** `coherent`: an object with a boolean `verdict` and a string

@@ -8,6 +8,16 @@ contain breaking changes, and they are marked **Breaking** below.
 
 ### Changed
 
+- `npx crucible-ai init` now writes `anthropic/claude-haiku-5.5` as the judge
+  model, with no `meta`. It got every verdict and value right on the full
+  conformance suite (820 calls) at ~1.4 s per call; the previous default,
+  `deepseek/deepseek-v4-flash-0731`, sometimes broke the JSON format or got a
+  stateful case wrong. Existing config files are not changed. See
+  [Judge models](https://github.com/Geekmotors/crucible-ai/blob/main/docs/judge-models.md).
+- A judge reply with a trailing comma before `}` or `]`
+  (`{ "verdict": true, "reasoning": "…", }`) is now repaired instead of asked
+  again. Comments and other broken JSON are still asked again once.
+
 - The package source moved to the `typescript/` folder of the repository,
   next to the shared `spec/` and `schemas/`, ready for the .NET port. The
   published package, its contents and its API are unchanged. The API

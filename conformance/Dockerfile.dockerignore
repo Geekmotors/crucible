@@ -8,3 +8,4 @@
 !conformance/payload-sections.jq
 !conformance/coherent-payload.jq
 !conformance/extract-payload.jq
+!conformance/reply-repair.jq

@@ -109,7 +109,7 @@ the config file:
 ```json
 {
   "provider": "openrouter",
-  "model": "deepseek/deepseek-v4-flash-0731",
+  "model": "anthropic/claude-haiku-5.5",
   "testDefaults": { "runs": 20, "threshold": 0.85 }
 }
 ```
@@ -751,8 +751,8 @@ your system under test and 10 judge calls per assertion. Declare
 enough.
 
 Example: two `coherent()` assertions at `{ runs: 50 }` is 100 judge calls per
-execution — about $0.004 with `deepseek/deepseek-v4-flash-0731`
-(~$0.00004/call) or $0.25 with `anthropic/claude-sonnet-5` (~$0.0025/call).
+execution — about $0.025 with `anthropic/claude-haiku-5.5`
+(~$0.00025/call) or $0.25 with `anthropic/claude-sonnet-5` (~$0.0025/call).
 Per-call costs come from [judge-models.md](judge-models.md); multiply by the
 number of inference tests and CI executions per day before choosing a
 measurement-sized `runs` for every build.

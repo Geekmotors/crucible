@@ -237,8 +237,9 @@ effect bounded by it.
 
 What eats the budget is usually judge calls awaited one after another. With a
 reasoning model at default effort a call can take ~11 s, so three sequential
-`coherent()` calls in one body can run out of time. Use low reasoning effort
-([recommended config](configuration.md#choosing-a-judge-model)), and start
+`coherent()` calls in one body can run out of time. Use a fast judge (the
+[recommended one](configuration.md#choosing-a-judge-model) takes ~1.4 s) or
+low reasoning effort, and start
 independent judgments together and await them at once
 ([pattern](typescript/api.md#cruciblecoherent)). Each judge reply attempt also has its
 own limit (`inferenceTimeout`, 30 s by default). Details:

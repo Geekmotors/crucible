@@ -1,5 +1,5 @@
 enum JudgeModel {
-  Recommended = 'deepseek/deepseek-v4-flash-0731',
+  Recommended = 'anthropic/claude-haiku-5.5',
 }
 
 export { JudgeModel };

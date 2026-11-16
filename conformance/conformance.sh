@@ -212,6 +212,10 @@ if ${1}_strict_reply(\$matrix[0].cases[\$index]) then ${1}_outcome else error(\"
     "$3"
 }
 
+repaired_reply() {
+  jq_lib -R -s -j 'include "reply-repair"; repaired_reply' "$1"
+}
+
 call_judge() {
   auth_config |
     curl --config - \
@@ -258,6 +262,7 @@ run_suite() {
     request_body "$suite" "$index" > "$WORK_DIR/body.json"
     matched=0
     compliant=0
+    repaired=0
     errored=0
     rep=1
     while [ "$rep" -le "$REPS" ]; do
@@ -277,23 +282,28 @@ run_suite() {
       cost=$(jq -r '.usage.cost // 0' "$WORK_DIR/reply.json")
       total_cost=$(awk -v a="$total_cost" -v b="$cost" 'BEGIN { printf "%.6f", a + b }')
       jq -j '.choices[0].message.content' "$WORK_DIR/reply.json" > "$WORK_DIR/content.txt"
+      note=""
       if outcome=$(strict_outcome "$suite" "$index" "$WORK_DIR/content.txt" 2> /dev/null); then
         compliant=$((compliant + 1))
+      elif repaired_reply "$WORK_DIR/content.txt" > "$WORK_DIR/repaired.txt" 2> /dev/null &&
+        outcome=$(strict_outcome "$suite" "$index" "$WORK_DIR/repaired.txt" 2> /dev/null); then
+        repaired=$((repaired + 1))
+        note=", repaired"
       else
         outcome=non-compliant
       fi
       if [ "$outcome" = "$expected" ]; then
         matched=$((matched + 1))
-        echo "PASS $case_id rep $rep/$REPS: $outcome (${seconds}s, \$$cost)"
+        echo "PASS $case_id rep $rep/$REPS: $outcome (${seconds}s, \$$cost$note)"
       else
         failures=$((failures + 1))
-        echo "FAIL $case_id rep $rep/$REPS: $outcome, expected $expected (${seconds}s, \$$cost)"
+        echo "FAIL $case_id rep $rep/$REPS: $outcome, expected $expected (${seconds}s, \$$cost$note)"
         echo "     reply: $(cat "$WORK_DIR/content.txt")"
       fi
       rep=$((rep + 1))
     done
-    summary="$summary$(printf '%-34s expected %-7s matches %s/%s  strict JSON %s/%s  errored %s' \
-      "$case_id" "$expected" "$matched" "$REPS" "$compliant" "$REPS" "$errored")
+    summary="$summary$(printf '%-34s expected %-7s matches %s/%s  strict JSON %s/%s  repaired %s  errored %s' \
+      "$case_id" "$expected" "$matched" "$REPS" "$compliant" "$REPS" "$repaired" "$errored")
 "
     index=$((index + 1))
   done

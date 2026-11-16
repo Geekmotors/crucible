@@ -1,6 +1,5 @@
 import { ConfigTemplate } from '../config-template.util.js';
 import { JudgeModel } from './judge-model.enum.js';
-import { ReasoningEffort } from './reasoning-effort.enum.js';
 import type { ConfigStore } from '../../core/config.js';
 import { ConfigHarness } from '../../core/test/config-harness.util.js';
 import { ApiKey } from '../../providers/test/api-key.enum.js';
@@ -31,12 +30,11 @@ class TemplateHarness {
     );
   }
 
-  static builtInsWithLowReasoning(): Record<string, unknown> {
+  static builtInsForRecommendedJudge(): Record<string, unknown> {
     return ConfigHarness.resolvedSettings(
       ConfigHarness.builtInStore({
         provider: ProviderName.OpenRouter,
         model: JudgeModel.Recommended,
-        meta: { reasoning: { effort: ReasoningEffort.Low } },
       }),
     );
   }

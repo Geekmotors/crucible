@@ -1,6 +1,8 @@
 type JsoncReading =
   { readonly ok: true; readonly value: unknown } | { readonly ok: false; readonly line?: number };
 
+type JsoncReaderOptions = { readonly comments: boolean };
+
 type Stripped =
   { readonly ok: true; readonly json: string } | { readonly ok: false; readonly line: number };
 
@@ -12,6 +14,8 @@ class JsoncReader {
   private static readonly PARSE_POSITION = /position (\d+)/;
   private static readonly LINE_BREAK = /\r\n?|\n/;
   private static readonly NON_BREAKING = /[^\r\n]/g;
+
+  constructor(private readonly options: JsoncReaderOptions = { comments: true }) {}
 
   read(text: string): JsoncReading {
     const stripped = this.strip(this.withoutByteOrderMark(text));
@@ -46,9 +50,9 @@ class JsoncReader {
         pendingComma = -1;
         previous = char;
         index = end;
-      } else if (char === '/' && next === '/') {
+      } else if (this.options.comments && char === '/' && next === '/') {
         index = this.lineEnd(text, index);
-      } else if (char === '/' && next === '*') {
+      } else if (this.options.comments && char === '/' && next === '*') {
         const end = text.indexOf('*/', index + 2);
         if (end === -1) {
           return { ok: false, line: this.lineAt(text, index) };

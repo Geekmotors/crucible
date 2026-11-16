@@ -1,5 +1,6 @@
 import type { CompletionRequest, ProviderAdapter } from '../providers/types.js';
 import { CrucibleError } from './errors.js';
+import { JsoncReader } from './jsonc-reader.util.js';
 import { RetryingCompleter } from './retry.js';
 import { RunScope, runScope } from './state.js';
 import { TraceReporter } from './trace-reporter.js';
@@ -24,6 +25,7 @@ type JudgeQuestion<T> = {
 
 class JudgeExchange {
   private static readonly MAX_REPLY_ATTEMPTS = 2;
+  private static readonly REPLY_READER = new JsoncReader({ comments: false });
 
   private static timeoutDeadline(ms: number): AbortSignal {
     return AbortSignal.timeout(ms);
@@ -108,13 +110,11 @@ class JudgeExchange {
   }
 
   private parsed<T>(reply: string, question: JudgeQuestion<T>): T {
-    let json: unknown;
-    try {
-      json = JSON.parse(this.stripFences(reply));
-    } catch (cause) {
-      throw this.unexpected(question.contract, cause);
+    const reading = JudgeExchange.REPLY_READER.read(this.stripFences(reply));
+    if (!reading.ok) {
+      throw this.unexpected(question.contract);
     }
-    const read = question.read(json);
+    const read = question.read(reading.value);
     if (read === undefined) {
       throw this.unexpected(question.contract);
     }
@@ -129,10 +129,9 @@ class JudgeExchange {
       .trim();
   }
 
-  private unexpected(contract: string, cause?: unknown): CrucibleError {
+  private unexpected(contract: string): CrucibleError {
     return new CrucibleError('infra', `The judge reply was not the expected ${contract} JSON.`, {
       retryable: true,
-      cause,
     });
   }
 }
