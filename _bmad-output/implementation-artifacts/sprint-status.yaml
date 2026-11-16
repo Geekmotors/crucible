@@ -120,7 +120,7 @@ development_status:
   9-1-one-repo-two-packages: done
   9-2-dotnet-solution-and-fixture-runner: done
   9-3-dotnet-parsing-config-providers: done
-  9-4-dotnet-payloads-and-reports: backlog
+  9-4-dotnet-payloads-and-reports: done
   9-5-dotnet-engine-context-and-gate: backlog
   9-6-dotnet-xunit-adapter: backlog
   9-7-dotnet-ichatclient-and-docs: backlog

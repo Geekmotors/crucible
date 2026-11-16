@@ -6,6 +6,9 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="$(RepositoryRoot)/schemas/*.md" LogicalName="schemas/%(Filename)%(Extension)" LinkBase="schemas" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Geekmotors.Crucible.Tests" />
   </ItemGroup>
 </Project>

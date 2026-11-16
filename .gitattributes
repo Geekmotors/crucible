@@ -1,0 +1,4 @@
+schemas/*.md text eol=lf
+spec/**/*.json text eol=lf
+conformance/** text eol=lf
+*.sh text eol=lf
