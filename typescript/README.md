@@ -99,7 +99,17 @@ OpenAI:
 }
 ```
 
-Azure OpenAI, a LiteLLM gateway, or a local server such as Ollama (`http://localhost:11434/v1`) work the same way with their own `baseUrl`. `meta` fields go to the provider as-is, so drop OpenRouter's `reasoning` line for any other endpoint. More examples and what has been tested live: [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
+A local Ollama, no key needed:
+
+```json
+{
+  "provider": "openai-compatible",
+  "baseUrl": "http://localhost:11434/v1",
+  "model": "qwen3:8b"
+}
+```
+
+Azure OpenAI, a LiteLLM gateway or LM Studio work the same way with their own `baseUrl`. `meta` fields go to the provider as-is, so drop OpenRouter's `reasoning` line for any other endpoint. More examples and what has been tested live: [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
 
 **2. Set your API key** in the environment. Never put it in the config file.
 
