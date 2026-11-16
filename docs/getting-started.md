@@ -21,11 +21,11 @@ the key, tuning and reading a failure work the same way.
 ## 1. Install
 
 Requirements: Node.js 22 or newer (22.12 or newer for Vitest 5), Jest 30 or Vitest 5 (optional peer
-dependencies — Crucible uses the runner you already have), and access to a judge model: an
-[OpenRouter](https://openrouter.ai) account with credit (the default), an
-OpenAI API key, or any OpenAI-compatible endpoint — Azure OpenAI, a LiteLLM
-gateway, a local server such as Ollama. Hosted judge calls are paid model
-calls.
+dependencies — Crucible uses the runner you already have), and a judge model
+behind any OpenAI-compatible chat completions API: an
+[OpenRouter](https://openrouter.ai) account with credit (what `init` sets up),
+an OpenAI API key, Azure OpenAI, a LiteLLM gateway, or a local server such as
+Ollama. Hosted judge calls are paid model calls.
 
 ```sh
 npm install --save-dev crucible-ai

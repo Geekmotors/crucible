@@ -30,14 +30,14 @@ Why this exists, and how it compares with promptfoo, DeepEval and others: [Inspi
 - **Reliability gates:** every test runs its whole body concurrently (10 runs by default) and passes on the pass rate (0.9 by default); `{ runs, threshold }` tunes both.
 - **Readable failures:** the report shows the pass rate, each failed run and the judge's reasoning.
 - **Fail fast, spend less:** a fatal provider or config error stops the sibling runs.
-- **Any judge model, your provider:** [OpenRouter](https://openrouter.ai), OpenAI, or any OpenAI-compatible endpoint (Azure OpenAI, a LiteLLM gateway, Ollama; only OpenRouter's compatible endpoint is tested live so far), chosen in a committed config file.
+- **Any OpenAI-compatible judge:** the judge is any model behind an OpenAI-compatible chat completions API, chosen in a committed config file: [OpenRouter](https://openrouter.ai), OpenAI, Azure OpenAI, a LiteLLM gateway, or a local server such as Ollama. Only OpenRouter has been tested live so far.
 - ESM and CommonJS builds, bundled TypeScript types, published with npm provenance.
 
 ## Requirements
 
 - Node.js 22 or later (Vitest 5 itself needs Node.js 22.12 or later)
 - Jest 30 (with the default `injectGlobals: true`) or Vitest 5. Both are optional peer dependencies: install the one you use.
-- Access to a judge model: an OpenRouter API key with credit (the default), an OpenAI API key, or an OpenAI-compatible endpoint. Hosted judge calls are paid model calls, typically a fraction of a cent each.
+- A judge model behind an OpenAI-compatible chat completions API, for example an OpenRouter or OpenAI API key with credit. Hosted judge calls are paid model calls, typically a fraction of a cent each.
 
 ## Installation
 
@@ -76,12 +76,45 @@ This writes `crucible.config.jsonc`: the provider, the judge model and an OpenRo
 
 The `$schema` line gives your editor autocomplete and hover docs for every field. `init` never overwrites: if `crucible.config.json` or `crucible.config.jsonc` already exists, it changes nothing and exits non-zero.
 
-To judge with OpenAI instead, set `"provider": "openai"` and `"model": "gpt-5-mini"`, and remove the OpenRouter `meta` line. For Azure OpenAI, a gateway or a local model server, use `"provider": "openai-compatible"` with a `"baseUrl"`. See [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
+**Pick your judge.** Crucible talks to any OpenAI-compatible chat completions API: set `"provider": "openai-compatible"` and point `"baseUrl"` at the API root (the part before `/chat/completions`).
+
+OpenRouter (one key, every model):
+
+```jsonc
+{
+  "provider": "openai-compatible",
+  "baseUrl": "https://openrouter.ai/api/v1",
+  "model": "deepseek/deepseek-v4-flash-0731",
+  "meta": { "reasoning": { "effort": "low" } } // OpenRouter-only setting
+}
+```
+
+OpenAI:
+
+```json
+{
+  "provider": "openai-compatible",
+  "baseUrl": "https://api.openai.com/v1",
+  "model": "gpt-5-mini"
+}
+```
+
+A local Ollama, no key needed:
+
+```json
+{
+  "provider": "openai-compatible",
+  "baseUrl": "http://localhost:11434/v1",
+  "model": "qwen3:8b"
+}
+```
+
+Azure OpenAI, a LiteLLM gateway or LM Studio work the same way with their own `baseUrl`. `meta` fields go to the provider as-is, so drop OpenRouter's `reasoning` line for any other endpoint. More examples and what has been tested live: [Providers](https://github.com/Geekmotors/crucible-ai/blob/main/docs/configuration.md#providers).
 
 **2. Set your API key** in the environment. Never put it in the config file.
 
 ```sh
-export CRUCIBLE_JUDGE_KEY=...   # every provider reads it; "apiKeyEnv" in the config names another variable
+export CRUCIBLE_JUDGE_KEY=...   # your OpenRouter or OpenAI key; "apiKeyEnv" in the config names another variable
 ```
 
 **3. Write a test.** With no options it is already a reliability gate: the body runs 10 times concurrently and the test passes when at least 9 runs pass:
@@ -212,7 +245,8 @@ Put defaults for every `crucible.it()` in the config; they replace the built-in 
 
 ```json
 {
-  "provider": "openrouter",
+  "provider": "openai-compatible",
+  "baseUrl": "https://openrouter.ai/api/v1",
   "model": "deepseek/deepseek-v4-flash-0731",
   "testDefaults": { "runs": 20, "threshold": 0.85, "testTimeout": 90000 }
 }
