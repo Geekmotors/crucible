@@ -105,10 +105,7 @@ It writes `crucible.config.jsonc`. The top sets the judge:
 {
   "$schema": "./node_modules/crucible-ai/schemas/crucible.config.schema.json",
   "provider": "openrouter",
-  "model": "deepseek/deepseek-v4-flash-0731",
-  // OpenRouter reasoning setting that speeds up the model above; extra request fields
-  // go to the provider as-is, so remove or change this when you switch provider.
-  "meta": { "reasoning": { "effort": "low" } },
+  "model": "anthropic/claude-haiku-5.5",
 
   // Every line below shows a default. Uncomment a line to change it.
   // "apiKeyEnv": "CRUCIBLE_JUDGE_KEY", // the variable holding the key, never the key
@@ -122,14 +119,8 @@ It writes `crucible.config.jsonc`. The top sets the judge:
 - `provider` — the judge provider: `openrouter`, `openai` or
   `openai-compatible` (see below).
 - `model` — a model id your provider serves. The value above is the
-  [recommended default judge](judge-models.md#recommendation-feeds-oq-6) on
-  OpenRouter.
-- `meta` — passed unmodified to the provider as extra request parameters.
-  `{ "reasoning": { "effort": "low" } }` is an OpenRouter setting that keeps
-  the recommended model accurate and well inside Crucible's per-test
-  deadline
-  ([why](judge-models.md#reasoning-effort-and-the-per-test-deadline-story-33-e2e)).
-  Remove or change it when you switch provider.
+  [recommended default judge](judge-models.md#recommended-judge-anthropicclaude-haiku-55) on
+  OpenRouter (Claude Haiku 5.5).
 - The commented lines list every other setting at its default, so you can
   see and change any of them without looking them up.
 
@@ -294,8 +285,7 @@ the config:
 ```json
 {
   "provider": "openrouter",
-  "model": "deepseek/deepseek-v4-flash-0731",
-  "meta": { "reasoning": { "effort": "low" } },
+  "model": "anthropic/claude-haiku-5.5",
   "testDefaults": { "runs": 20, "threshold": 0.85 }
 }
 ```

@@ -30,10 +30,7 @@ writes `crucible.config.jsonc` in the current directory:
   // Judge provider: "openrouter", "openai" or "openai-compatible" (the last also needs
   // a "baseUrl", e.g. "http://localhost:11434/v1"). The API key comes from the environment.
   "provider": "openrouter",
-  "model": "deepseek/deepseek-v4-flash-0731",
-  // OpenRouter reasoning setting that speeds up the model above; extra request fields
-  // go to the provider as-is, so remove or change this when you switch provider.
-  "meta": { "reasoning": { "effort": "low" } },
+  "model": "anthropic/claude-haiku-5.5",
 
   // Every line below shows a default. Uncomment a line to change it.
   // "apiKeyEnv": "CRUCIBLE_JUDGE_KEY", // the variable holding the key, never the key
@@ -49,10 +46,8 @@ writes `crucible.config.jsonc` in the current directory:
 }
 ```
 
-- `meta` is the one active setting beyond the judge: an OpenRouter
-  reasoning setting for the recommended model
-  ([why](judge-models.md#reasoning-effort-and-the-per-test-deadline-story-33-e2e)).
-  Remove or change it when you switch provider ([`meta`](#meta)).
+- The recommended model needs no extra request fields, so there is no
+  [`meta`](#meta) line; add one for any parameter your provider accepts.
 - Uncomment a line to change that setting; a commented line changes nothing.
   Uncomment `"testDefaults": {`, the fields you want and the closing `},`
   together.
@@ -117,8 +112,8 @@ a wrong path only loses the editor hints.
 ```json
 {
   "provider": "openrouter",
-  "model": "deepseek/deepseek-v4-flash-0731",
-  "meta": { "reasoning": { "effort": "low" } },
+  "model": "anthropic/claude-haiku-5.5",
+  "meta": { "max_tokens": 400 },
   "verbosity": "default",
   "testDefaults": { "runs": 20, "threshold": 0.85, "testTimeout": 90000 },
   "excerptChars": 500
@@ -146,8 +141,8 @@ With the config above, each request to OpenRouter is:
 
 ```json
 {
-  "reasoning": { "effort": "low" },
-  "model": "deepseek/deepseek-v4-flash-0731",
+  "max_tokens": 400,
+  "model": "anthropic/claude-haiku-5.5",
   "messages": [{ "role": "system", "content": "…" }, { "role": "user", "content": "…" }]
 }
 ```
@@ -262,7 +257,7 @@ provider-specific fields of its own to the request.
 ### `openrouter`
 
 One key gives you every model OpenRouter routes to. `model` is an OpenRouter
-model id such as `deepseek/deepseek-v4-flash-0731`. This is the provider
+model id such as `anthropic/claude-haiku-5.5`. This is the provider
 Crucible's own tests, judge measurements and CI run on.
 
 ### `openai`
@@ -347,7 +342,7 @@ LM Studio works the same way at `http://localhost:1234/v1`.
 {
   "provider": "openai-compatible",
   "baseUrl": "https://openrouter.ai/api/v1",
-  "model": "deepseek/deepseek-v4-flash-0731"
+  "model": "anthropic/claude-haiku-5.5"
 }
 ```
 
@@ -381,22 +376,20 @@ raise `inferenceTimeout` if calls time out).
 
 ## Choosing a judge model
 
-The recommended default judge is `deepseek/deepseek-v4-flash-0731` with
-`"meta": { "reasoning": { "effort": "low" } }`:
+The recommended default judge is `anthropic/claude-haiku-5.5` on OpenRouter,
+with no `meta`:
 
-- It matched more expensive models on every case of the validation matrix at
-  a fraction of the cost ([judge-models.md](judge-models.md),
-  [raw runs](judge-validation-runs.md)). Cost dominates once multi-run gates
-  multiply call volume.
-- With default reasoning it takes ~11 s per call, which leaves little room in
-  the default test timeout (30 s plus 1 s per extra run; 39 s for the
-  default 10 runs) when a body awaits
-  several judgments in sequence; raise `testTimeout` (per test or in
-  `testDefaults`) if your bodies need longer
-  ([Timeout](runs-and-threshold.md#timeout)).
-  Low effort brings it to ~4–5 s.
-- Do **not** disable reasoning (`"enabled": false`): it is faster and cheaper
-  but was unreliable on claims about state (a 3-run gate failed 2 of 3 runs).
+- It got every verdict and value right in 820 conformance calls across all
+  41 cases, at ~1.4 s and ~$0.00025 per call
+  ([judge-models.md](judge-models.md#recommended-judge-anthropicclaude-haiku-55)).
+  A default 10-run test with one assertion costs about $0.0025 in judge calls.
+- Its only output slip was an occasional trailing comma in the JSON reply,
+  which Crucible repairs without asking again.
+- The previous default, `deepseek/deepseek-v4-flash-0731` with
+  `"meta": { "reasoning": { "effort": "low" } }`, is cheaper but slower
+  (~4–5 s), and in CI it sometimes broke the JSON format or got a stateful
+  case wrong. If you keep it, keep that `meta`: with reasoning disabled it was
+  unreliable on claims about state (a 3-run gate failed 2 of 3 runs).
 
 This guidance is provisional. The validation matrix is small and
 deliberately unambiguous, so it cannot yet tell models apart on hard cases.

@@ -308,7 +308,7 @@ NUnit: a `[SetUpFixture]` with `[OneTimeSetUp]`; MSTest:
   choice and pass through unchanged. `ConversationId` is cleared on every
   call, so no judge call continues a server-side conversation. The
   reply is `ChatResponse.Text`, held to the same rules as a provider reply:
-  strict JSON, one re-ask when unusable, `InferenceTimeout` enforced through
+  strict JSON with trailing commas dropped, one re-ask when unusable, `InferenceTimeout` enforced through
   the `CancellationToken` passed to the client.
 - **Failures.** One attempt plus up to two retries (after 250 to 500 ms,
   then 500 to 1000 ms) for transient failures: an `HttpRequestException`

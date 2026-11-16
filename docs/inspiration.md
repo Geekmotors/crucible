@@ -137,9 +137,12 @@ prompt; details in [docs/judge-models.md](judge-models.md)):
 
 Every model held the strict-JSON output contract for all 60 calls and
 returned the correct verdict on every case, including the knowledge-boundary
-(anti-omniscience) leak. Recommended default judge:
-`deepseek/deepseek-v4-flash-0731` — equal accuracy at a fraction of the
-cost, which dominates once multi-run reliability gates multiply call volume.
+(anti-omniscience) leak. That first spike picked
+`deepseek/deepseek-v4-flash-0731` as the default on cost. On the full
+conformance suite (41 cases, 820 calls, November 2026)
+`anthropic/claude-haiku-5.5` got every verdict and value right at ~1.4 s and
+~$0.00025 per call, and is now the recommended judge
+([details](judge-models.md#recommended-judge-anthropicclaude-haiku-55)).
 Reliability was graded by comparing each model's verdicts and reasoning
 against a frontier model's independent interpretation of the same cases.
 

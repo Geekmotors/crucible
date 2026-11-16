@@ -78,7 +78,8 @@ The file itself is authoritative; read it for the exact wording.
 { "verdict": false, "reasoning": "The reply names the Blue Door cafe, which reveals the meeting place." }
 ```
 
-Crucible accepts that object (tolerating a surrounding markdown code fence),
+Crucible accepts that object (tolerating a surrounding markdown code fence
+and a trailing comma),
 and asks once more if the reply is anything else. The `reasoning` is what
 appears under *Judge reasoning* in failure reports.
 
@@ -234,8 +235,8 @@ lenient
 { "value": null, "reasoning": "The reply hedges between two and three (\"Probably two, maybe three\")." }
 ```
 
-Crucible accepts the object (tolerating a surrounding markdown code fence)
-only when `value` is `null` or of the requested type and `reasoning` is a
+Crucible accepts the object (tolerating a surrounding markdown code fence
+and a trailing comma) only when `value` is `null` or of the requested type and `reasoning` is a
 string; anything else is asked once more and then errors the run as a
 retryable `infra` error. The `reasoning` appears under *Judge reasoning* in
 the `Extraction` lines of failure reports.

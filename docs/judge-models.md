@@ -1,11 +1,44 @@
-# Judge Model Notes — `coherent` schema validation (Story 1.3 spike)
+# Judge Model Notes
+
+## Recommended judge: `anthropic/claude-haiku-5.5`
+
+Measured 2026-11-16 on OpenRouter with the full conformance suite (9
+`coherent` and 32 `extract` cases, 5 reps each, 205 calls per run), without
+extended thinking: two runs with no `meta`, two with
+`"meta": { "response_format": { "type": "json_object" } }`:
+
+| Runs | Calls | Wrong verdicts or values | Replies not strict JSON | Median latency | Cost / call | Cost / run |
+| --- | --- | --- | --- | --- | --- | --- |
+| 4 | 820 | 0 | 3 (all a trailing comma) | ~1.4 s | ~$0.00025 | ~$0.05 |
+
+- Every verdict and value was right, including the knowledge-boundary and
+  room-booking cases that the previous default only got right with
+  reasoning turned on.
+- The only output slip was a trailing comma after `reasoning`
+  (`{ "value": 7, "reasoning": "...", }`), about 1 reply in 270. Crucible
+  drops a trailing comma before parsing a reply
+  ([spec](../spec/README.md#judge--reply)), so these replies are usable and
+  cost no extra call. OpenRouter's `"response_format": { "type": "json_object" }`
+  did not stop it, so the recommended config does not set it.
+- About 2.5× the cost per call of the previous default
+  (`deepseek/deepseek-v4-flash-0731`) and about 3× faster.
+
+Why the default changed: in CI conformance runs from 2026-11-14 to
+2026-11-16, `deepseek/deepseek-v4-flash-0731` (with `"reasoning": { "effort":
+"low" }`) returned replies with unescaped quotes inside `reasoning` (twice) and a
+stray `)` after the JSON, which no repair can safely fix, and one wrong
+verdict (`knowledge-boundary-sealed-winner-known`). Each failed a CI run.
+(A fenced reply also failed one run; Crucible always accepted fences, and
+the harness now does too.)
+
+## History: `coherent` schema validation (Story 1.3 spike)
 
 Run date: 2026-09-14 · 3 models × 4 conformance cases × 5 repetitions = 60 real
 OpenRouter calls against `schemas/coherent.md` (schema as system prompt, payload
 assembled per the schema's documented order). Fixtures:
 `conformance/cases/coherent.json`.
 
-## Results
+### Results
 
 | Model | JSON compliance | Verdict accuracy | Median latency | Cost / call | Total run cost |
 | --- | --- | --- | --- | --- | --- |
@@ -13,7 +46,7 @@ assembled per the schema's documented order). Fixtures:
 | `google/gemini-3.8-flash` | 20/20 | 20/20 | 3.2 s | ~$0.0014 | $0.027 |
 | `anthropic/claude-sonnet-5` | 20/20 | 20/20 | 2.4 s | ~$0.0025 | $0.049 |
 
-## Ratings (1–5; reliability graded by comparing each model's verdicts and stated reasoning against Claude Fable 5's own interpretation of every case)
+### Ratings (1–5; reliability graded by comparing each model's verdicts and stated reasoning against Claude Fable 5's own interpretation of every case)
 
 | Model | Speed | Cost | Reliability | Notes |
 | --- | --- | --- | --- | --- |
@@ -21,7 +54,7 @@ assembled per the schema's documented order). Fixtures:
 | `google/gemini-3.8-flash` | 4 | 4 | 5 | Quotes response evidence verbatim in reasoning; fully aligned verdicts |
 | `anthropic/claude-sonnet-5` | 5 | 3 | 5 | Fastest and the only model that explicitly weaves STATE facts into its justification (richest diagnostics for failure output) |
 
-## Recommendation (feeds OQ-6)
+### Recommendation at the time (feeds OQ-6; superseded above)
 
 - **Default judge:** `deepseek/deepseek-v4-flash-0731` — indistinguishable
   accuracy on this matrix at a fraction of the cost; multi-run pass-rate testing
@@ -33,7 +66,7 @@ assembled per the schema's documented order). Fixtures:
   cases (partial reveals, implication-only leaks, multi-fact state conflicts)
   — deliberate follow-up for the conformance cases.
 
-## Wire findings (confirms Story 1.2 adapter assumptions)
+### Wire findings (confirms Story 1.2 adapter assumptions)
 
 - Envelope shape `choices[0].message.content` confirmed on all three models.
 - Strict-JSON output held for 60/60 calls with no code fences — the schema's
@@ -64,8 +97,9 @@ Measured 2026-11-13 against real OpenRouter while building the e2e suite:
   a 3-run gate failed 2 of 3 runs on the e2e room-booking scenario (now the
   `room-booking-*` conformance cases).
 - The judge config `typescript/e2e/crucible.config.json` (the live smoke and the default
-  for `make conformance`) uses `"reasoning": { "effort": "low" }`: correct
-  verdicts, inside the deadline.
+  for `make conformance`) used `"reasoning": { "effort": "low" }` with this
+  model: correct verdicts, inside the deadline. It now uses
+  `anthropic/claude-haiku-5.5` with no `meta`, at ~1.4 s per call.
 - Multi-step bodies that start every step's `coherent` call before awaiting
   any of them (each call judges the state as it stands when it is made) cost
   about one judge round trip per run instead of one per step.
@@ -99,7 +133,9 @@ errored or verdicts wrong whichever provider serves it. Before relying on a
 different model — on OpenRouter, on OpenAI, or behind an `openai-compatible`
 endpoint — check it with the conformance harness, which sends the real
 schemas and the conformance cases to your judge and reports, per case,
-whether each reply was strict JSON and matched the expected verdict or value.
+whether each reply matched the expected verdict or value, how many replies
+were strict JSON as sent, and how many were usable only after the repairs
+Crucible itself makes (removing a code fence, dropping a trailing comma).
 
 ```sh
 make conformance CONFORMANCE_CONFIG=path/to/your/crucible.config.json

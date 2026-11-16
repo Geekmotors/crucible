@@ -30,7 +30,7 @@ or keep both references at the same version. Release notes:
    {
      "$schema": "https://raw.githubusercontent.com/Geekmotors/crucible-ai/main/schemas/crucible.config.schema.json",
      "provider": "openrouter",
-     "model": "deepseek/deepseek-v4-flash-0731"
+     "model": "anthropic/claude-haiku-5.5"
    }
    ```
 
@@ -201,8 +201,8 @@ public sealed class JudgeSetup
 - The config file becomes optional. If present, `testDefaults`, `verbosity` and `excerptChars` still apply;
   `provider`, `model`, `baseUrl`, `apiKeyEnv` and `meta` are ignored with one warning on standard error.
 - Each judge call sends a system and a user message with a copy of your `ChatOptions`; choose the model and
-  temperature there or in the client. The reply follows the same rules as a provider reply (strict JSON, one re-ask,
-  `InferenceTimeout`).
+  temperature there or in the client. The reply follows the same rules as a provider reply (strict JSON with trailing commas dropped,
+  one re-ask, `InferenceTimeout`).
 - An `HttpRequestException` without status or with 408, 429 or 5xx, a `TimeoutException`, an `IOException`, a
   client-side timeout, or an SDK exception whose public `int Status` (itself or an inner exception) is 408, 429 or
   5xx (OpenAI's `ClientResultException`, Azure's `RequestFailedException`) is retried twice, then errors the run. Any
