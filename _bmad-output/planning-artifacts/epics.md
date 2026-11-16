@@ -819,4 +819,4 @@ So that npm and NuGet each show their own README and the docs separate concepts 
 
 ### Story 9.8: Publish to NuGet
 
-**Then** `publish-dotnet.yml` packs both packages (SourceLink, deterministic, symbols, README, licence), verifies the tag `dotnet-vX.Y.Z` matches the version and the commit is on `main`, waits for the `nuget` environment, logs in with trusted publishing and pushes; RELEASING.md covers .NET; `Geekmotors.Crucible` and `Geekmotors.Crucible.Xunit` 0.1.0 are released
+**Then** `publish-dotnet.yml` packs both packages (SourceLink, deterministic, symbols, README, licence), pins `Geekmotors.Crucible.Xunit`'s dependency on `Geekmotors.Crucible` to the exact same version (it uses internals), verifies the tag `dotnet-vX.Y.Z` matches the version and the commit is on `main`, waits for the `nuget` environment, logs in with trusted publishing and pushes; RELEASING.md covers .NET; `Geekmotors.Crucible` and `Geekmotors.Crucible.Xunit` 0.1.0 are released

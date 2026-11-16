@@ -3,6 +3,7 @@ namespace CrucibleAI.Tests.Constants;
 internal static class EngineRuns
 {
     public const int Single = 1;
+    public const int Pair = 2;
     public const int Few = 3;
     public const int Many = 10;
     public const int FromTestDefaults = 2;

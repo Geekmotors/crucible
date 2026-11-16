@@ -9,7 +9,7 @@ public sealed class ConsumerNamespaceTests
     public async Task AGeekmotorsNamespaceReachesTheCrucibleEntryPoint()
     {
         var error = await Assert.ThrowsAsync<CrucibleException>(
-            () => Crucible.Gate(new RunOptions { Runs = OptionValues.NoRuns }, _ => Task.CompletedTask));
+            () => Crucible.Gate(new RunOptions { Runs = OptionValues.NoRuns }, _ => Task.CompletedTask, TestContext.Current.CancellationToken));
 
         Assert.Equal(CrucibleErrorKind.Usage, error.Kind);
     }

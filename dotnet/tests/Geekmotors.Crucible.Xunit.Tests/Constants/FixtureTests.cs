@@ -1,0 +1,51 @@
+namespace CrucibleAI.Xunit.Tests.Constants;
+
+internal static class FixtureTests
+{
+    public const string FolderKey = "CrucibleFixtureFolder";
+    public const string Assembly = "Geekmotors.Crucible.Xunit.Fixture.dll";
+    public const string FirstInClass = "CrucibleAI.Xunit.Fixture.Isolation.SameClassTests.TheFirstTestSeesOnlyItsOwnFacts";
+    public const string SecondInClass = "CrucibleAI.Xunit.Fixture.Isolation.SameClassTests.TheSecondTestSeesOnlyItsOwnFacts";
+    public const string ParallelLeft = "CrucibleAI.Xunit.Fixture.Isolation.ParallelLeftTests.MeetsTheOtherClassAndSeesOnlyItsOwnFacts";
+    public const string ParallelRight = "CrucibleAI.Xunit.Fixture.Isolation.ParallelRightTests.MeetsTheOtherClassAndSeesOnlyItsOwnFacts";
+    public const string CollectionAlpha = "CrucibleAI.Xunit.Fixture.Isolation.CollectionAlphaTests.MeetsTheOtherCollectionAndSeesOnlyItsOwnFacts";
+    public const string CollectionBeta = "CrucibleAI.Xunit.Fixture.Isolation.CollectionBetaTests.MeetsTheOtherCollectionAndSeesOnlyItsOwnFacts";
+    public const string InlineRows = "CrucibleAI.Xunit.Fixture.Isolation.TheoryRowsTests.EachInlineRowSeesOnlyItsOwnFacts";
+    public const string ClassDataRows = "CrucibleAI.Xunit.Fixture.Isolation.TheoryRowsTests.EachClassDataRowSeesOnlyItsOwnFacts";
+    public const string RunTimeRows = "CrucibleAI.Xunit.Fixture.Isolation.TheoryRowsTests.EachRowEnumeratedAtRunTimeSeesOnlyItsOwnFacts";
+    public const string RunInstances = "CrucibleAI.Xunit.Fixture.Isolation.RunInstanceTests.EachRunHasItsOwnInstanceAndFacts";
+    public const string Lifetime = "CrucibleAI.Xunit.Fixture.Lifecycle.LifetimeTests.EachRunIsInitialisedOutsideTheRunAndDisposedAfterIt";
+    public const string FailingDisposal = "CrucibleAI.Xunit.Fixture.Lifecycle.FailingDisposalTests.EveryRunFailsWhenItsInstanceCannotBeDisposed";
+    public const string Sequential = "CrucibleAI.Xunit.Fixture.Lifecycle.SequentialTests.RunsOneAtATime";
+    public const string Concurrent = "CrucibleAI.Xunit.Fixture.Lifecycle.ConcurrentTests.RunsAllAtOnce";
+    public const string PlainFact = "CrucibleAI.Xunit.Fixture.Usage.PlainFactTests.APlainFactCannotAddFacts";
+    public const string Constructor = "CrucibleAI.Xunit.Fixture.Usage.ConstructorTests.TheConstructorRunsOutsideTheRun";
+    public const string StaticInitialiser = "CrucibleAI.Xunit.Fixture.Usage.StaticInitialiserTests.TheStaticInitialiserRunsOutsideAnyRun";
+    public const string ClassFixture = "CrucibleAI.Xunit.Fixture.Usage.ClassFixtureTests.TheClassFixtureIsBuiltOutsideAnyRun";
+    public const string CollectionFixture = "CrucibleAI.Xunit.Fixture.Usage.CollectionFixtureTests.TheCollectionFixtureIsBuiltOutsideAnyRun";
+    public const string ClassSetsRuns = "CrucibleAI.Xunit.Fixture.Settings.ClassDefaultsTests.TheClassSetsTheRuns";
+    public const string MethodOverridesClass = "CrucibleAI.Xunit.Fixture.Settings.ClassDefaultsTests.TheMethodOverridesTheClass";
+    public const string AssemblySetsRuns = "CrucibleAI.Xunit.Fixture.Settings.AssemblyDefaultsTests.TheAssemblySetsTheRuns";
+    public const string FailingVerdict = "CrucibleAI.Xunit.Fixture.Results.FailingVerdictTests.FailsWithTheReport";
+    public const string Skipped = "CrucibleAI.Xunit.Fixture.Results.SkippedTests.NeverRuns";
+    public const string TimedOut = "CrucibleAI.Xunit.Fixture.Results.TimedOutTests.IsCancelledByXunitsTimeout";
+    public const string CancellationObserved = "CrucibleAI.Xunit.Fixture.Results.CancellationObserverTests.TheTimedOutRunWasCancelled";
+    public const string StaticMethod = "CrucibleAI.Xunit.Fixture.Lifecycle.StaticMethodTests.RunsWithoutAnInstanceAfterItsStaticInitialiser";
+    public const string LifecycleNamespace = "CrucibleAI.Xunit.Fixture.Lifecycle";
+    public const string AsyncVoid = "CrucibleAI.Xunit.Fixture.Lifecycle.AsyncVoidTests.IsRefused";
+    public const string UnknownAwaitable = "CrucibleAI.Xunit.Fixture.Lifecycle.UnknownAwaitableTests.IsRefused";
+    public const string SynchronousShape = "CrucibleAI.Xunit.Fixture.Lifecycle.ReturnShapeTests.ASynchronousMethodRunsInsideItsRun";
+    public const string ValueTaskShape = "CrucibleAI.Xunit.Fixture.Lifecycle.ReturnShapeTests.AValueTaskMethodRunsInsideItsRun";
+    public const string ValueTaskOfTShape = "CrucibleAI.Xunit.Fixture.Lifecycle.ReturnShapeTests.AValueTaskOfTMethodRunsInsideItsRun";
+    public const string TaskOfTShape = "CrucibleAI.Xunit.Fixture.Lifecycle.ReturnShapeTests.ATaskOfTMethodRunsInsideItsRun";
+    public const string FailingConstructor = "CrucibleAI.Xunit.Fixture.Lifecycle.FailingConstructorTests.EveryRunFailsWhenItsInstanceCannotBeBuilt";
+    public const string FailingInitialise = "CrucibleAI.Xunit.Fixture.Lifecycle.FailingInitialiseTests.EveryRunFailsWhenItsInstanceCannotBeInitialised";
+    public const string AssertSkip = "CrucibleAI.Xunit.Fixture.Results.DynamicSkipTests.SkipsWhenARunCallsAssertSkip";
+    public const string SkipException = "CrucibleAI.Xunit.Fixture.Results.DynamicSkipTests.SkipsWhenARunThrowsASkipException";
+    public const string UsageError = "CrucibleAI.Xunit.Fixture.Results.UsageErrorTests.FailsWithTheUsageErrorARunThrows";
+    public const string Injection = "CrucibleAI.Xunit.Fixture.Usage.InjectionTests.EachRunReceivesTheOutputHelperAndTheAssemblyFixture";
+    public const string InvalidSettings = "CrucibleAI.Xunit.Fixture.Results.InvalidSettingsTests.FailsAsAUsageError";
+    public const int InlineRowCount = 3;
+    public const int DataRowCount = 2;
+    public const string FailedReportHeadline = "FAILED:";
+}

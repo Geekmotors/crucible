@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CrucibleAI.Xunit.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Geekmotors.Crucible/Geekmotors.Crucible.csproj" />
+    <ProjectReference Include="../../src/Geekmotors.Crucible.Xunit/Geekmotors.Crucible.Xunit.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Geekmotors.Crucible.Xunit.Fixture/Geekmotors.Crucible.Xunit.Fixture.csproj" ReferenceOutputAssembly="false" />
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>CrucibleFixtureFolder</_Parameter1>
+      <_Parameter2>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../Geekmotors.Crucible.Xunit.Fixture/bin/$(Configuration)/$(TargetFramework)/'))</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

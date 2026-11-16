@@ -32,7 +32,7 @@ internal sealed class EngineHarness
 
     public GateEngine Engine { get; }
 
-    public Task RunAsync(RunOptions options, Func<CrucibleContext, Task> body) => Engine.RunAsync(new GateRequest([], options, _ => body, false));
+    public Task RunAsync(RunOptions options, Func<CrucibleContext, Task> body) => Engine.RunAsync(new GateRequest([], options, _ => Task.FromResult(RunBody.Of(body)), false));
 
     public Task RunAsync(GateRequest request) => Engine.RunAsync(request);
 

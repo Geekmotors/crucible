@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Runtime.ExceptionServices;
 using CrucibleAI.Options;
+using CrucibleAI.Providers;
 using CrucibleAI.Runs;
 using CrucibleAI.Tracing;
 using CrucibleAI.Verdicts;
@@ -16,23 +17,26 @@ internal sealed class GateEngine(Func<EngineSession> session, TimeProvider time)
     private readonly VerdictCalculator _calculator = new();
     private readonly RunScope _scope = new();
 
-    public GateEngine()
-        : this(EngineSession.FromConfigFile, TimeProvider.System)
+    private const string NoTask = "A Crucible test body must return a Task, not null.";
+
+    public GateEngine(IJudgeClient? judge)
+        : this(() => EngineSession.FromConfigFile(judge), TimeProvider.System)
     {
     }
 
-    public Task GateAsync(RunOptions? options, Func<CrucibleContext, Task>? body)
+    public Task GateAsync(RunOptions? options, Func<CrucibleContext, Task>? body, CancellationToken cancellationToken = default)
     {
         if (body is null)
         {
             throw CrucibleException.Usage("Crucible.Gate needs a test body.");
         }
         var declared = _validator.Validate(options, RunOptionsSource.Test);
-        return RunAsync(new GateRequest([], declared, _ => body, false));
+        return RunAsync(new GateRequest([], declared, _ => Task.FromResult(RunBody.Of(body)), false, cancellationToken));
     }
 
     public async Task RunAsync(GateRequest request)
     {
+        request.Cancellation.ThrowIfCancellationRequested();
         var session = _session.Value;
         var options = _resolver.Resolve([session.TestDefaults, .. request.Groups, request.Declared]);
         session.Trace.Write(new TestStartedEvent(options.Runs, options.Threshold, options.TestTimeout));
@@ -41,8 +45,12 @@ internal sealed class GateEngine(Func<EngineSession> session, TimeProvider time)
         var batch = new RunBatch(runs, session.Trace);
         BatchEnd end;
         using (time.CreateTimer(_ => batch.Expire(options.TestTimeout), null, TimeSpan.FromMilliseconds(options.TestTimeout), Timeout.InfiniteTimeSpan))
+        using (request.Cancellation.Register(() => batch.Cancel(request.Cancellation)))
         {
-            Start(request, runs, batch);
+            if (!batch.IsEnded)
+            {
+                Start(request, runs, batch);
+            }
             end = await batch.Ended.ConfigureAwait(false);
         }
         foreach (var run in runs)
@@ -75,12 +83,16 @@ internal sealed class GateEngine(Func<EngineSession> session, TimeProvider time)
     private async Task RunOneAsync(GateRequest request, RunState run, RunBatch batch)
     {
         Exception? thrown = null;
+        RunBody? body = null;
         try
         {
             _scope.Enter(null);
-            var body = request.BodyFor(run.Number);
-            _scope.Enter(run);
-            await (body(run.Context) ?? throw CrucibleException.Usage("A Crucible test body must return a Task, not null.")).ConfigureAwait(false);
+            body = await (request.BodyFor(run.Number) ?? throw CrucibleException.Usage(NoTask)).ConfigureAwait(false);
+            if (!batch.IsEnded)
+            {
+                _scope.Enter(run);
+                await (body.Invoke(run.Context) ?? throw CrucibleException.Usage(NoTask)).ConfigureAwait(false);
+            }
         }
         catch (Exception failure)
         {
@@ -89,8 +101,26 @@ internal sealed class GateEngine(Func<EngineSession> session, TimeProvider time)
         finally
         {
             run.Close();
+            _scope.Enter(null);
+        }
+        if (body is not null)
+        {
+            thrown = await TearDownAsync(body, thrown).ConfigureAwait(false);
         }
         batch.Settle(run, _classifier.Classify(thrown), thrown);
+    }
+
+    private static async Task<Exception?> TearDownAsync(RunBody body, Exception? thrown)
+    {
+        try
+        {
+            await body.TeardownAsync().ConfigureAwait(false);
+            return thrown;
+        }
+        catch (Exception failure)
+        {
+            return thrown ?? failure;
+        }
     }
 
     private void Conclude(BatchEnd end, ResolvedRunOptions options, EngineSession session)

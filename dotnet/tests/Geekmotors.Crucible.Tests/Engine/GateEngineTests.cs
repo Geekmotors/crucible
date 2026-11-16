@@ -49,12 +49,12 @@ public sealed class GateEngineTests
         var harness = new EngineHarness();
         var gauge = new ConcurrencyGauge();
 
-        await harness.RunAsync(new GateRequest([], EngineRuns.AllOfMany, _ => async _ =>
+        await harness.RunAsync(new GateRequest([], EngineRuns.AllOfMany, _ => Task.FromResult(RunBody.Of(async _ =>
         {
             gauge.Enter();
             await Task.Yield();
             gauge.Leave();
-        }, true));
+        })), true));
 
         Assert.Equal(EngineRuns.OneAtATime, gauge.Most);
     }
@@ -68,7 +68,7 @@ public sealed class GateEngineTests
         await harness.RunAsync(new GateRequest([], EngineRuns.AllOfFew, run =>
         {
             built.Add(run);
-            return _ => Task.CompletedTask;
+            return Task.FromResult(RunBody.Of(_ => Task.CompletedTask));
         }, false));
 
         Assert.Equal(Enumerable.Range(1, EngineRuns.Few), built.Order());
@@ -80,11 +80,11 @@ public sealed class GateEngineTests
         var harness = new EngineHarness(config: EngineTexts.ConfigWithTestDefaults);
         var runs = 0;
 
-        await harness.RunAsync(new GateRequest([new RunOptions { Threshold = EngineRuns.Everyone }], new RunOptions(), _ => _ =>
+        await harness.RunAsync(new GateRequest([new RunOptions { Threshold = EngineRuns.Everyone }], new RunOptions(), _ => Task.FromResult(RunBody.Of(_ =>
         {
             Interlocked.Increment(ref runs);
             return Task.CompletedTask;
-        }, false));
+        })), false));
 
         Assert.Equal(EngineRuns.FromTestDefaults, runs);
     }

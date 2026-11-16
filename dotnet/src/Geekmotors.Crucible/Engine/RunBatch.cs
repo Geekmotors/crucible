@@ -75,6 +75,17 @@ internal sealed class RunBatch
         }
     }
 
+    public void Cancel(CancellationToken cancellation)
+    {
+        lock (_gate)
+        {
+            if (!IsEnded)
+            {
+                _end.SetResult(new BatchEnd(new VerdictEnding(), [], null, new OperationCanceledException(cancellation)));
+            }
+        }
+    }
+
     private SettledRun[] WithUnsettledDiscarded(out int discarded)
     {
         var results = new SettledRun[_runs.Count];
