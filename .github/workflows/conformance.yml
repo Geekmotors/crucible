@@ -5,19 +5,17 @@ on:
     branches: [main]
     paths:
       - 'schemas/**'
-      - 'e2e/ext/fixtures/*-conformance.json'
-      - 'e2e/ext/conformance/**'
-      - 'src/core/payload-assembler.util.ts'
-      - 'e2e/crucible.config.json'
+      - 'conformance/**'
+      - 'typescript/src/core/payload-assembler.util.ts'
+      - 'typescript/e2e/crucible.config.json'
       - 'Makefile'
       - '.github/workflows/conformance.yml'
   pull_request:
     paths:
       - 'schemas/**'
-      - 'e2e/ext/fixtures/*-conformance.json'
-      - 'e2e/ext/conformance/**'
-      - 'src/core/payload-assembler.util.ts'
-      - 'e2e/crucible.config.json'
+      - 'conformance/**'
+      - 'typescript/src/core/payload-assembler.util.ts'
+      - 'typescript/e2e/crucible.config.json'
       - 'Makefile'
       - '.github/workflows/conformance.yml'
   schedule:

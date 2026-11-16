@@ -1,6 +1,6 @@
 import { isDeepStrictEqual } from 'node:util';
-import coherentCases from '../../../e2e/ext/fixtures/coherent-conformance.json' with { type: 'json' };
-import extractCases from '../../../e2e/ext/fixtures/extract-conformance.json' with { type: 'json' };
+import coherentCases from '../../../../conformance/cases/coherent.json' with { type: 'json' };
+import extractCases from '../../../../conformance/cases/extract.json' with { type: 'json' };
 import harnessConfig from '../../../e2e/crucible.config.json' with { type: 'json' };
 import { SpecFixtures } from './spec-fixtures.util.js';
 import type { FixtureCase, FixtureFile } from './spec-fixtures.util.js';

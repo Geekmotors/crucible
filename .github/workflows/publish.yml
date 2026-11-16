@@ -19,6 +19,9 @@ jobs:
     strategy:
       matrix:
         node-version: [22, 24]
+    defaults:
+      run:
+        working-directory: typescript
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -28,11 +31,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      - name: Tag matches package.json version
+          cache-dependency-path: typescript/package-lock.json
+      - name: Tag matches typescript/package.json version
         run: |
           version="$(node -p "require('./package.json').version")"
           if [ "$GITHUB_REF_NAME" != "v$version" ]; then
-            echo "::error title=Tag/version mismatch::Tag $GITHUB_REF_NAME does not match package.json version $version. Bump package.json, commit to main, then tag v$version."
+            echo "::error title=Tag/version mismatch::Tag $GITHUB_REF_NAME does not match typescript/package.json version $version. Bump typescript/package.json, commit to main, then tag v$version."
             exit 1
           fi
       - name: Tagged commit is on main
@@ -59,6 +63,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: typescript
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

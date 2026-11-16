@@ -471,3 +471,12 @@
 - The CI `unit` job builds twice (`npm run build` / `tsc -p e2e`, then `make e2e-offline` → `e2e-compile`): seconds, kept so CI runs the documented target.
 - The stub matches the extract MODE section only through the reply script's TARGET/RESPONSE; strict vs lenient request shape rests on the payload goldens.
 - Running the stub Jest config from anywhere but `e2e/stub` (cwd) reads the wrong `crucible.config.json`; `make e2e-offline` is the supported entry point. Node 24 `NODE_USE_ENV_PROXY` with an `HTTP_PROXY` that does not exempt `127.0.0.1` would route stub calls through the proxy.
+
+## Deferred from: code review of 9-1-one-repo-two-packages (2026-11-15)
+
+- `conformance.yml` path filters omit `typescript/src/providers/**` (the TS request builder); request goldens catch envelope drift on every PR, so only live-judge drift from a provider change waits for the weekly run.
+- `typescript/package.json` `prepare: "cd .. && husky"` assumes the parent directory is the git root, and CI does not set `HUSKY=0`; husky 9 exits 0 when no `.git` is found.
+- The pre-commit hook runs lint and format only, not `make spec-goldens-check`; CI catches stale goldens.
+
+- Harness default judge config stays `typescript/e2e/crucible.config.json` (shared with the TS live smoke and the request goldens). Revisit when the .NET port needs its own live-smoke config: consider `conformance/judge.config.json`.
+- CLAUDE.md rules read TypeScript-specific after the move (type vs interface, export style, file suffixes, `typescript/src/api/`, TDD scope); Jack to decide wording for C# ("in spirit" per Epic 9 intro).

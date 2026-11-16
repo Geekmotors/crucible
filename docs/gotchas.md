@@ -196,14 +196,14 @@ a `usage` error, not shared facts. Call `crucible.facts()` from
 code the running body awaits, or use the run context `t` the body receives:
 `t.facts()`, `t.coherent()` and `t.extract()` hold their run, so they work
 from such callbacks until that run ends (afterwards they are a `usage`
-error). See [the run context `t`](api.md#the-run-context-t).
+error). See [the run context `t`](typescript/api.md#the-run-context-t).
 
 ## `facts` never replaces
 
 `crucible.facts()` only adds to the run's facts; calling it twice keeps both
 sets of entries. Add facts while arranging and again after an act. Facts
 passed to a single call (`{ facts }` on `coherent()` or `extract()`) are
-never added to the run. See [`crucible.facts()`](api.md#cruciblefacts).
+never added to the run. See [`crucible.facts()`](typescript/api.md#cruciblefacts).
 
 ## Keep facts consistent
 
@@ -233,7 +233,7 @@ reasoning model at default effort a call can take ~11 s, so three sequential
 `coherent()` calls in one body can run out of time. Use low reasoning effort
 ([recommended config](configuration.md#choosing-a-judge-model)), and start
 independent judgments together and await them at once
-([pattern](api.md#cruciblecoherent)). Each judge reply attempt also has its
+([pattern](typescript/api.md#cruciblecoherent)). Each judge reply attempt also has its
 own limit (`inferenceTimeout`, 30 s by default). Details:
 [Timeout](runs-and-threshold.md#timeout).
 

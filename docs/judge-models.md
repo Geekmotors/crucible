@@ -3,7 +3,7 @@
 Run date: 2026-09-14 · 3 models × 4 conformance cases × 5 repetitions = 60 real
 OpenRouter calls against `schemas/coherent.md` (schema as system prompt, payload
 assembled per the schema's documented order). Fixtures:
-`e2e/ext/fixtures/coherent-conformance.json`.
+`conformance/cases/coherent.json`.
 
 ## Results
 
@@ -63,7 +63,7 @@ Measured 2026-11-13 against real OpenRouter while building the e2e suite:
 - With reasoning disabled the judge is fast but unreliable on stateful claims:
   a 3-run gate failed 2 of 3 runs on the e2e room-booking scenario (now the
   `room-booking-*` conformance cases).
-- The judge config `e2e/crucible.config.json` (the live smoke and the default
+- The judge config `typescript/e2e/crucible.config.json` (the live smoke and the default
   for `make conformance`) uses `"reasoning": { "effort": "low" }`: correct
   verdicts, inside the deadline.
 - Multi-step bodies that start every step's `coherent` call before awaiting
@@ -74,9 +74,9 @@ Measured 2026-11-13 against real OpenRouter while building the e2e suite:
 
 Whether a judge model gets the verdicts and values right is checked only by
 the conformance harness (`make conformance`, below), against the cases in
-`e2e/ext/fixtures/coherent-conformance.json` and
-`e2e/ext/fixtures/extract-conformance.json`. CI runs it when the schemas,
-the cases, the harness, the judge config (`e2e/crucible.config.json`) or the
+`conformance/cases/coherent.json` and
+`conformance/cases/extract.json`. CI runs it when the schemas,
+the cases, the harness, the judge config (`typescript/e2e/crucible.config.json`) or the
 payload builder change, and weekly to catch provider or model drift; a
 release needs a passing run (see [RELEASING.md](../RELEASING.md)). The payload and request goldens in `spec/`
 prove that Crucible sends exactly what the harness sends, so the harness
@@ -87,7 +87,7 @@ on every pull request) drives real Jest and Vitest processes against a local
 stub judge on `127.0.0.1:28731` that answers from a script (a call it has no
 reply for fails the test); if that port is taken, the run stops with an
 error naming it; `make e2e` adds one live OpenRouter
-smoke (`e2e/core/cjs-build.test.cts`: one `coherent` and one `extract` call)
+smoke (`typescript/e2e/core/cjs-build.test.cts`: one `coherent` and one `extract` call)
 that proves the real provider accepts the request and key.
 
 ## Using another provider or model
@@ -107,7 +107,7 @@ make conformance CONFORMANCE_CONFIG=path/to/your/crucible.config.json
 
 - Needs Docker. The harness reads `provider`, `model`, `meta`, `baseUrl` and
   `apiKeyEnv` from the config you point it at (default:
-  `e2e/crucible.config.json`, OpenRouter) and passes the key into the
+  `typescript/e2e/crucible.config.json`, OpenRouter) and passes the key into the
   container by the variable's name: `CRUCIBLE_JUDGE_KEY`, or the variable
   `apiKeyEnv` names. Export it first. The harness reads plain JSON only: a
   config with comments or trailing commas (fine for Crucible itself, as in

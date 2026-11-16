@@ -58,7 +58,7 @@ test.
 | `threshold` | the enclosing `crucible.describe`, else `testDefaults.threshold`, else `0.9` | number with 0 < `threshold` ≤ 1 | Minimum fraction of runs that must pass |
 | `inferenceTimeout` | the enclosing `crucible.describe`, else `testDefaults.inferenceTimeout`, else `30000` | integer ms, 1 to 2147483647 | How long each `crucible.coherent()` or `crucible.extract()` judge reply attempt may take, provider retries included |
 | `testTimeout` | the trailing `timeout` argument, else the enclosing `crucible.describe`, else `testDefaults.testTimeout`, else `30000 + 1000 × (runs − 1)` | integer ms, 1 to 2147483647 | How long the whole test — every run, arrange, act and assert — may take |
-| `strict` | the enclosing `crucible.describe`, else `testDefaults.strict`, else `false` | `true` or `false` | How [`crucible.extract()`](api.md#crucibleextract) treats a hedged reply: `false` (lenient) takes the value it leans to ("probably two" → `2`), `true` makes any hedge `null`. A call's own `{ strict }` wins over it |
+| `strict` | the enclosing `crucible.describe`, else `testDefaults.strict`, else `false` | `true` or `false` | How [`crucible.extract()`](typescript/api.md#crucibleextract) treats a hedged reply: `false` (lenient) takes the value it leans to ("probably two" → `2`), `true` makes any hedge `null`. A call's own `{ strict }` wins over it |
 
 With `runs` and `threshold` omitted and no [project-wide defaults](#project-wide-defaults-testdefaults)
 the test is a reliability gate: 10 runs, and at least 9 must pass. Each run
@@ -345,7 +345,7 @@ Failing claims (first failure of each of the 5 failed runs):
   excerpt of the judged response, and the error your test threw. If a judge
   call errored before any false verdict, that error is shown instead.
 - **Extractions in a failed run.** After those fields, every
-  [`crucible.extract()`](api.md#crucibleextract) the run made is listed in
+  [`crucible.extract()`](typescript/api.md#crucibleextract) the run made is listed in
   call order — its mode (`lenient` or `strict`), description, requested
   type, the value the judge returned
   (`null` included), the facts it used (`Facts:`, when there were any), its
@@ -543,7 +543,7 @@ backstop must not undercut it.
 
 #### Gate timeouts
 
-[`crucible.gate()`](api.md#cruciblegate) resolves and enforces the same
+[`crucible.gate()`](typescript/api.md#cruciblegate) resolves and enforces the same
 `testTimeout` as `crucible.it()` — the gate's own options, an enclosing
 `crucible.describe`, `testDefaults`, then
 `30000 + 1000 × (runs − 1)` — and reports an `errored` verdict when it

@@ -44,7 +44,7 @@ The API is the same; it registers tests through Vitest's own `test` and
 `describe`, so Vitest's `globals` option is not needed. Run `npx vitest run`
 where this guide says `npx jest`. The few differences (Vitest's `for`,
 `skipIf` and `runIf`, the test context, blocked modifiers, watch mode) are in
-[the API reference](api.md#vitest).
+[the API reference](typescript/api.md#vitest).
 
 ## 2. Choose the right assertion first
 
@@ -359,7 +359,7 @@ your API key or `meta` values. Details: [Verbosity](runs-and-threshold.md#verbos
 
 - [Configuration reference](configuration.md) — every field, validation
   rules, errors, providers, CI secrets.
-- [API reference](api.md) — `crucible.it`, `coherent`, `extract`, `facts`, the
+- [API reference](typescript/api.md) — `crucible.it`, `coherent`, `extract`, `facts`, the
   error classes.
 - [Gotchas](gotchas.md) — the mistakes that cost the most time.
 - [The instruction schema](instruction-schema.md) — how the judge decides,

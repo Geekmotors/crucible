@@ -8,13 +8,15 @@ CONFORMANCE_IMAGE ?= crucible-ai-conformance
 CONFORMANCE_REPS ?= 3
 CONFORMANCE_SUITES ?= coherent extract
 CONFORMANCE_CA_BUNDLE ?=
-CONFORMANCE_CONFIG ?= e2e/crucible.config.json
+TS_DIR = typescript
+CONFORMANCE_HARNESS = conformance
+CONFORMANCE_CONFIG ?= $(TS_DIR)/e2e/crucible.config.json
 MACOS_CA_KEYCHAINS = /Library/Keychains/System.keychain /System/Library/Keychains/SystemRootCertificates.keychain
 
-E2E_JEST = cd e2e && NODE_OPTIONS="$(E2E_NODE_OPTIONS)" ../node_modules/.bin/jest --config jest.config.mjs --ci
+E2E_JEST = cd $(TS_DIR)/e2e && NODE_OPTIONS="$(E2E_NODE_OPTIONS)" ../node_modules/.bin/jest --config jest.config.mjs --ci
 E2E_STUB_ENV = env -u CRUCIBLE_JUDGE_KEY -u CRUCIBLE_VERBOSE
-E2E_STUB_JEST = cd e2e/stub && $(E2E_STUB_ENV) NODE_OPTIONS="$(E2E_OFFLINE_NODE_OPTIONS)" ../../node_modules/.bin/jest --config jest.config.mjs --ci --runInBand
-E2E_STUB_VITEST = cd e2e/stub && $(E2E_STUB_ENV) ../../node_modules/.bin/vitest run --config vitest/vitest.config.ts
+E2E_STUB_JEST = cd $(TS_DIR)/e2e/stub && $(E2E_STUB_ENV) NODE_OPTIONS="$(E2E_OFFLINE_NODE_OPTIONS)" ../../node_modules/.bin/jest --config jest.config.mjs --ci --runInBand
+E2E_STUB_VITEST = cd $(TS_DIR)/e2e/stub && $(E2E_STUB_ENV) ../../node_modules/.bin/vitest run --config vitest/vitest.config.ts
 
 e2e-key:
 	@if [ -z "$$(printf '%s' "$$CRUCIBLE_JUDGE_KEY" | tr -d '[:space:]')" ]; then \
@@ -24,8 +26,8 @@ e2e-key:
 	fi
 
 e2e-compile:
-	npm run build
-	npx tsc --noEmit -p e2e
+	cd $(TS_DIR) && npm run build
+	cd $(TS_DIR) && npx tsc --noEmit -p e2e
 
 e2e-build: e2e-key e2e-compile
 
@@ -43,17 +45,17 @@ e2e-offline: e2e-stub-jest e2e-stub-vitest
 e2e: e2e-key e2e-offline e2e-core
 
 spec-goldens:
-	sh e2e/ext/conformance/spec-goldens.sh write
+	sh $(CONFORMANCE_HARNESS)/spec-goldens.sh write
 
 spec-goldens-check:
-	sh e2e/ext/conformance/spec-goldens.sh check
+	sh $(CONFORMANCE_HARNESS)/spec-goldens.sh check
 
 spec-payloads: spec-goldens
 
 spec-payloads-check: spec-goldens-check
 
 conformance-image:
-	docker build --file e2e/ext/conformance/Dockerfile --tag $(CONFORMANCE_IMAGE) .
+	docker build --file $(CONFORMANCE_HARNESS)/Dockerfile --tag $(CONFORMANCE_IMAGE) .
 
 CONFORMANCE_RUN = docker run --rm --volume "$(abspath $(CONFORMANCE_CONFIG)):/conformance/judge.config.json:ro"
 

@@ -1,6 +1,6 @@
 {
   "$schema": "./surface.schema.json",
-  "description": "Every public item a Crucible port provides, each pinned by fixture cases. spec/PORTING.md explains how a port uses it; the TypeScript coverage check (src/core/spec-surface.test.ts) fails when an item has no fixture, a cited case does not exercise it, or the TypeScript surface and this list differ.",
+  "description": "Every public item a Crucible port provides, each pinned by fixture cases. spec/PORTING.md explains how a port uses it; the TypeScript coverage check (typescript/src/core/spec-surface.test.ts) fails when an item has no fixture, a cited case does not exercise it, or the TypeScript surface and this list differ.",
   "operations": [
     { "name": "run-options/resolve", "docs": "spec/README.md#run-options--resolve" },
     { "name": "run-options/validate", "docs": "spec/README.md#run-options--validate" },
@@ -23,7 +23,7 @@
   "functions": [
     {
       "name": "crucible.it",
-      "docs": "docs/api.md#crucibleit",
+      "docs": "docs/typescript/api.md#crucibleit",
       "summary": "Registers one runner test whose body runs `runs` times concurrently and passes when at least `threshold` of the runs pass; throws the verdict error with the report otherwise.",
       "fixtures": [
         "run-options-validate-test-runs-zero",
@@ -35,7 +35,7 @@
     },
     {
       "name": "crucible.describe",
-      "docs": "docs/api.md#crucibledescribe",
+      "docs": "docs/typescript/api.md#crucibledescribe",
       "summary": "Registers a runner group whose options every crucible.it inside inherits, field by field.",
       "fixtures": [
         "run-options-validate-group-runs-zero",
@@ -45,7 +45,7 @@
     },
     {
       "name": "crucible.gate",
-      "docs": "docs/api.md#cruciblegate",
+      "docs": "docs/typescript/api.md#cruciblegate",
       "summary": "Wraps a body into a test function for the runner's own it/test with the same runs, verdict and report as crucible.it.",
       "fixtures": [
         "run-options-validate-test-every-field",
@@ -56,7 +56,7 @@
     },
     {
       "name": "crucible.coherent",
-      "docs": "docs/api.md#cruciblecoherent",
+      "docs": "docs/typescript/api.md#cruciblecoherent",
       "summary": "Asks the judge whether a response is consistent with a claim given the run's facts; resolves to the verdict.",
       "fixtures": [
         "assertion-call-coherent-arguments-only",
@@ -68,7 +68,7 @@
     },
     {
       "name": "crucible.extract",
-      "docs": "docs/api.md#crucibleextract",
+      "docs": "docs/typescript/api.md#crucibleextract",
       "summary": "Asks the judge for the one value a text commits to, typed as asked, or null.",
       "fixtures": [
         "assertion-call-extract-arguments-only",
@@ -80,7 +80,7 @@
     },
     {
       "name": "crucible.facts",
-      "docs": "docs/api.md#cruciblefacts",
+      "docs": "docs/typescript/api.md#cruciblefacts",
       "summary": "Adds facts to the current run, in order; every later judge call of the run sends them as STATE.",
       "fixtures": [
         "assertion-call-coherent-run-facts",
@@ -91,33 +91,33 @@
     },
     {
       "name": "crucible.load",
-      "docs": "docs/api.md#crucibleload-and-crucibleappend-deprecated",
+      "docs": "docs/typescript/api.md#crucibleload-and-crucibleappend-deprecated",
       "summary": "Deprecated alias of crucible.facts.",
       "fixtures": ["payload-coherent-run-facts"]
     },
     {
       "name": "crucible.append",
-      "docs": "docs/api.md#crucibleload-and-crucibleappend-deprecated",
+      "docs": "docs/typescript/api.md#crucibleload-and-crucibleappend-deprecated",
       "summary": "Deprecated alias of crucible.facts.",
       "fixtures": ["payload-coherent-run-facts"]
     },
     {
       "name": "t.facts",
-      "docs": "docs/api.md#the-run-context-t",
+      "docs": "docs/typescript/api.md#the-run-context-t",
       "summary": "crucible.facts bound to one run.",
       "fixtures": ["payload-coherent-run-facts"],
       "portTests": "Works from callbacks that lost the async context; a usage error once its run has ended."
     },
     {
       "name": "t.coherent",
-      "docs": "docs/api.md#the-run-context-t",
+      "docs": "docs/typescript/api.md#the-run-context-t",
       "summary": "crucible.coherent bound to one run.",
       "fixtures": ["payload-coherent-run-facts-then-call-facts"],
       "portTests": "Works from callbacks that lost the async context; rejects with a usage error once its run has ended."
     },
     {
       "name": "t.extract",
-      "docs": "docs/api.md#the-run-context-t",
+      "docs": "docs/typescript/api.md#the-run-context-t",
       "summary": "crucible.extract bound to one run.",
       "fixtures": ["payload-extract-run-facts-then-call-facts"],
       "portTests": "Works from callbacks that lost the async context; rejects with a usage error once its run has ended."
@@ -126,14 +126,14 @@
   "runOptions": [
     {
       "name": "runs",
-      "docs": "docs/api.md#crucibleit",
+      "docs": "docs/typescript/api.md#crucibleit",
       "default": 10,
       "valid": "an integer of at least 1 (no upper bound; accept at least 2147483647)",
       "fixtures": ["run-options-resolve-test-runs-only", "run-options-validate-test-runs-zero"]
     },
     {
       "name": "threshold",
-      "docs": "docs/api.md#crucibleit",
+      "docs": "docs/typescript/api.md#crucibleit",
       "default": 0.9,
       "valid": "a number greater than 0 and at most 1",
       "fixtures": [
@@ -144,7 +144,7 @@
     },
     {
       "name": "inferenceTimeout",
-      "docs": "docs/api.md#crucibleit",
+      "docs": "docs/typescript/api.md#crucibleit",
       "default": 30000,
       "valid": "an integer number of milliseconds from 1 to 2147483647",
       "fixtures": [
@@ -154,7 +154,7 @@
     },
     {
       "name": "testTimeout",
-      "docs": "docs/api.md#crucibleit",
+      "docs": "docs/typescript/api.md#crucibleit",
       "default": "30000 + 1000 × (runs − 1) from the resolved runs, at most 2147483647, unless any layer declares one",
       "valid": "an integer number of milliseconds from 1 to 2147483647",
       "fixtures": [
@@ -165,7 +165,7 @@
     },
     {
       "name": "strict",
-      "docs": "docs/api.md#crucibleextract",
+      "docs": "docs/typescript/api.md#crucibleextract",
       "default": false,
       "valid": "true or false",
       "fixtures": [
@@ -179,7 +179,7 @@
     {
       "assertion": "coherent",
       "name": "facts",
-      "docs": "docs/api.md#cruciblecoherent",
+      "docs": "docs/typescript/api.md#cruciblecoherent",
       "default": "none: the run's facts alone",
       "valid": "a string or an array of strings; sent after the run's facts, for this call only",
       "fixtures": [
@@ -191,7 +191,7 @@
     {
       "assertion": "extract",
       "name": "as",
-      "docs": "docs/api.md#crucibleextract",
+      "docs": "docs/typescript/api.md#crucibleextract",
       "default": "string",
       "valid": "one of the values",
       "values": ["string", "number", "boolean"],
@@ -204,7 +204,7 @@
     {
       "assertion": "extract",
       "name": "strict",
-      "docs": "docs/api.md#crucibleextract",
+      "docs": "docs/typescript/api.md#crucibleextract",
       "default": "the test's resolved strict",
       "valid": "true or false",
       "fixtures": [
@@ -216,7 +216,7 @@
     {
       "assertion": "extract",
       "name": "facts",
-      "docs": "docs/api.md#crucibleextract",
+      "docs": "docs/typescript/api.md#crucibleextract",
       "default": "none: the run's facts alone",
       "valid": "a string or an array of strings; sent after the run's facts, for this call only",
       "fixtures": [
@@ -387,7 +387,7 @@
   "errorKinds": [
     {
       "kind": "usage",
-      "docs": "docs/api.md#crucibleerror",
+      "docs": "docs/typescript/api.md#crucibleerror",
       "meaning": "An API called incorrectly: invalid test or group options, invalid assertion arguments or facts, an invalid CRUCIBLE_VERBOSE.",
       "fixtures": [
         "run-options-validate-test-runs-zero",
@@ -398,7 +398,7 @@
     },
     {
       "kind": "config",
-      "docs": "docs/api.md#crucibleerror",
+      "docs": "docs/typescript/api.md#crucibleerror",
       "meaning": "The config file or the key environment is wrong.",
       "fixtures": [
         "config-load-no-file",
@@ -410,7 +410,7 @@
     {
       "kind": "infra",
       "retryable": true,
-      "docs": "docs/api.md#crucibleerror",
+      "docs": "docs/typescript/api.md#crucibleerror",
       "meaning": "A transient provider failure after every attempt, or a judge reply unusable twice: the run is errored, not failed.",
       "fixtures": [
         "provider-response-mixed-retryable-failures-exhaust",
@@ -420,7 +420,7 @@
     {
       "kind": "infra",
       "retryable": false,
-      "docs": "docs/api.md#crucibleerror",
+      "docs": "docs/typescript/api.md#crucibleerror",
       "meaning": "A request the provider will refuse again (bad key, no credit, unknown model): it aborts the whole test.",
       "fixtures": [
         "provider-response-status-401-fatal",

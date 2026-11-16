@@ -20,22 +20,28 @@ jobs:
     strategy:
       matrix:
         node-version: [22, 24]
+    defaults:
+      run:
+        working-directory: typescript
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
+          cache-dependency-path: typescript/package-lock.json
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm test
       - run: make spec-goldens-check
+        working-directory: .
       - run: npm run build
       - run: npm run verify:pack
       - run: npx tsc --noEmit -p e2e
       - run: make e2e-offline
+        working-directory: .
 
   e2e-core:
     name: e2e-core (live OpenRouter smoke, main only)
@@ -64,7 +70,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: typescript/package-lock.json
       - run: npm ci
+        working-directory: typescript
       - name: make e2e-core
         env:
           CRUCIBLE_JUDGE_KEY: ${{ secrets.CRUCIBLE_JUDGE_KEY }}

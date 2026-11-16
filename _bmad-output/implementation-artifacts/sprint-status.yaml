@@ -1,5 +1,5 @@
 # generated: 2026-08-16 10:42:22
-# last_updated: 2026-11-14
+# last_updated: 2026-11-15
 # project: crucible-ai
 # project_key: NOKEY
 # tracking_system: file-system
@@ -41,7 +41,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-08-16 10:42:22
-last_updated: 2026-11-14
+last_updated: 2026-11-15
 project: crucible-ai
 project_key: NOKEY
 tracking_system: file-system
@@ -114,3 +114,15 @@ development_status:
   8-6-harden-prompt-fencing: done
   8-5-live-tests-only-where-needed: done
   epic-8-retrospective: optional
+
+  # Epic 9: Crucible for .NET
+  epic-9: in-progress
+  9-1-one-repo-two-packages: done
+  9-2-dotnet-solution-and-fixture-runner: backlog
+  9-3-dotnet-parsing-config-providers: backlog
+  9-4-dotnet-payloads-and-reports: backlog
+  9-5-dotnet-engine-context-and-gate: backlog
+  9-6-dotnet-xunit-adapter: backlog
+  9-7-dotnet-ichatclient-and-docs: backlog
+  9-8-dotnet-publish-to-nuget: backlog
+  epic-9-retrospective: optional

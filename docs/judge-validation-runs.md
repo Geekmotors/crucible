@@ -4,7 +4,7 @@ Every judge call below is a real, unedited exchange with the named model over
 OpenRouter (2026-09-14), using [`schemas/coherent.md`](../schemas/coherent.md) as the system prompt and the
 user payload shown. Each case ran 5 times per model; one representative reply
 is shown per model with the verdict tally across all 5 repetitions. Raw fixture
-data: [`e2e/ext/fixtures/coherent-conformance.json`](../e2e/ext/fixtures/coherent-conformance.json). Summary and ratings:
+data: [`conformance/cases/coherent.json`](../conformance/cases/coherent.json). Summary and ratings:
 [`judge-models.md`](judge-models.md).
 
 ## The prompt

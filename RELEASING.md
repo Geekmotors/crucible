@@ -1,14 +1,14 @@
 # Releasing crucible-ai
 
-Releases are staged by `.github/workflows/publish.yml` when a `v*` tag is pushed, and go live only when a maintainer approves them on npmjs.com with 2FA. Nobody runs `npm publish` by hand: `publishConfig.provenance` is `true`, so a local publish fails on purpose (provenance can only be generated in CI).
+The npm package lives in `typescript/`. Releases are staged by `.github/workflows/publish.yml` when a `v*` tag is pushed, and go live only when a maintainer approves them on npmjs.com with 2FA. Nobody runs `npm publish` by hand: `publishConfig.provenance` is `true`, so a local publish fails on purpose (provenance can only be generated in CI).
 
 ## What the workflow does
 
 1. **verify** (Node 22 and 24, no publish credentials)
-   - fails unless the tag is exactly `v` + the `package.json` version
+   - fails unless the tag is exactly `v` + the `typescript/package.json` version
    - fails unless the tagged commit is on `main`
-   - `npm ci`, lint, format check, typecheck, unit tests, build
-   - `npm run verify:pack`: the tarball may contain only `dist/` (including the `crucible-ai` CLI, `dist/cli.js`), `schemas/*.md`, `schemas/crucible.config.schema.json`, `README.md`, `CHANGELOG.md`, `LICENSE` and `package.json`
+   - in `typescript/`: `npm ci`, lint, format check, typecheck, unit tests, build (the build copies the root `schemas/` and `LICENSE` into the package)
+   - `npm run verify:pack`: the tarball may contain only `dist/` (including the `crucible-ai` CLI, `dist/cli.js`), `schemas/*.md`, `schemas/crucible.config.schema.json`, `README.md`, `CHANGELOG.md`, `LICENSE` and `package.json` (all from `typescript/`), and the packed `schemas/*` and `LICENSE` must match the root copies byte for byte
 2. **publish** (needs verify; GitHub environment `npm`; the only job with `id-token: write`)
    - installs npm 11.21.2 (staged publishing needs npm 11.15.0 or later and Node 22.14.0 or later)
    - `npm ci --ignore-scripts`, build, pack check again
@@ -45,23 +45,23 @@ npm only lets you configure a trusted publisher on a package that already exists
 
 Check these before tagging, or the publish fails with an auth or provenance error:
 
-- `package.json` `repository.url` must stay `git+https://github.com/Geekmotors/crucible-ai.git`. Provenance checks it against the repository the workflow ran in.
+- `typescript/package.json` `repository.url` must stay `git+https://github.com/Geekmotors/crucible-ai.git`, with `repository.directory` `typescript`. Provenance checks the URL against the repository the workflow ran in.
 - If you rename the workflow file or the environment, update the trusted publisher to match.
 - The repository must stay public. npm provenance is only generated for public source repositories.
 
 ## Every release
 
-1. Merge everything for the release into `main`. The README links to `blob/main/docs/...`, so the docs have to be on `main` before anyone reads the npm page.
+1. Merge everything for the release into `main`. The npm README (`typescript/README.md`) links to `blob/main/docs/...`, so the docs have to be on `main` before anyone reads the npm page.
 2. Check the judge and the e2e suite on the `main` commit you are releasing from (the version bump in step 3 changes no judged input). `.env.dev.local` must set `CRUCIBLE_JUDGE_KEY` to your OpenRouter key.
    ```sh
-   set -a; . ./.env.dev.local; set +a
+   set -a; . ./.env.dev.local; set +a   # from the repository root, like the make targets
    make conformance   # needs Docker; judges every conformance case against real OpenRouter
    make e2e           # stub-judge suites plus the one live OpenRouter smoke (2 judge calls)
    ```
    A passing `make conformance` is required before tagging: model behaviour is tested only there, not in `make e2e` or the unit tests. A green **Actions → conformance** run on that commit counts instead (start it with **Run workflow** on `main` if no push triggered it).
-3. Bump the version in a PR and merge it to `main`. In the same PR, rename `## Unreleased` in `CHANGELOG.md` to the new version (the changelog ships in the tarball):
+3. Bump the version in a PR and merge it to `main`. In the same PR, rename `## Unreleased` in `typescript/CHANGELOG.md` to the new version (the changelog ships in the tarball):
    ```sh
-   npm version 0.2.0 --no-git-tag-version   # edits package.json and package-lock.json
+   cd typescript && npm version 0.2.0 --no-git-tag-version   # edits typescript/package.json and package-lock.json
    ```
 4. Tag the merged commit on `main` and push only that tag:
    ```sh
