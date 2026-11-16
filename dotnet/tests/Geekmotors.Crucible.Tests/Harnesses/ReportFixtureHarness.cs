@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Reports;
-using Geekmotors.Crucible.Runs;
+using CrucibleAI.Reports;
+using CrucibleAI.Runs;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class ReportFixtureHarness
 {

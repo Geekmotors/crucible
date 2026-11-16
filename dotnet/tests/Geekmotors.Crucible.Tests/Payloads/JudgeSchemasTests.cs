@@ -1,8 +1,8 @@
-using Geekmotors.Crucible.Payloads;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Harnesses;
+using CrucibleAI.Payloads;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Harnesses;
 
-namespace Geekmotors.Crucible.Tests.Payloads;
+namespace CrucibleAI.Tests.Payloads;
 
 public sealed class JudgeSchemasTests
 {

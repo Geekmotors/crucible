@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Geekmotors.Crucible.Config;
+namespace CrucibleAI.Config;
 
 internal sealed class PhysicalConfigFileSystem : IConfigFileSystem
 {

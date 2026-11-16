@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Tests.Constants;
+namespace CrucibleAI.Tests.Constants;
 
 internal static class UnicodeTexts
 {

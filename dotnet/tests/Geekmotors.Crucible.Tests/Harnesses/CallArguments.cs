@@ -1,15 +1,15 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class CallArguments
 {
     private static readonly Dictionary<string, Type> Types = new(StringComparer.Ordinal)
     {
         ["string"] = typeof(string),
-        ["number"] = typeof(double),
-        ["boolean"] = typeof(bool),
+        ["number"] = typeof(double?),
+        ["boolean"] = typeof(bool?),
         ["date"] = typeof(DateTime),
     };
 

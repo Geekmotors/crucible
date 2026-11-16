@@ -1,7 +1,7 @@
 using System.Globalization;
-using Geekmotors.Crucible.Text;
+using CrucibleAI.Text;
 
-namespace Geekmotors.Crucible.Reports;
+namespace CrucibleAI.Reports;
 
 internal sealed class ReportFields(int excerptChars)
 {

@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Providers;
-using Geekmotors.Crucible.Urls;
+using CrucibleAI.Providers;
+using CrucibleAI.Urls;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class PlainHttpFixtureHarness
 {

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Geekmotors.Crucible.Tests</RootNamespace>
+    <RootNamespace>CrucibleAI.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <NoWarn>$(NoWarn);CS1591</NoWarn>

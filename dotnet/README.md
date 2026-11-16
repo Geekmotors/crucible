@@ -1,7 +1,8 @@
 # Crucible for .NET
 
 **Coming soon.** `Geekmotors.Crucible` (the engine) and `Geekmotors.Crucible.Xunit` (the xUnit v3
-adapter) are being ported from the TypeScript package. Nothing is published to NuGet yet, and the
+adapter) are being ported from the TypeScript package. Their types live in the `CrucibleAI` namespace
+(`using CrucibleAI;`), so `Crucible.Gate(...)` resolves from any namespace, `Geekmotors.*` included. Nothing is published to NuGet yet, and the
 API is not ready for use.
 
 The port follows [`spec/PORTING.md`](../spec/PORTING.md) and is proven against the shared fixtures

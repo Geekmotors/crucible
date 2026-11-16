@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Json.Schema;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal sealed class FixtureChecker
 {

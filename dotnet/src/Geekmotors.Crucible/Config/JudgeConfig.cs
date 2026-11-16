@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Urls;
+using CrucibleAI.Urls;
 
-namespace Geekmotors.Crucible.Config;
+namespace CrucibleAI.Config;
 
 internal sealed record JudgeConfig(
     ProviderKind Provider,
@@ -9,6 +9,7 @@ internal sealed record JudgeConfig(
     JsonObject? Meta,
     Verbosity Verbosity,
     RunOptions TestDefaults,
+    JsonObject TestDefaultsNode,
     int ExcerptChars,
     HttpUrl? BaseUrl,
     string? ApiKeyEnv);

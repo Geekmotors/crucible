@@ -1,11 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Verdicts;
+using CrucibleAI.Config;
+using CrucibleAI.Judging;
+using CrucibleAI.Runs;
+using CrucibleAI.Verdicts;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class RunRecordJson
 {

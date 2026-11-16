@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Options;
+namespace CrucibleAI.Options;
 
 internal sealed record ResolvedRunOptions(int Runs, double Threshold, int InferenceTimeout, int TestTimeout, bool Strict)
 {

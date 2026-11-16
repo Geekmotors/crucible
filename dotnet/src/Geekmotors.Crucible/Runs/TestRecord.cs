@@ -1,3 +1,3 @@
-namespace Geekmotors.Crucible.Runs;
+namespace CrucibleAI.Runs;
 
 internal sealed record TestRecord(int Runs, double Threshold, TestEnding Ending, IReadOnlyList<RunResult> Results);

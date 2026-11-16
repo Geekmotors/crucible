@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Text;
+namespace CrucibleAI.Text;
 
 internal static class TextFormat
 {

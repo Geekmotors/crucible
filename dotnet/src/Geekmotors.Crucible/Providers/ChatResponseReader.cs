@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text;
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Json;
+using CrucibleAI.Json;
 
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal sealed class ChatResponseReader
 {

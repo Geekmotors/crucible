@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Json;
+namespace CrucibleAI.Json;
 
 internal enum JsonDialect
 {

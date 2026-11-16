@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Tests.Constants;
+using CrucibleAI.Config;
+using CrucibleAI.Tests.Constants;
 
-namespace Geekmotors.Crucible.Tests.Config;
+namespace CrucibleAI.Tests.Config;
 
 public sealed class PhysicalConfigFileSystemTests
 {

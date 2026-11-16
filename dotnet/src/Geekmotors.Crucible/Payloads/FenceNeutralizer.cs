@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Geekmotors.Crucible.Payloads;
+namespace CrucibleAI.Payloads;
 
 internal static class FenceNeutralizer
 {

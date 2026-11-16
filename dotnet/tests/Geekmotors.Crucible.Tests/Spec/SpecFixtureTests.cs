@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Tests.Harnesses;
+using CrucibleAI.Tests.Harnesses;
 
-namespace Geekmotors.Crucible.Tests.Spec;
+namespace CrucibleAI.Tests.Spec;
 
 public sealed class SpecFixtureTests
 {

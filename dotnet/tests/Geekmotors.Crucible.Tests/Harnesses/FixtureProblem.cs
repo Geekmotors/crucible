@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal enum FixtureProblem
 {

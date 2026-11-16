@@ -1,3 +1,3 @@
-namespace Geekmotors.Crucible.Tracing;
+namespace CrucibleAI.Tracing;
 
 internal sealed record TestExpiredEvent(long DeadlineMs, int Discarded) : TraceEvent;

@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Tests.Fakes;
+namespace CrucibleAI.Tests.Fakes;
 
 internal sealed class ManualTimer(ManualTimeProvider clock, TimerCallback callback, object? state) : ITimer
 {

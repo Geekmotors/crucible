@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Assertions;
+using CrucibleAI.Assertions;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class AssertionCallFixtureHarness
 {

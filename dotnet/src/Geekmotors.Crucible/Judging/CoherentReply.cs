@@ -1,3 +1,3 @@
-namespace Geekmotors.Crucible.Judging;
+namespace CrucibleAI.Judging;
 
 internal sealed record CoherentReply(bool Verdict, string Reasoning);

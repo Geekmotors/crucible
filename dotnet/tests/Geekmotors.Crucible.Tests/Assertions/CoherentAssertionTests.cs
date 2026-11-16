@@ -1,10 +1,10 @@
-using Geekmotors.Crucible.Assertions;
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
-using Geekmotors.Crucible.Tests.Harnesses;
+using CrucibleAI.Assertions;
+using CrucibleAI.Runs;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
+using CrucibleAI.Tests.Harnesses;
 
-namespace Geekmotors.Crucible.Tests.Assertions;
+namespace CrucibleAI.Tests.Assertions;
 
 public sealed class CoherentAssertionTests
 {
@@ -76,5 +76,29 @@ public sealed class CoherentAssertionTests
             () => harness.Coherent.AskAsync(harness.Run(), new CoherentCall(AssertionTexts.Response, AssertionTexts.Claim, [null])));
 
         Assert.Equal(CrucibleErrorKind.Usage, error.Kind);
+    }
+
+    [Fact]
+    public async Task AJudgeCallThatKeptFailingIsRecordedWithItsProviderAttempts()
+    {
+        var failing = HttpAnswers.Json(AssertionTexts.ServerError, null);
+        var harness = new AssertionHarness(new ProviderHarness(JudgeSettings.OpenRouterConfig).Client(failing, failing, failing));
+
+        await Assert.ThrowsAsync<CrucibleException>(
+            () => harness.Coherent.AskAsync(harness.Run(), new CoherentCall(AssertionTexts.Response, AssertionTexts.Claim, null)));
+
+        Assert.Equal(AssertionTexts.ProviderAttempts, Assert.IsType<ErroredCall>(Assert.Single(harness.Record.Calls)).Attempts);
+    }
+
+    [Fact]
+    public async Task AJudgeCallWithoutAKeyIsNotRecorded()
+    {
+        var noKey = new ProviderHarness(JudgeSettings.OpenRouterConfig, new Dictionary<string, string>(StringComparer.Ordinal));
+        var harness = new AssertionHarness(noKey.Client());
+
+        await Assert.ThrowsAsync<CrucibleException>(
+            () => harness.Coherent.AskAsync(harness.Run(), new CoherentCall(AssertionTexts.Response, AssertionTexts.Claim, null)));
+
+        Assert.Empty(harness.Record.Calls);
     }
 }

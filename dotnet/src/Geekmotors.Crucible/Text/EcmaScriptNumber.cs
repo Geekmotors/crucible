@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace Geekmotors.Crucible.Text;
+namespace CrucibleAI.Text;
 
 internal static class EcmaScriptNumber
 {

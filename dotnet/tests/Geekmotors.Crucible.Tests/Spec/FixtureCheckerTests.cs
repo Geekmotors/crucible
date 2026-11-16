@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Harnesses;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Harnesses;
 
-namespace Geekmotors.Crucible.Tests.Spec;
+namespace CrucibleAI.Tests.Spec;
 
 public sealed class FixtureCheckerTests
 {

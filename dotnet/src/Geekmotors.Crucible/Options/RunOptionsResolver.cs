@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Options;
+namespace CrucibleAI.Options;
 
 internal sealed class RunOptionsResolver
 {

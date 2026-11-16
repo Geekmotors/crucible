@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Providers;
-using Geekmotors.Crucible.Tests.Fakes;
+using CrucibleAI.Providers;
+using CrucibleAI.Tests.Fakes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class ProviderFixtureHarness
 {
@@ -24,7 +24,7 @@ internal static class ProviderFixtureHarness
         var client = new ChatCompletionsClient(
             config, new HttpClient(new ScriptedHandler([HttpAnswers.Echo()])), environment, new ImmediateBackoff(), new RecordingWarningSink());
         var reply = await client.CompleteAsync(
-            new JudgeRequest(input["system"]!.GetValue<string>(), input["prompt"]!.GetValue<string>()), CancellationToken.None);
+            new JudgeRequest(input["system"]!.GetValue<string>(), input["prompt"]!.GetValue<string>()), new QuietJudgeObserver(), CancellationToken.None);
         var request = JsonNode.Parse(reply)!.AsObject();
         request["headers"] = Headers(request["headers"]!.AsObject());
         return request;
@@ -34,7 +34,7 @@ internal static class ProviderFixtureHarness
     {
         var answers = input!["responses"]!.AsArray().Select(Answer).ToArray();
         var reply = await new ProviderHarness(Constants.JudgeSettings.OpenRouterConfig).Client(answers)
-            .CompleteAsync(ProviderHarness.Request, CancellationToken.None);
+            .CompleteAsync(ProviderHarness.Request, new QuietJudgeObserver(), CancellationToken.None);
         return JsonValue.Create(reply);
     }
 

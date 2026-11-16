@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Judging;
+namespace CrucibleAI.Judging;
 
 internal sealed class CoherentReplyReader
 {

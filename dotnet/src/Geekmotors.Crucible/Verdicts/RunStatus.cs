@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Verdicts;
+namespace CrucibleAI.Verdicts;
 
 internal enum RunStatus
 {

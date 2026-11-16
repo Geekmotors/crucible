@@ -1,9 +1,9 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Judging;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
+using CrucibleAI.Judging;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class JudgeReplyFixtureHarness
 {
@@ -22,11 +22,11 @@ internal static class JudgeReplyFixtureHarness
         if (input["ask"]!.GetValue<string>() == "coherent")
         {
             var coherent = await exchange.AskAsync(
-                ProviderHarness.Request, new CoherentReplyReader().Read, JudgeTimes.InferenceTimeout, CancellationToken.None);
+                ProviderHarness.Request, new CoherentReplyReader().Read, JudgeTimes.InferenceTimeout, new QuietJudgeObserver(), CancellationToken.None);
             return new JsonObject { ["verdict"] = coherent.Verdict, ["reasoning"] = coherent.Reasoning };
         }
-        var reader = new ExtractReplyReader(Types[input["type"]!.GetValue<string>()]);
-        var extract = await exchange.AskAsync(ProviderHarness.Request, reader.Read, JudgeTimes.InferenceTimeout, CancellationToken.None);
+        var reader = new ExtractReplyReader(new ExtractTarget(Types[input["type"]!.GetValue<string>()]));
+        var extract = await exchange.AskAsync(ProviderHarness.Request, reader.Read, JudgeTimes.InferenceTimeout, new QuietJudgeObserver(), CancellationToken.None);
         return new JsonObject { ["value"] = Value(extract.Value), ["reasoning"] = extract.Reasoning };
     }
 

@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Providers;
+using CrucibleAI.Providers;
 
-namespace Geekmotors.Crucible.Tests.Fakes;
+namespace CrucibleAI.Tests.Fakes;
 
 internal sealed class RecordingWarningSink : IWarningSink
 {

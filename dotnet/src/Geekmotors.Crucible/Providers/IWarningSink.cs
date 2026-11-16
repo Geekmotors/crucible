@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal interface IWarningSink
 {

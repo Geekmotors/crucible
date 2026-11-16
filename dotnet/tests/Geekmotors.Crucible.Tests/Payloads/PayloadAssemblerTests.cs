@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Payloads;
-using Geekmotors.Crucible.Tests.Constants;
+using CrucibleAI.Payloads;
+using CrucibleAI.Tests.Constants;
 
-namespace Geekmotors.Crucible.Tests.Payloads;
+namespace CrucibleAI.Tests.Payloads;
 
 public sealed class PayloadAssemblerTests
 {

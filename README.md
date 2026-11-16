@@ -25,6 +25,8 @@ crucible.it('keeps the meeting place secret', async () => {
 ## C# (xUnit), coming soon
 
 ```csharp
+using CrucibleAI;
+
 [CrucibleFact(Runs = 10, Threshold = 0.9)]
 public async Task KeepsTheMeetingPlaceSecret()
 {
@@ -45,7 +47,7 @@ The .NET port is in progress. This is its planned API; it is not on NuGet yet.
 | Language | Package | Docs |
 | --- | --- | --- |
 | TypeScript (Jest, Vitest) | [`crucible-ai`](https://www.npmjs.com/package/crucible-ai) on npm | [typescript/README.md](typescript/README.md), [API reference](docs/typescript/api.md) |
-| .NET (xUnit) | `Geekmotors.Crucible`, `Geekmotors.Crucible.Xunit` on NuGet (coming soon) | coming soon |
+| .NET (xUnit) | `Geekmotors.Crucible`, `Geekmotors.Crucible.Xunit` on NuGet (coming soon; namespace `CrucibleAI`) | coming soon |
 
 ## Shared documentation
 

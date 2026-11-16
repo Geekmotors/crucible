@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Tests.Fakes;
+using CrucibleAI.Config;
+using CrucibleAI.Tests.Fakes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class ConfigFixtureHarness
 {

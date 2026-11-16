@@ -1,3 +1,3 @@
-namespace Geekmotors.Crucible.Verdicts;
+namespace CrucibleAI.Verdicts;
 
-internal sealed record Verdict(VerdictOutcome Outcome, int Need, int Passed, int Failed, int Errored);
+internal sealed record Verdict(VerdictZone Outcome, int Need, int Passed, int Failed, int Errored);

@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Json;
+using CrucibleAI.Json;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class JsoncFixtureHarness
 {

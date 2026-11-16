@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible;
+namespace CrucibleAI;
 
 /// <summary>What went wrong when Crucible throws a <see cref="CrucibleException"/>.</summary>
 public enum CrucibleErrorKind

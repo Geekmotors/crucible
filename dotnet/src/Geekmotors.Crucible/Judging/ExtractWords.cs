@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Judging;
+namespace CrucibleAI.Judging;
 
 internal static class ExtractWords
 {

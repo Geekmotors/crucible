@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Runs;
-using Geekmotors.Crucible.Tests.Constants;
+using CrucibleAI.Runs;
+using CrucibleAI.Tests.Constants;
 
-namespace Geekmotors.Crucible.Tests.Runs;
+namespace CrucibleAI.Tests.Runs;
 
 public sealed class RunRecordTests
 {

@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible.Urls;
+namespace CrucibleAI.Urls;
 
 internal enum HostKind
 {

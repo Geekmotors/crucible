@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Text;
+using CrucibleAI.Config;
+using CrucibleAI.Text;
 
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal sealed class JudgeKeyReader(IEnvironment environment)
 {

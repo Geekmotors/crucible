@@ -1,3 +1,3 @@
-namespace Geekmotors.Crucible.Runs;
+namespace CrucibleAI.Runs;
 
 internal abstract record JudgeCall;

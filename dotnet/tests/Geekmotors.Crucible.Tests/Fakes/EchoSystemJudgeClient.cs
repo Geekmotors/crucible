@@ -1,10 +1,10 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Providers;
+using CrucibleAI.Providers;
 
-namespace Geekmotors.Crucible.Tests.Fakes;
+namespace CrucibleAI.Tests.Fakes;
 
 internal sealed class EchoSystemJudgeClient : IJudgeClient
 {
-    public Task<string> CompleteAsync(JudgeRequest request, CancellationToken cancellation) =>
+    public Task<string> CompleteAsync(JudgeRequest request, IJudgeObserver observer, CancellationToken cancellation) =>
         Task.FromResult(new JsonObject { ["verdict"] = true, ["value"] = null, ["reasoning"] = request.System }.ToJsonString());
 }

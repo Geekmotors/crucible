@@ -1,8 +1,8 @@
-using Geekmotors.Crucible.Providers;
-using Geekmotors.Crucible.Tests.Constants;
-using Geekmotors.Crucible.Tests.Fakes;
+using CrucibleAI.Providers;
+using CrucibleAI.Tests.Constants;
+using CrucibleAI.Tests.Fakes;
 
-namespace Geekmotors.Crucible.Tests.Providers;
+namespace CrucibleAI.Tests.Providers;
 
 public sealed class ExponentialBackoffTests
 {
@@ -11,7 +11,8 @@ public sealed class ExponentialBackoffTests
     [Fact]
     public void TheFirstRetryWaitsTheBaseDelay()
     {
-        var wait = new ExponentialBackoff(_clock, () => BackoffTimes.NoJitter).WaitAsync(BackoffTimes.FirstRetry, CancellationToken.None);
+        var backoff = new ExponentialBackoff(_clock, () => BackoffTimes.NoJitter);
+        var wait = backoff.WaitAsync(backoff.Delay(BackoffTimes.FirstRetry), CancellationToken.None);
 
         _clock.Advance(BackoffTimes.FirstRetryWithoutJitter - BackoffTimes.Tick);
         var early = wait.IsCompleted;
@@ -23,7 +24,8 @@ public sealed class ExponentialBackoffTests
     [Fact]
     public void TheSecondRetryWaitsTwiceTheBaseDelay()
     {
-        var wait = new ExponentialBackoff(_clock, () => BackoffTimes.NoJitter).WaitAsync(BackoffTimes.SecondRetry, CancellationToken.None);
+        var backoff = new ExponentialBackoff(_clock, () => BackoffTimes.NoJitter);
+        var wait = backoff.WaitAsync(backoff.Delay(BackoffTimes.SecondRetry), CancellationToken.None);
 
         _clock.Advance(BackoffTimes.SecondRetryWithoutJitter - BackoffTimes.Tick);
         var early = wait.IsCompleted;
@@ -35,7 +37,8 @@ public sealed class ExponentialBackoffTests
     [Fact]
     public void JitterStretchesTheWaitUpToDouble()
     {
-        var wait = new ExponentialBackoff(_clock, () => BackoffTimes.FullJitter).WaitAsync(BackoffTimes.SecondRetry, CancellationToken.None);
+        var backoff = new ExponentialBackoff(_clock, () => BackoffTimes.FullJitter);
+        var wait = backoff.WaitAsync(backoff.Delay(BackoffTimes.SecondRetry), CancellationToken.None);
 
         _clock.Advance(BackoffTimes.SecondRetryWithFullJitter - BackoffTimes.Tick);
         var early = wait.IsCompleted;

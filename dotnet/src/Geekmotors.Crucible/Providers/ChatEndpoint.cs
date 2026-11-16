@@ -1,7 +1,7 @@
-using Geekmotors.Crucible.Config;
-using Geekmotors.Crucible.Urls;
+using CrucibleAI.Config;
+using CrucibleAI.Urls;
 
-namespace Geekmotors.Crucible.Providers;
+namespace CrucibleAI.Providers;
 
 internal sealed record ChatEndpoint(string Name, Uri Url, string KeyVariable, bool KeyRequired, HttpUrl? BaseUrl)
 {

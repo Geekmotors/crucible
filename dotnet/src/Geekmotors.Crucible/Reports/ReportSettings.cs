@@ -1,5 +1,5 @@
-using Geekmotors.Crucible.Config;
+using CrucibleAI.Config;
 
-namespace Geekmotors.Crucible.Reports;
+namespace CrucibleAI.Reports;
 
 internal sealed record ReportSettings(int ExcerptChars, Verbosity Verbosity);

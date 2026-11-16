@@ -1,4 +1,4 @@
-namespace Geekmotors.Crucible;
+namespace CrucibleAI;
 
 /// <summary>
 /// The error Crucible throws for a usage mistake, a configuration problem or a judge failure.

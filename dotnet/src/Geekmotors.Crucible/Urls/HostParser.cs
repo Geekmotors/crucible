@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Geekmotors.Crucible.Urls;
+namespace CrucibleAI.Urls;
 
 internal sealed class HostParser(Ipv4Parser ipv4, Ipv6Parser ipv6)
 {

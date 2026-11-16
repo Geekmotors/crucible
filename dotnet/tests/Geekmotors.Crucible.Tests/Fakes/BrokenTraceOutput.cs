@@ -1,6 +1,6 @@
-using Geekmotors.Crucible.Tracing;
+using CrucibleAI.Tracing;
 
-namespace Geekmotors.Crucible.Tests.Fakes;
+namespace CrucibleAI.Tests.Fakes;
 
 internal sealed class BrokenTraceOutput(Exception failure) : ITraceOutput
 {

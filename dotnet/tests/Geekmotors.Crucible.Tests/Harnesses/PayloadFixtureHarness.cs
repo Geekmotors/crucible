@@ -1,8 +1,8 @@
 using System.Text.Json.Nodes;
-using Geekmotors.Crucible.Assertions;
-using Geekmotors.Crucible.Runs;
+using CrucibleAI.Assertions;
+using CrucibleAI.Runs;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class PayloadFixtureHarness
 {

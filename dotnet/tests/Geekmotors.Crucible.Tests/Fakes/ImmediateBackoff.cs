@@ -1,8 +1,10 @@
-using Geekmotors.Crucible.Providers;
+using CrucibleAI.Providers;
 
-namespace Geekmotors.Crucible.Tests.Fakes;
+namespace CrucibleAI.Tests.Fakes;
 
 internal sealed class ImmediateBackoff : IRetryBackoff
 {
-    public Task WaitAsync(int retry, CancellationToken cancellation) => Task.CompletedTask;
+    public TimeSpan Delay(int retry) => TimeSpan.Zero;
+
+    public Task WaitAsync(TimeSpan delay, CancellationToken cancellation) => Task.CompletedTask;
 }

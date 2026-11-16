@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal sealed record FixtureFile(string Name, string Text, string Area, string Operation, IReadOnlyList<FixtureCase> Cases)
 {

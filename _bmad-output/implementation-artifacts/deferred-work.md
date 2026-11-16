@@ -491,3 +491,13 @@
 
 - C# assertion services never record `ErroredCall` when the judge exchange fails; the report's "a judge call errored" / "Judge attempts" paths depend on it. Carry into Story 9.5 explicitly (its ACs do not mention it).
 - `Runs` <-> `Assertions` namespace cycle through `FactList` (same assembly, not a runtime cycle).
+
+## Deferred from: code review of 9-5-dotnet-engine-context-and-gate (2026-11-15)
+
+- A settled run's fire-and-forget judge calls are not cancelled until the batch ends and still trace/record into the settled run (TS parity); consider a per-run cancellation source cancelled on settle.
+- A deadline that fires before a parallel run's `Task.Run` starts still runs that body (result ignored).
+- `long?` extraction goes through `double`; integers above 2^53 are silently rounded.
+- Surface check does not scan exception types; `reportText:` and `infra(retryable)` mappings are true by construction.
+- No `Aborted` trace event when cancellation hits during backoff; `RunBatch.Settle` throwing would hang the gate to its deadline; `RunClassifier` follows only the first `AggregateException` inner.
+- Story 9.6: a `CancellationToken` parameter on `Crucible.Gate` (wired to xUnit's test cancellation, `TestContext.Current.CancellationToken`).
+- Story 9.6: async body factory plus per-run teardown on `GateRequest` (e.g. `Func<int, Task<Func<CrucibleContext, Task>>>` and a dispose hook), so `IAsyncLifetime.InitializeAsync` runs outside the run scope and each per-run instance is disposed after its run.

@@ -1,7 +1,7 @@
 using System.Reflection;
 using Json.Schema;
 
-namespace Geekmotors.Crucible.Tests.Harnesses;
+namespace CrucibleAI.Tests.Harnesses;
 
 internal static class SpecFixtureCatalog
 {
@@ -55,7 +55,7 @@ internal static class SpecFixtureCatalog
 
     private static Assembly Assembly => typeof(SpecFixtureCatalog).Assembly;
 
-    private static string Read(string resource)
+    public static string Read(string resource)
     {
         using var stream = Assembly.GetManifestResourceStream(resource)
             ?? throw new FileNotFoundException(resource);
