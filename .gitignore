@@ -31,6 +31,11 @@ venv/
 # Test output
 coverage/
 
+# .NET build output
+dotnet/**/bin/
+dotnet/**/obj/
+dotnet/**/TestResults/
+
 # Shared files copied into the npm package at build time
 typescript/schemas/
 typescript/LICENSE

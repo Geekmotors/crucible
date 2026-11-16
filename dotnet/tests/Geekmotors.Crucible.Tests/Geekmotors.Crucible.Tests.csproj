@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Geekmotors.Crucible.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="JsonSchema.Net" />
+    <PackageReference Include="xunit.v3" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Geekmotors.Crucible/Geekmotors.Crucible.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(SpecRoot)/**/*.json" LogicalName="spec/%(RecursiveDir)%(Filename)%(Extension)" LinkBase="spec" />
+  </ItemGroup>
+</Project>

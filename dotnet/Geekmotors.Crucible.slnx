@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Geekmotors.Crucible/Geekmotors.Crucible.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Geekmotors.Crucible.Tests/Geekmotors.Crucible.Tests.csproj" />
+  </Folder>
+</Solution>

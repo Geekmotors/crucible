@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <RootNamespace>Geekmotors.Crucible</RootNamespace>
+    <AssemblyName>Geekmotors.Crucible</AssemblyName>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Geekmotors.Crucible.Tests" />
+  </ItemGroup>
+</Project>
