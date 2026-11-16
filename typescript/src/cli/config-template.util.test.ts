@@ -1,6 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
 import { JudgeModel } from './test/judge-model.enum.js';
-import { ReasoningEffort } from './test/reasoning-effort.enum.js';
 import { TemplateHarness } from './test/template-harness.util.js';
 import { ConfigHarness } from '../core/test/config-harness.util.js';
 import { RunCount } from '../core/test/run-count.enum.js';
@@ -15,16 +14,14 @@ describe('the generated config file as written', () => {
     );
   });
 
-  it('asks OpenRouter for low reasoning effort to speed up the recommended model', () => {
-    expect(TemplateHarness.store(TemplateHarness.generated()).get().meta).toEqual({
-      reasoning: { effort: ReasoningEffort.Low },
-    });
+  it('sends no extra request fields to the judge', () => {
+    expect(TemplateHarness.store(TemplateHarness.generated()).get().meta).toBeUndefined();
   });
 
   it('resolves every other setting to its built-in default', () => {
     expect(
       ConfigHarness.resolvedSettings(TemplateHarness.store(TemplateHarness.generated())),
-    ).toEqual(TemplateHarness.builtInsWithLowReasoning());
+    ).toEqual(TemplateHarness.builtInsForRecommendedJudge());
   });
 
   it('judges through OpenRouter with the key from CRUCIBLE_JUDGE_KEY', async () => {
@@ -51,7 +48,7 @@ describe('the generated config file with every commented setting uncommented', (
       ConfigHarness.resolvedSettings(
         TemplateHarness.store(TemplateHarness.withEverySettingUncommented()),
       ),
-    ).toEqual(TemplateHarness.builtInsWithLowReasoning());
+    ).toEqual(TemplateHarness.builtInsForRecommendedJudge());
   });
 
   it('still judges with the key from CRUCIBLE_JUDGE_KEY', async () => {

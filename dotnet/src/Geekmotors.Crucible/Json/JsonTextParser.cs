@@ -28,6 +28,8 @@ internal sealed class JsonTextParser
 
     private bool IsJsonc => _dialect == JsonDialect.Jsonc;
 
+    private bool AllowsTrailingCommas => _dialect != JsonDialect.Strict;
+
     private JsonNode? Document()
     {
         if (IsJsonc && _text.Length > 0 && _text[0] == ByteOrderMark)
@@ -121,7 +123,7 @@ internal sealed class JsonTextParser
         }
         Expect(',');
         SkipInsignificant();
-        if (IsJsonc && Current == closer)
+        if (AllowsTrailingCommas && Current == closer)
         {
             _position++;
             return true;

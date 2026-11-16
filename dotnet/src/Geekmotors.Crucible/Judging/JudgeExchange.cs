@@ -53,7 +53,7 @@ internal sealed class JudgeExchange(IJudgeClient client, TimeProvider time)
     {
         try
         {
-            return (read(JsonTextParser.Parse(JudgeReplyText.Unwrap(reply), JsonDialect.Strict)), null);
+            return (read(JsonTextParser.Parse(JudgeReplyText.Unwrap(reply), JsonDialect.JudgeReply)), null);
         }
         catch (JsonSyntaxException problem)
         {

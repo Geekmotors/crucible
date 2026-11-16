@@ -4,4 +4,5 @@ internal enum JsonDialect
 {
     Strict,
     Jsonc,
+    JudgeReply,
 }

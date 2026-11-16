@@ -330,7 +330,7 @@ current Microsoft docs):
 | `verdict/compute` | `need`, the three zones, discarded runs |
 | `assertion/call` | assertion and `facts` arguments, call options reaching the payload |
 | `payload/coherent`, `payload/extract` | the exact user message, fencing and injection safety, every conformance case |
-| `judge/reply` | reply unwrapping, strict JSON, shapes, the re-ask |
+| `judge/reply` | reply unwrapping, strict JSON plus trailing-comma repair, shapes, the re-ask |
 | `provider/request` | URL, headers, body, key rules, per provider |
 | `provider/response` | envelopes, status classes, retries, fatal vs retryable |
 | `provider/plain-http-warning` | when the plain-http key warning is written |
@@ -432,7 +432,7 @@ Story 9.4.
 | [Line breaks](README.md#text-rules) | the report set and the wider fencing set are different lists | write both | `splitlines` is the fencing set only | write both |
 | [Regex match](README.md#config--load) | match the whole string | `\A…\z` (`^…$` also matches before a trailing `\n`) | `re.fullmatch` | `matches()` |
 | [URLs](README.md#config--load) | WHATWG URL Standard parsing and serialisation | `Uri` differs: use a WHATWG parser. Known deviations of the C# port: non-ASCII hosts go through `IdnMapping`, which rejects empty labels, CheckHyphens violations and over-long labels that WHATWG `domainToASCII` accepts, and does not validate `xn--` labels in ASCII input; a host WHATWG accepts but `Uri` cannot hold (`{`, `}`, `` ` ``, `!`, `~`, …) is a `config` error when the client is built. Fixtures pin none of these | `urllib` differs: use a WHATWG parser | `URI` differs: use a WHATWG parser |
-| [JSON input](README.md#text-rules) | keep object member order; duplicate keys: last wins; strict JSON for replies; numbers are doubles (`1e999` is infinity, then unusable) | check your parser accepts duplicates and huge exponents | `json` keeps order, last wins | Jackson `ObjectNode` keeps order |
+| [JSON input](README.md#text-rules) | keep object member order; duplicate keys: last wins; strict JSON for replies, except a trailing comma is dropped; numbers are doubles (`1e999` is infinity, then unusable) | check your parser accepts duplicates and huge exponents | `json` keeps order, last wins | Jackson `ObjectNode` keeps order |
 | [Unset vs null](README.md#special-values) | `$special: "undefined"` is a present but unset value | `null` for an optional option | `None` | `null` / `Optional.empty()` |
 | [Request body](README.md#provider--request) | any valid JSON escaping; the body is compared as parsed JSON | `Utf8JsonWriter` writes an unpaired surrogate (prompt, system prompt, meta) as `\uFFFD` where `JSON.stringify` writes `\udXXX`: a known deviation of the C# port; fixtures never hold a lone surrogate | | |
 | [Headers](README.md#provider--request) | header names compare case-insensitively | | | |
