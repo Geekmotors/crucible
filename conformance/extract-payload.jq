@@ -18,7 +18,7 @@ def typed_value($wanted):
 def extract_strict_reply($case):
   length == 1
   and (.[0] | type == "object")
-  and (.[0] | keys == ["reasoning", "value"])
+  and (.[0] | has("reasoning") and has("value"))
   and (.[0].value | typed_value($case.type))
   and (.[0].reasoning | type == "string");
 

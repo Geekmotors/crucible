@@ -6,6 +6,7 @@ E2E_NODE_OPTIONS ?= --experimental-vm-modules --use-system-ca
 E2E_OFFLINE_NODE_OPTIONS ?= --experimental-vm-modules
 CONFORMANCE_IMAGE ?= crucible-ai-conformance
 CONFORMANCE_REPS ?= 3
+CONFORMANCE_REASK_LIMIT ?= 3
 CONFORMANCE_SUITES ?= coherent extract
 CONFORMANCE_CA_BUNDLE ?=
 TS_DIR = typescript
@@ -105,6 +106,7 @@ conformance: conformance-image
 	} | $(CONFORMANCE_RUN) --interactive \
 		$$key_flag \
 		--env CONFORMANCE_REPS=$(CONFORMANCE_REPS) \
+		--env CONFORMANCE_REASK_LIMIT=$(CONFORMANCE_REASK_LIMIT) \
 		--env CONFORMANCE_SUITES="$(CONFORMANCE_SUITES)" \
 		--env CONFORMANCE_EXTRA_CA=/dev/stdin \
 		$(CONFORMANCE_IMAGE)

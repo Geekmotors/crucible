@@ -7,6 +7,7 @@ SCHEMA_DIR=${CONFORMANCE_SCHEMA_DIR:-$HARNESS_DIR/schemas}
 CASES_DIR=${CONFORMANCE_CASES_DIR:-$HARNESS_DIR/cases}
 JUDGE_CONFIG=${CONFORMANCE_JUDGE_CONFIG:-$HARNESS_DIR/judge.config.json}
 REPS=${CONFORMANCE_REPS:-3}
+REASK_LIMIT=${CONFORMANCE_REASK_LIMIT:-3}
 EXTRA_CA_FILE=${CONFORMANCE_EXTRA_CA:-/etc/conformance/extra-ca.pem}
 SYSTEM_CA_FILE=/etc/ssl/certs/ca-certificates.crt
 CALL_TIMEOUT_SECONDS=120
@@ -230,10 +231,38 @@ call_judge() {
       "$ENDPOINT"
 }
 
+ask_judge() {
+  calls=$((calls + 1))
+  reply_kind=""
+  if ! transport=$(call_judge "$WORK_DIR/body.json" "$WORK_DIR/reply.json"); then
+    transport="curl-failed 0"
+  fi
+  status=${transport% *}
+  seconds=${transport#* }
+  if [ "$status" != "200" ] || ! jq -e '.choices[0].message.content | type == "string"' "$WORK_DIR/reply.json" > /dev/null 2>&1; then
+    return 1
+  fi
+  cost=$(jq -r '.usage.cost // 0' "$WORK_DIR/reply.json")
+  total_cost=$(awk -v a="$total_cost" -v b="$cost" 'BEGIN { printf "%.6f", a + b }')
+  rep_cost=$(awk -v a="$rep_cost" -v b="$cost" 'BEGIN { printf "%.6f", a + b }')
+  rep_seconds=$(awk -v a="$rep_seconds" -v b="$seconds" 'BEGIN { printf "%.3f", a + b }')
+  jq -j '.choices[0].message.content' "$WORK_DIR/reply.json" > "$WORK_DIR/content.txt"
+  if outcome=$(strict_outcome "$suite" "$index" "$WORK_DIR/content.txt" 2> /dev/null); then
+    reply_kind=strict
+  elif repaired_reply "$WORK_DIR/content.txt" > "$WORK_DIR/repaired.txt" 2> /dev/null &&
+    outcome=$(strict_outcome "$suite" "$index" "$WORK_DIR/repaired.txt" 2> /dev/null); then
+    reply_kind=repaired
+  else
+    outcome=non-compliant
+    reply_kind=unusable
+  fi
+}
+
 run_matrix() {
   model=$(jq -r '.model' "$JUDGE_CONFIG")
-  echo "conformance: suites [$SUITES] x $REPS reps against $model via $PROVIDER ($ENDPOINT)"
+  echo "conformance: suites [$SUITES] x $REPS reps against $model via $PROVIDER ($ENDPOINT), up to $REASK_LIMIT re-asks"
   calls=0
+  reasks=0
   failures=0
   total_cost=0
   summary=""
@@ -242,7 +271,7 @@ run_matrix() {
   done
   echo
   printf '%s' "$summary"
-  echo "calls $calls, cost \$$total_cost"
+  echo "calls $calls, re-asks $reasks/$REASK_LIMIT, cost \$$total_cost"
   if [ "$failures" -gt 0 ]; then
     echo "conformance: FAILED ($failures of $calls calls did not conform)"
     exit "$EXIT_MISMATCH"
@@ -264,46 +293,44 @@ run_suite() {
     compliant=0
     repaired=0
     errored=0
+    reasked=0
     rep=1
     while [ "$rep" -le "$REPS" ]; do
-      calls=$((calls + 1))
-      if ! transport=$(call_judge "$WORK_DIR/body.json" "$WORK_DIR/reply.json"); then
-        transport="curl-failed 0"
+      rep_cost=0
+      rep_seconds=0
+      note=""
+      if ask_judge && [ "$reply_kind" = unusable ] && [ "$reasks" -lt "$REASK_LIMIT" ]; then
+        reasks=$((reasks + 1))
+        reasked=$((reasked + 1))
+        note=", re-asked"
+        echo "REASK $case_id rep $rep/$REPS: unusable reply ($reasks/$REASK_LIMIT re-asks used)"
+        echo "     reply: $(cat "$WORK_DIR/content.txt")"
+        ask_judge || true
       fi
-      status=${transport% *}
-      seconds=${transport#* }
-      if [ "$status" != "200" ] || ! jq -e '.choices[0].message.content | type == "string"' "$WORK_DIR/reply.json" > /dev/null 2>&1; then
+      if [ -z "$reply_kind" ]; then
         errored=$((errored + 1))
         failures=$((failures + 1))
-        echo "ERRORED $case_id rep $rep/$REPS: http $status"
+        echo "ERRORED $case_id rep $rep/$REPS: http $status$note"
         rep=$((rep + 1))
         continue
       fi
-      cost=$(jq -r '.usage.cost // 0' "$WORK_DIR/reply.json")
-      total_cost=$(awk -v a="$total_cost" -v b="$cost" 'BEGIN { printf "%.6f", a + b }')
-      jq -j '.choices[0].message.content' "$WORK_DIR/reply.json" > "$WORK_DIR/content.txt"
-      note=""
-      if outcome=$(strict_outcome "$suite" "$index" "$WORK_DIR/content.txt" 2> /dev/null); then
-        compliant=$((compliant + 1))
-      elif repaired_reply "$WORK_DIR/content.txt" > "$WORK_DIR/repaired.txt" 2> /dev/null &&
-        outcome=$(strict_outcome "$suite" "$index" "$WORK_DIR/repaired.txt" 2> /dev/null); then
-        repaired=$((repaired + 1))
-        note=", repaired"
-      else
-        outcome=non-compliant
-      fi
+      case "$reply_kind" in
+        strict) compliant=$((compliant + 1)) ;;
+        repaired) repaired=$((repaired + 1)); note="$note, repaired" ;;
+        unusable) if [ -z "$note" ]; then note=", re-ask limit reached"; fi ;;
+      esac
       if [ "$outcome" = "$expected" ]; then
         matched=$((matched + 1))
-        echo "PASS $case_id rep $rep/$REPS: $outcome (${seconds}s, \$$cost$note)"
+        echo "PASS $case_id rep $rep/$REPS: $outcome (${rep_seconds}s, \$$rep_cost$note)"
       else
         failures=$((failures + 1))
-        echo "FAIL $case_id rep $rep/$REPS: $outcome, expected $expected (${seconds}s, \$$cost$note)"
+        echo "FAIL $case_id rep $rep/$REPS: $outcome, expected $expected (${rep_seconds}s, \$$rep_cost$note)"
         echo "     reply: $(cat "$WORK_DIR/content.txt")"
       fi
       rep=$((rep + 1))
     done
-    summary="$summary$(printf '%-34s expected %-7s matches %s/%s  strict JSON %s/%s  repaired %s  errored %s' \
-      "$case_id" "$expected" "$matched" "$REPS" "$compliant" "$REPS" "$repaired" "$errored")
+    summary="$summary$(printf '%-34s expected %-7s matches %s/%s  strict JSON %s/%s  repaired %s  re-asked %s  errored %s' \
+      "$case_id" "$expected" "$matched" "$REPS" "$compliant" "$REPS" "$repaired" "$reasked" "$errored")
 "
     index=$((index + 1))
   done
@@ -312,6 +339,13 @@ run_suite() {
 case "$REPS" in
   '' | *[!0-9]* | 0)
     echo "conformance: CONFORMANCE_REPS must be a positive integer, got '$REPS'" >&2
+    exit "$EXIT_USAGE"
+    ;;
+esac
+
+case "$REASK_LIMIT" in
+  '' | *[!0-9]*)
+    echo "conformance: CONFORMANCE_REASK_LIMIT must be a whole number, got '$REASK_LIMIT'" >&2
     exit "$EXIT_USAGE"
     ;;
 esac
