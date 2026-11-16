@@ -124,5 +124,5 @@ development_status:
   9-5-dotnet-engine-context-and-gate: done
   9-6-dotnet-xunit-adapter: done
   9-7-dotnet-ichatclient-and-docs: done
-  9-8-dotnet-publish-to-nuget: backlog
+  9-8-dotnet-publish-to-nuget: done
   epic-9-retrospective: optional

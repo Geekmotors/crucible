@@ -18,7 +18,9 @@ dotnet add package Geekmotors.Crucible.Xunit   # xUnit v3; brings Geekmotors.Cru
 dotnet add package Geekmotors.Crucible         # NUnit, MSTest or anything else: Crucible.Gate
 ```
 
-Version 0.1.0 is the first NuGet release; until it is published, build from this repository.
+`Geekmotors.Crucible.Xunit` depends on exactly the same version of `Geekmotors.Crucible`; let it bring the engine in,
+or keep both references at the same version. Release notes:
+[CHANGELOG](https://github.com/Geekmotors/crucible-ai/blob/main/dotnet/CHANGELOG.md).
 
 ## Quick start (xUnit v3)
 
@@ -257,7 +259,9 @@ explains every field and the `full` and `debug` verbosity levels.
 - [Judge models](https://github.com/Geekmotors/crucible-ai/blob/main/docs/judge-models.md)
 
 The port follows [`spec/PORTING.md`](https://github.com/Geekmotors/crucible-ai/blob/main/spec/PORTING.md) and runs
-the shared fixtures in `spec/`, the same answer key as the TypeScript package `crucible-ai`.
+the shared fixtures in `spec/`, the same answer key as the TypeScript package `crucible-ai`. Each release passes the
+`spec/` at its own release tag: version X.Y.Z at tag `dotnet-vX.Y.Z`. The assembly says so too:
+`[AssemblyMetadata("CrucibleSpec", "dotnet-vX.Y.Z")]` on `Geekmotors.Crucible`.
 
 ## Contributing: build and test
 
@@ -271,7 +275,9 @@ dotnet format --verify-no-changes
 ```
 
 Or from the repository root: `make dotnet-test` and `make dotnet-format`; `make dotnet-live` runs the opt-in live
-smoke against OpenRouter.
+smoke against OpenRouter; `make dotnet-pack-check` packs both packages into `dotnet/artifacts/packages/` and checks
+their contents and metadata (`scripts/verify-pack.sh`). Releases: see
+[RELEASING.md](https://github.com/Geekmotors/crucible-ai/blob/main/RELEASING.md#net-packages).
 
 | Path | What |
 | --- | --- |
@@ -281,6 +287,7 @@ smoke against OpenRouter.
 | `tests/Geekmotors.Crucible.Xunit.Tests/` | adapter tests: settings resolution, and isolation proven by running the fixture project in a child process |
 | `tests/Geekmotors.Crucible.Xunit.Fixture/` | real xUnit tests run only by the adapter tests (fake judge, never by `dotnet test`) |
 | `tests/Geekmotors.Crucible.LiveTests/` | opt-in live smoke against OpenRouter (`make dotnet-live`) |
+| `scripts/verify-pack.sh` | the package check CI and the release workflow run |
 
 The fixture runner embeds every `spec/**/*.json` file, validates each against `spec/fixture.schema.json` and runs
 every case; the case ids C# skips, with their reasons (each is input a C# caller cannot express, such as a number

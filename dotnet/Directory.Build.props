@@ -13,4 +13,18 @@
     <RepositoryRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..'))</RepositoryRoot>
     <SpecRoot>$(RepositoryRoot)/spec</SpecRoot>
   </PropertyGroup>
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Authors>Geekmotors</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Geekmotors/crucible-ai</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Geekmotors/crucible-ai</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>https://github.com/Geekmotors/crucible-ai/blob/main/dotnet/CHANGELOG.md</PackageReleaseNotes>
+  </PropertyGroup>
 </Project>
