@@ -9,6 +9,8 @@ import type {
   CrucibleDescribe,
   CrucibleErrorKind,
   CrucibleFetch,
+  CrucibleFetchInit,
+  CrucibleFetchResponse,
   CrucibleIt,
   ExtractedValue,
   ExtractOptions,
@@ -603,7 +605,19 @@ behaviour. They are planned for removal in 1.0; replace either with
 
 ```ts
 crucible.useFetch(fetch: CrucibleFetch): void
+
+type CrucibleFetch = (url: string, init: CrucibleFetchInit) => Promise<CrucibleFetchResponse>;
+type CrucibleFetchInit = {
+  readonly method: 'POST';
+  readonly headers: Readonly<Record<string, string>>;
+  readonly body: string;
+  readonly signal: AbortSignal;
+};
+type CrucibleFetchResponse = { readonly ok: boolean; readonly status: number; json(): Promise<unknown> };
 ```
+
+The types are structural, so the global `fetch`, undici's `fetch` and your
+own wrapper all fit without a cast.
 
 Sets the `fetch` that every judge HTTP call goes through, instead of Node's
 global `fetch`: a proxy dispatcher, logging, or a fake judge in your own
@@ -631,8 +645,9 @@ crucible.useFetch((url, init) => fetch(url, { ...init, dispatcher }));
   `Authorization` carrying your judge key, when there is one), a JSON `body` and the
   `signal` Crucible aborts on `inferenceTimeout`. Pass the signal on, or the
   timeout cannot cancel the request.
-- **What it must return.** A `Response`, or anything with `ok`, `status` and
-  `json()`. A rejected promise counts as a network failure and is retried
+- **What it must return.** A promise of anything with `ok`, `status` and
+  `json()` (`CrucibleFetchResponse`): a `Response` from any `fetch`, or a
+  plain object in a fake judge. A rejected promise counts as a network failure and is retried
   like one ([provider failures](../configuration.md#provider-failures)).
 - **Logging.** `init.headers` carries your judge key; never log it.
 
@@ -675,6 +690,8 @@ Thrown by a `crucible.it()` or `crucible.gate()` test that did not pass. Its `me
 | `CoherentOptions` | `{ facts?: string \| readonly string[] }` — the third argument of `crucible.coherent()` |
 | `ExtractOptions` | `{ as?: ExtractType; strict?: boolean; facts?: string \| readonly string[] }` (generic: `ExtractOptions<T extends ExtractType>` narrows `as` to `T`) |
 | `ExtractedValue` | `string \| number \| boolean \| null` — any value `crucible.extract()` can resolve to |
-| `CrucibleFetch` | `(url: string, init: RequestInit) => Promise<Response>` — the argument of `crucible.useFetch()` |
+| `CrucibleFetch` | `(url: string, init: CrucibleFetchInit) => Promise<CrucibleFetchResponse>` — the argument of `crucible.useFetch()` |
+| `CrucibleFetchInit` | `{ method: 'POST'; headers: Record<string, string>; body: string; signal: AbortSignal }` (all read-only) — what `crucible.useFetch()`'s function receives |
+| `CrucibleFetchResponse` | `{ ok: boolean; status: number; json(): Promise<unknown> }` — what it must resolve to |
 | `CrucibleErrorKind` | `'config' \| 'usage' \| 'infra'` |
 | `VerdictOutcome` | `'failed' \| 'errored'` |

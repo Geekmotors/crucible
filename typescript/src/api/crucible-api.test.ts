@@ -50,9 +50,9 @@ describe('CrucibleApi', () => {
       new VitestBinding(new VitestRunnerFake().source).spec(),
       transport,
     );
-    crucible.useFetch(TransportHarness.serving(TransportReply.Chosen) as never);
+    crucible.useFetch(TransportHarness.serving(TransportReply.Chosen));
     const error = Capture.thrown(() =>
-      crucible.useFetch(TransportHarness.serving(TransportReply.Chosen) as never),
+      crucible.useFetch(TransportHarness.serving(TransportReply.Chosen)),
     );
     expect((error as CrucibleError).kind).toBe('usage');
   });

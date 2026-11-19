@@ -1,3 +1,11 @@
-type CrucibleFetch = (url: string, init: RequestInit) => Promise<Response>;
+import type {
+  FetchLike,
+  ProviderHttpRequestInit,
+  ProviderHttpResponse,
+} from '../providers/provider-boundary.js';
 
-export type { CrucibleFetch };
+type CrucibleFetch = FetchLike;
+type CrucibleFetchInit = ProviderHttpRequestInit;
+type CrucibleFetchResponse = ProviderHttpResponse;
+
+export type { CrucibleFetch, CrucibleFetchInit, CrucibleFetchResponse };

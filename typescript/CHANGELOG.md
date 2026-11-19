@@ -14,7 +14,8 @@ contain breaking changes, and they are marked **Breaking** below.
   Crucible test starts (for example in a `setupFiles` module); a value that
   is not a function, a call after the first test started, or a second call
   with a different function is a `usage` error. Exported from `crucible-ai`
-  and `crucible-ai/vitest`, with its type `CrucibleFetch`. See
+  and `crucible-ai/vitest`, with its types `CrucibleFetch`,
+  `CrucibleFetchInit` and `CrucibleFetchResponse`. See
   [`crucible.useFetch()`](https://github.com/Geekmotors/crucible-ai/blob/main/docs/typescript/api.md#crucibleusefetch).
 
 ## 0.5.0

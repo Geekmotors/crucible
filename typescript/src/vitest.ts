@@ -3,6 +3,8 @@ export type {
   CoherentOptions,
   CrucibleDescribe,
   CrucibleFetch,
+  CrucibleFetchInit,
+  CrucibleFetchResponse,
   CrucibleIt,
   CrucibleErrorKind,
   ExtractedValue,
