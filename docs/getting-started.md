@@ -81,6 +81,23 @@ check:
    never answers — so `null` is a finding, not a crash. Pass
    `{ strict: true }` to make any hedge `null`. For a tolerance, use a Jest matcher on the value
    (`toBeCloseTo`, `toBeGreaterThan`).
+
+   For a quality that comes in degrees, where pass or fail would hide how bad
+   a miss is, ask for a grade on a scale you define in the description and
+   gate on it:
+
+   ```ts
+   const severity = await crucible.extract(
+     reply,
+     'how much of the previous turn the reply repeats: 0 none, 1 a phrase, 2 a sentence, 3 most of it',
+     { as: 'number' },
+   );
+   expect(severity).toBeLessThanOrEqual(1);
+   ```
+
+   Name every point on the scale, so the judge and your threshold mean the
+   same thing. `null` (no grade to take) fails the matcher, like a grade
+   above the threshold.
 3. **`coherent()`** for claims that are inherently semantic: what prose
    means, whether reasoning holds, whether a response is consistent with the
    facts the system was given, whether it reveals something it should not
