@@ -93,7 +93,7 @@ class Reporter {
   }
 
   private stampSection(results: readonly RunResult[]): string[] {
-    const stamp = this.stamp();
+    const stamp = this.buildableStamp();
     if (stamp === undefined) {
       return [];
     }
@@ -104,6 +104,14 @@ class Reporter {
         this.field('Crucible', this.stampText.crucible(stamp), Reporter.STAMP_INDENT),
       ].join('\n'),
     ];
+  }
+
+  private buildableStamp(): JudgeStamp | undefined {
+    try {
+      return this.stamp();
+    } catch {
+      return undefined;
+    }
   }
 
   private passHeadline({ tally, options }: VerdictSummary): string {

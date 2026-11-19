@@ -684,6 +684,10 @@ field("Judge", "<who>; <spend>", "")
 field("Crucible", "<package> <version>; schemas coherent <coherent>, extract <extract>", "")
 ```
 
+A port that cannot build the stamp (its package manifest or a schema cannot
+be read) renders the report without it, never an error in its place: the
+stamp must not hide the report it belongs to.
+
 `stamp` holds:
 
 - `package`, `version`: the port's package name and version
