@@ -2,6 +2,7 @@ export { crucible, CrucibleError, CrucibleVerdictError } from './api/crucible.js
 export type {
   CoherentOptions,
   CrucibleDescribe,
+  CrucibleFetch,
   CrucibleIt,
   CrucibleErrorKind,
   ExtractedValue,

@@ -1,5 +1,6 @@
 import type { ExtractedValueFor } from '../core/extract-type.js';
 import type { CoherentOptions } from './coherent-options.js';
+import type { CrucibleFetch } from './crucible-fetch.js';
 import type { ExtractOptions } from './extract-options.js';
 import type { RunContext } from './run-context.js';
 import type { RunOptions } from './run-options.js';
@@ -107,6 +108,22 @@ type CrucibleCoreSurface = {
    * @param state - One fact or several.
    */
   append(state: string | readonly string[]): void;
+  /**
+   * Sets the `fetch` every judge HTTP call goes through, for every built-in
+   * provider and every attempt: a proxy dispatcher, logging, or a fake
+   * judge. Call it once, before the first Crucible test starts, for example
+   * in a Jest or Vitest `setupFiles` module. Without it Crucible uses the
+   * global `fetch`. Crucible calls it as `fetch(url, init)` with `method`,
+   * `headers`, `body` and `signal` set, and reads `ok`, `status` and
+   * `json()` from the response.
+   *
+   * A value that is not a function is a `usage` error, and so is a call
+   * after the first Crucible test started or a second call with a different
+   * function; the same function again is a no-op.
+   *
+   * @param fetch - A function with the shape of the global `fetch`.
+   */
+  useFetch(fetch: CrucibleFetch): void;
 };
 
 export type { CrucibleCoreSurface };

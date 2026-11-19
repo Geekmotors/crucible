@@ -4,6 +4,7 @@ import type { ExtractedValue, ExtractType } from '../core/extract-type.js';
 import { CrucibleVerdictError } from '../core/verdict-error.js';
 import type { CoherentOptions } from './coherent-options.js';
 import { CrucibleApi } from './crucible-api.js';
+import type { CrucibleFetch } from './crucible-fetch.js';
 import type { CrucibleDescribe } from './crucible-describe.js';
 import type { CrucibleIt } from './crucible-it.js';
 import type { CrucibleSurface } from './crucible-surface.js';
@@ -20,6 +21,7 @@ export type { VerdictOutcome } from '../core/verdict-error.js';
 export type {
   CoherentOptions,
   CrucibleDescribe,
+  CrucibleFetch,
   CrucibleIt,
   ExtractedValue,
   ExtractOptions,

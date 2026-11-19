@@ -16,8 +16,10 @@ type SchemaField = {
 
 type ConfigSchema = SchemaField & { required: string[] };
 
+type TypeScriptOnlyFunction = 'useFetch';
+
 class PublicSurface {
-  static crucible: Record<keyof CrucibleSurface, true> = {
+  static crucible: Record<Exclude<keyof CrucibleSurface, TypeScriptOnlyFunction>, true> = {
     it: true,
     describe: true,
     gate: true,

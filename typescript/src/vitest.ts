@@ -2,6 +2,7 @@ export { crucible, CrucibleError, CrucibleVerdictError } from './api/crucible-vi
 export type {
   CoherentOptions,
   CrucibleDescribe,
+  CrucibleFetch,
   CrucibleIt,
   CrucibleErrorKind,
   ExtractedValue,

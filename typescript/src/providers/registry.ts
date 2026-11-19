@@ -1,4 +1,5 @@
 import { CrucibleError } from '../core/errors.js';
+import { JudgeTransport } from './judge-transport.js';
 import { OpenAiCompatibleProvider } from './openai-compatible.js';
 import { OpenAiProvider } from './openai.js';
 import { OpenRouterProvider } from './openrouter.js';
@@ -87,6 +88,7 @@ class ProviderRegistry {
   }
 }
 
-const providerRegistry = ProviderRegistry.builtIn();
+const judgeTransport = new JudgeTransport();
+const providerRegistry = ProviderRegistry.builtIn(judgeTransport.fetchLike);
 
-export { ProviderRegistry, providerRegistry };
+export { judgeTransport, ProviderRegistry, providerRegistry };
