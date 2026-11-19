@@ -53,7 +53,11 @@ class ReportHarness {
   }
 
   static run(status: RunStatus, cause?: unknown): RunResult {
-    return { status, cause, context: { state: [], verdicts: [], extractions: [], errors: [] } };
+    return {
+      status,
+      cause,
+      context: { state: [], verdicts: [], extractions: [], errors: [], usage: [] },
+    };
   }
 
   static renderedFailure(cause: unknown): string {
@@ -67,7 +71,7 @@ class ReportHarness {
   ): string {
     const result = {
       ...ReportHarness.run(status, new Error(ClaimText.Default)),
-      context: { state: [], verdicts: [], extractions: [], errors: [], ...ledger },
+      context: { state: [], verdicts: [], extractions: [], errors: [], usage: [], ...ledger },
     };
     return ReportHarness.rendered(result, verbosity);
   }
