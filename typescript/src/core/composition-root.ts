@@ -1,3 +1,5 @@
+import type { JudgeTransport } from '../providers/judge-transport.js';
+import { judgeTransport } from '../providers/registry.js';
 import { config } from './config.js';
 import { Extractor } from './extractor.js';
 import { Gate } from './gate.js';
@@ -32,7 +34,10 @@ class CompositionRoot {
   private readonly stampAssembler = new JudgeStampAssembler();
   private readonly trace = new TraceReporter(CompositionRoot.traceSettings, runScope);
 
-  constructor(private readonly spec: RunnerSpec) {}
+  constructor(
+    private readonly spec: RunnerSpec,
+    private readonly transport: JudgeTransport = judgeTransport,
+  ) {}
 
   coherentJudge(): Judge {
     this.judge ??= new Judge(
@@ -102,6 +107,8 @@ class CompositionRoot {
         new Reporter(CompositionRoot.reportSettings, () => this.judgeStamp()),
         CompositionRoot.testDefaults,
         this.trace,
+        undefined,
+        () => this.transport.seal(),
       ),
       this.assertions(),
       new GroupSettings(this.spec.groupPath),

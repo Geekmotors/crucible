@@ -19,6 +19,9 @@ import { VerbosityLevel } from './test/verbosity-level.enum.js';
 import { CrucibleVerdictError } from './verdict-error.js';
 import { Capture } from './test/capture.util.js';
 import { CustomTimeout } from './test/custom-timeout.enum.js';
+import { RegistryHarness } from '../providers/test/registry-harness.util.js';
+import { TransportHarness } from '../providers/test/transport-harness.util.js';
+import { TransportReply } from '../providers/test/transport-reply.enum.js';
 
 describe('Runner', () => {
   it('resolves when the run passes', async () => {
@@ -441,5 +444,17 @@ describe('Runner — verbosity', () => {
       Threshold.Certain,
     );
     expect(output).toContain('run #2 judge verdict');
+  });
+
+  it('closes the choice of judge fetch once a test starts', async () => {
+    const transport = TransportHarness.transport();
+    await RunnerHarness.startingRunner(() => transport.seal()).execute(() => undefined, {
+      runs: RunCount.Single,
+    });
+    expect(
+      RegistryHarness.errorKind(() =>
+        transport.use(TransportHarness.serving(TransportReply.Chosen)),
+      ),
+    ).toBe('usage');
   });
 });

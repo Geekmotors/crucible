@@ -34,6 +34,17 @@ class RunnerHarness {
     return new Runner(scope, new Reporter(), () => defaults, new TraceReporter(), timer.arm);
   }
 
+  static startingRunner(onStart: () => void): Runner {
+    return new Runner(
+      new RunScope(),
+      new Reporter(),
+      () => ({}),
+      new TraceReporter(),
+      new ManualTimer().arm,
+      onStart,
+    );
+  }
+
   static tracedRunner(traced: TraceHarness, timer: ManualTimer = new ManualTimer()): Runner {
     return new Runner(
       traced.scope,

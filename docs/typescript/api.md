@@ -8,6 +8,9 @@ import type {
   CoherentOptions,
   CrucibleDescribe,
   CrucibleErrorKind,
+  CrucibleFetch,
+  CrucibleFetchInit,
+  CrucibleFetchResponse,
   CrucibleIt,
   ExtractedValue,
   ExtractOptions,
@@ -21,10 +24,10 @@ import type {
 } from 'crucible-ai';
 ```
 
-`crucible` is a frozen object with six functions: [`it`](#crucibleit),
+`crucible` is a frozen object with seven functions: [`it`](#crucibleit),
 [`describe`](#crucibledescribe), [`gate`](#cruciblegate),
-[`coherent`](#cruciblecoherent), [`extract`](#crucibleextract)
-and [`facts`](#cruciblefacts), plus two deprecated aliases of `facts`,
+[`coherent`](#cruciblecoherent), [`extract`](#crucibleextract),
+[`facts`](#cruciblefacts) and [`useFetch`](#crucibleusefetch), plus two deprecated aliases of `facts`,
 [`load` and `append`](#crucibleload-and-crucibleappend-deprecated). Each run
 of a test body also gets a [run context `t`](#the-run-context-t) with
 `facts`, `coherent` and `extract` bound to that run — the recommended style.
@@ -598,6 +601,56 @@ Deprecated aliases of [`crucible.facts()`](#cruciblefacts), with identical
 behaviour. They are planned for removal in 1.0; replace either with
 `crucible.facts()`.
 
+## `crucible.useFetch()`
+
+```ts
+crucible.useFetch(fetch: CrucibleFetch): void
+
+type CrucibleFetch = (url: string, init: CrucibleFetchInit) => Promise<CrucibleFetchResponse>;
+type CrucibleFetchInit = {
+  readonly method: 'POST';
+  readonly headers: Readonly<Record<string, string>>;
+  readonly body: string;
+  readonly signal: AbortSignal;
+};
+type CrucibleFetchResponse = { readonly ok: boolean; readonly status: number; json(): Promise<unknown> };
+```
+
+The types are structural, so the global `fetch`, undici's `fetch` and your
+own wrapper all fit without a cast.
+
+Sets the `fetch` that every judge HTTP call goes through, instead of Node's
+global `fetch`: a proxy dispatcher, logging, or a fake judge in your own
+tests. Every built-in provider (`openrouter`, `openai`, `openai-compatible`)
+uses it for every attempt, retries included. Call it **once, before the
+first Crucible test starts**, for example in a module listed in Jest's or
+Vitest's `setupFiles`:
+
+```ts
+// crucible.setup.ts, listed in setupFiles
+import { crucible } from 'crucible-ai';
+import { fetch, ProxyAgent } from 'undici';
+
+const dispatcher = new ProxyAgent('http://proxy.example.com:8080');
+crucible.useFetch((url, init) => fetch(url, { ...init, dispatcher }));
+```
+
+- **Rules.** A value that is not a function is a `usage` error. Calling it
+  after the first `crucible.it()` or `crucible.gate()` test started, or again
+  with a different function, is a `usage` error (it never silently keeps the
+  old `fetch`). The same function again is a no-op. The choice belongs to the
+  process, so each Jest or Vitest worker sets it up through `setupFiles`.
+- **What it is called with.** `fetch(url, init)`: the provider's chat
+  completions URL and an `init` with `method: 'POST'`, `headers` (with
+  `Authorization` carrying your judge key, when there is one), a JSON `body` and the
+  `signal` Crucible aborts on `inferenceTimeout`. Pass the signal on, or the
+  timeout cannot cancel the request.
+- **What it must return.** A promise of anything with `ok`, `status` and
+  `json()` (`CrucibleFetchResponse`): a `Response` from any `fetch`, or a
+  plain object in a fake judge. A rejected promise counts as a network failure and is retried
+  like one ([provider failures](../configuration.md#provider-failures)).
+- **Logging.** `init.headers` carries your judge key; never log it.
+
 ## Errors
 
 ### `CrucibleError`
@@ -637,5 +690,8 @@ Thrown by a `crucible.it()` or `crucible.gate()` test that did not pass. Its `me
 | `CoherentOptions` | `{ facts?: string \| readonly string[] }` — the third argument of `crucible.coherent()` |
 | `ExtractOptions` | `{ as?: ExtractType; strict?: boolean; facts?: string \| readonly string[] }` (generic: `ExtractOptions<T extends ExtractType>` narrows `as` to `T`) |
 | `ExtractedValue` | `string \| number \| boolean \| null` — any value `crucible.extract()` can resolve to |
+| `CrucibleFetch` | `(url: string, init: CrucibleFetchInit) => Promise<CrucibleFetchResponse>` — the argument of `crucible.useFetch()` |
+| `CrucibleFetchInit` | `{ method: 'POST'; headers: Record<string, string>; body: string; signal: AbortSignal }` (all read-only) — what `crucible.useFetch()`'s function receives |
+| `CrucibleFetchResponse` | `{ ok: boolean; status: number; json(): Promise<unknown> }` — what it must resolve to |
 | `CrucibleErrorKind` | `'config' \| 'usage' \| 'infra'` |
 | `VerdictOutcome` | `'failed' \| 'errored'` |
