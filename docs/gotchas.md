@@ -412,3 +412,14 @@ NODE_OPTIONS=--use-system-ca npx jest
 `--use-system-ca` needs Node 22.15 or newer (or 23.8+). On older versions,
 point `NODE_EXTRA_CA_CERTS` at your proxy's CA certificate instead. Never
 disable certificate verification.
+
+If judge calls must go through an HTTP(S) proxy, Node 22.21+ and 24+ route
+`fetch` through `HTTPS_PROXY` when `NODE_USE_ENV_PROXY=1` is set. For an
+explicit proxy dispatcher (undici's `ProxyAgent`) or any other custom
+handling, pass your own `fetch` to
+[`crucible.useFetch()`](typescript/api.md#crucibleusefetch).
+
+In C#, Crucible's providers use .NET's `HttpClient`, which trusts the
+operating system's certificate store; for a custom handler or proxy, pass an
+`IChatClient` built on your own `HttpClient` to
+[`Crucible.UseJudge`](dotnet/api.md#crucibleusejudge).

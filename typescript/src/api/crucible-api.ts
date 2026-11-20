@@ -1,8 +1,11 @@
 import { CompositionRoot } from '../core/composition-root.js';
+import type { JudgeTransport } from '../providers/judge-transport.js';
+import { judgeTransport } from '../providers/registry.js';
 import type { ExtractedValueFor } from '../core/extract-type.js';
 import type { RunnerSpec } from '../core/runner-spec.js';
 import type { CoherentOptions } from './coherent-options.js';
 import type { CrucibleCoreSurface } from './crucible-core-surface.js';
+import type { CrucibleFetch } from './crucible-fetch.js';
 import type { ExtractOptions } from './extract-options.js';
 import type { GateBody, GatedTest } from './run-context.js';
 import type { RunOptions } from './run-options.js';
@@ -10,8 +13,11 @@ import type { RunOptions } from './run-options.js';
 type RunnerSurface<It, Describe> = CrucibleCoreSurface & { it: It; describe: Describe };
 
 class CrucibleApi {
-  static build<It, Describe>(spec: RunnerSpec): Readonly<RunnerSurface<It, Describe>> {
-    const root = new CompositionRoot(spec);
+  static build<It, Describe>(
+    spec: RunnerSpec,
+    transport: JudgeTransport = judgeTransport,
+  ): Readonly<RunnerSurface<It, Describe>> {
+    const root = new CompositionRoot(spec, transport);
     return Object.freeze({
       it: root.runnerWrapper().test() as It,
       gate(optsOrBody: RunOptions | GateBody, body?: GateBody, ...surplus: unknown[]): GatedTest {
@@ -36,6 +42,9 @@ class CrucibleApi {
       },
       append(state: string | readonly string[]): void {
         root.assertions().facts(state);
+      },
+      useFetch(fetch: CrucibleFetch): void {
+        transport.use(fetch);
       },
     });
   }

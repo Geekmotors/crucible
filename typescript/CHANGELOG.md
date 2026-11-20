@@ -4,6 +4,20 @@ All notable changes to `crucible-ai` are listed here. The project follows
 [Semantic Versioning](https://semver.org); before 1.0, a minor version may
 contain breaking changes, and they are marked **Breaking** below.
 
+## Unreleased
+
+### Added
+
+- `crucible.useFetch(fetch)` sets the `fetch` every judge HTTP call goes
+  through, for every built-in provider and every attempt: a proxy
+  dispatcher, logging, or a fake judge. Call it once, before the first
+  Crucible test starts (for example in a `setupFiles` module); a value that
+  is not a function, a call after the first test started, or a second call
+  with a different function is a `usage` error. Exported from `crucible-ai`
+  and `crucible-ai/vitest`, with its types `CrucibleFetch`,
+  `CrucibleFetchInit` and `CrucibleFetchResponse`. See
+  [`crucible.useFetch()`](https://github.com/Geekmotors/crucible-ai/blob/main/docs/typescript/api.md#crucibleusefetch).
+
 ## 0.5.0
 
 ### Changed

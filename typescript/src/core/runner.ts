@@ -42,6 +42,8 @@ class Runner {
     return {};
   }
 
+  private static ignoreStart(): void {}
+
   private static startTimer(ms: number, onExpire: () => void): () => void {
     const handle = setTimeout(onExpire, ms);
     return () => clearTimeout(handle);
@@ -53,6 +55,7 @@ class Runner {
     private readonly testDefaults: TestDefaultsSupplier = Runner.noTestDefaults,
     private readonly trace: TraceReporter = new TraceReporter(),
     private readonly timer: DeadlineTimer = Runner.startTimer,
+    private readonly onStart: () => void = Runner.ignoreStart,
   ) {}
 
   ceilingFor(declared: RunOptions): number {
@@ -63,6 +66,7 @@ class Runner {
   }
 
   async execute(body: RunBody, opts: RunOptions = {}): Promise<void> {
+    this.onStart();
     const options = this.resolver.resolve(opts, this.testDefaults());
     const deadlineMs = options.testTimeout;
     this.trace.testStarted(options, deadlineMs);
