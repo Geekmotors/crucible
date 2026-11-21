@@ -6,7 +6,7 @@ of `Geekmotors.Crucible`. The project follows [Semantic Versioning](https://semv
 may contain breaking changes, and they are marked **Breaking** below. The TypeScript package `crucible-ai` has its own
 [changelog](https://github.com/Geekmotors/crucible-ai/blob/main/typescript/CHANGELOG.md).
 
-## Unreleased
+## 0.2.0
 
 ### Added
 
@@ -19,7 +19,7 @@ may contain breaking changes, and they are marked **Breaking** below. The TypeSc
 
   ```text
   Judge: openrouter "anthropic/claude-haiku-5.5"; served as "anthropic/claude-haiku-5.5", 1 response(s), 812 tokens, cost $0.000250
-  Crucible: Geekmotors.Crucible 0.1.0; schemas coherent 2ecbb5d8, extract 1e09070c
+  Crucible: Geekmotors.Crucible 0.2.0; schemas coherent 2ecbb5d8, extract 1e09070c
   ```
 
   See [Reading the failure report](https://github.com/Geekmotors/crucible-ai/blob/main/docs/runs-and-threshold.md#reading-the-failure-report).
